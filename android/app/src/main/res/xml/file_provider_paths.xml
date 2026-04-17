@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- External storage for APK download (OTA update) -->
+    <external-path name="external_files" path="."/>
+    <!-- App-specific external storage -->
+    <external-files-path name="external_app_files" path="."/>
+    <!-- Internal cache -->
+    <cache-path name="cache" path="."/>
+</paths>
