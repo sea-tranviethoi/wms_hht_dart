@@ -73,7 +73,10 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
           refreshToken: result['refreshToken'] as String? ?? '',
           loginType: 'QR',
         );
-        context.read<AuthBloc>().add(LoggedIn(user));
+        final authBloc = context.read<AuthBloc>();
+        authBloc.add(LoggedIn(user));
+        await authBloc.stream.firstWhere((s) => s is AuthAuthenticated);
+        if (!mounted) return;
         context.go(RouteNames.tenantSelection);
       } else {
         _setError('WMSサーバーに接続できません。\nネットワークを確認してください。');
