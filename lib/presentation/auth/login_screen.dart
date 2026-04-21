@@ -13,7 +13,7 @@ import '../../l10n/app_strings.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -25,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   MobileScannerController? _scannerController;
-  bool _isScanning = false;
 
   @override
   void dispose() {
@@ -39,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final strings = AppStrings.ofWithoutWatch(context);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isConnected = await ConnectivityCheck.isConnected();
     if (!isConnected) {
       if (mounted) {
@@ -51,8 +51,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       return;
     }
-
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     try {
       final success = await authProvider.login(
@@ -122,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final isConnected = await ConnectivityCheck.isConnected();
       if (!isConnected) {
         if (mounted) {
@@ -134,8 +133,6 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         return;
       }
-
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
       final success = await authProvider.loginByQR(userName, password);
 
@@ -170,14 +167,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _startQRScanner() {
     setState(() {
-      _isScanning = true;
       _scannerController = MobileScannerController();
     });
 
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        child: Container(
+        child: SizedBox(
           height: 400,
           child: Stack(
             children: [
@@ -190,9 +186,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       _scannerController?.stop();
                       Navigator.pop(context);
                       _handleQRScan(barcode.rawValue!);
-                      setState(() {
-                        _isScanning = false;
-                      });
                       break;
                     }
                   }
@@ -206,9 +199,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     _scannerController?.stop();
                     Navigator.pop(context);
-                    setState(() {
-                      _isScanning = false;
-                    });
                   },
                 ),
               ),

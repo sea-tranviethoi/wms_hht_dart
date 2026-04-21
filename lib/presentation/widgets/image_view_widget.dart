@@ -13,7 +13,7 @@ class ImageViewWidget extends StatelessWidget {
   final bool showFullScreen;
 
   const ImageViewWidget({
-    Key? key,
+    super.key,
     this.imageUrl,
     this.imageFile,
     this.placeholder,
@@ -21,7 +21,7 @@ class ImageViewWidget extends StatelessWidget {
     this.width,
     this.height,
     this.showFullScreen = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

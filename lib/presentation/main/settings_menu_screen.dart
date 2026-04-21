@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../config/theme_config.dart';
-import '../../routes/route_names.dart';
 import '../providers/language_provider.dart';
 import 'main_menu_screen.dart';
 
 class SettingsMenuScreen extends StatelessWidget {
-  const SettingsMenuScreen({Key? key}) : super(key: key);
+  const SettingsMenuScreen({super.key});
 
   List<MenuItem> _getMenuItems(BuildContext context) {
     return [

@@ -18,7 +18,7 @@ class BundleProvider with ChangeNotifier {
   List<Bundle> _bundles = [];
   List<Bundle> get bundles => _bundles;
 
-  List<BundleLine> _bundleLines = [];
+  final List<BundleLine> _bundleLines = [];
   List<BundleLine> get bundleLines => _bundleLines;
 
   // Table data: [transNo, countLine, id, scanStatus, hhtInfo, productName]
@@ -133,7 +133,7 @@ class BundleProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _errorMessage = 'Failed to load data: $e';
-      print('ERROR: Failed to load bundle data: $e');
+      debugPrint('ERROR: Failed to load bundle data: $e');
       _isLoading = false;
       notifyListeners();
     }

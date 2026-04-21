@@ -4,7 +4,6 @@ import 'dart:convert';
 import '../../core/storage/local_storage.dart';
 import '../../data/models/putaway/putaway_line.dart';
 import '../../data/models/putaway/putaway_order.dart';
-import '../../data/models/putaway/putaway_staging.dart';
 import '../../data/repositories/putaway_repository.dart';
 
 class PutawayProvider with ChangeNotifier {
@@ -177,7 +176,7 @@ class PutawayProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _errorMessage = 'Failed to load data: $e';
-      print('ERROR: Failed to load putaway data: $e');
+      debugPrint('ERROR: Failed to load putaway data: $e');
       _isLoading = false;
       notifyListeners();
     }
@@ -265,7 +264,7 @@ class PutawayProvider with ChangeNotifier {
 
       return handledByOther.isNotEmpty;
     } catch (e) {
-      print('Error checking product status: $e');
+      debugPrint('Error checking product status: $e');
       return false;
     }
   }

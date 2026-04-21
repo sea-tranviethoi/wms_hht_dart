@@ -14,7 +14,7 @@ class ListViewWidget<T> extends StatelessWidget {
   final Widget? loadingWidget;
 
   const ListViewWidget({
-    Key? key,
+    super.key,
     required this.items,
     required this.itemBuilder,
     this.shrinkWrap = false,
@@ -24,7 +24,7 @@ class ListViewWidget<T> extends StatelessWidget {
     this.emptyMessage,
     this.isLoading = false,
     this.loadingWidget,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,14 +73,14 @@ class ListItemCard extends StatelessWidget {
   final double? elevation;
 
   const ListItemCard({
-    Key? key,
+    super.key,
     required this.child,
     this.onTap,
     this.backgroundColor,
     this.padding,
     this.margin,
     this.elevation,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

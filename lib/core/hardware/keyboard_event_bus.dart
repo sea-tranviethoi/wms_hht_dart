@@ -1,12 +1,12 @@
 
 
-/// Port từ modules/KeyboardEventBus.js
-///
-/// Mô hình hoạt động:
-/// - Mỗi màn hình subscribe khi được focus, unsubscribe khi blur
-/// - Khi nhận event, gọi listener từ CUỐI danh sách (priority cao nhất)
-/// - Nếu listener trả về `true` → event đã được xử lý, dừng lại (stop propagation)
-/// - Priority chain: Modal (thêm sau = index cao) > Details > List > Home
+// Port từ modules/KeyboardEventBus.js
+//
+// Mô hình hoạt động:
+// - Mỗi màn hình subscribe khi được focus, unsubscribe khi blur
+// - Khi nhận event, gọi listener từ CUỐI danh sách (priority cao nhất)
+// - Nếu listener trả về `true` → event đã được xử lý, dừng lại (stop propagation)
+// - Priority chain: Modal (thêm sau = index cao) > Details > List > Home
 
 typedef KeyEventHandler = bool Function(int keyCode);
 

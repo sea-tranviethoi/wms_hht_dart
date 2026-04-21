@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/di/injection.dart';
-import '../../../core/storage/secure_storage.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../routes/route_names.dart';
 

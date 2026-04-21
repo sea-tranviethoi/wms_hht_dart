@@ -24,7 +24,7 @@ class CustomInput extends StatelessWidget {
   final String? initialValue;
 
   const CustomInput({
-    Key? key,
+    super.key,
     this.label,
     this.hint,
     this.controller,
@@ -44,7 +44,7 @@ class CustomInput extends StatelessWidget {
     this.onTap,
     this.borderColor,
     this.initialValue,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
-import 'package:dio/dio.dart';
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
@@ -31,7 +32,7 @@ class PutawayRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching putaway orders: $e');
+      debugPrint('Error fetching putaway orders: $e');
       return [];
     }
   }
@@ -50,7 +51,7 @@ class PutawayRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching putaway order by putaway no: $e');
+      debugPrint('Error fetching putaway order by putaway no: $e');
       return [];
     }
   }
@@ -72,7 +73,7 @@ class PutawayRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching putaway lines: $e');
+      debugPrint('Error fetching putaway lines: $e');
       return [];
     }
   }
@@ -91,7 +92,7 @@ class PutawayRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching putaway lines by putaway no: $e');
+      debugPrint('Error fetching putaway lines by putaway no: $e');
       return [];
     }
   }
@@ -110,7 +111,7 @@ class PutawayRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching putaway staging by putaway no: $e');
+      debugPrint('Error fetching putaway staging by putaway no: $e');
       return [];
     }
   }
@@ -125,7 +126,7 @@ class PutawayRepository {
 
       return response.statusCode == 200;
     } catch (e) {
-      print('Error deleting putaway staging: $e');
+      debugPrint('Error deleting putaway staging: $e');
       return false;
     }
   }
@@ -143,7 +144,7 @@ class PutawayRepository {
           response.data != null &&
           response.data['succeeded'] == true;
     } catch (e) {
-      print('Error adding range of putaway staging: $e');
+      debugPrint('Error adding range of putaway staging: $e');
       return false;
     }
   }
@@ -158,7 +159,7 @@ class PutawayRepository {
           response.data != null &&
           response.data['succeeded'] == true;
     } catch (e) {
-      print('Error completing putaway: $e');
+      debugPrint('Error completing putaway: $e');
       return false;
     }
   }
@@ -177,7 +178,7 @@ class PutawayRepository {
 
       return response.statusCode == 200 && response.data != null;
     } catch (e) {
-      print('Error updating HHT status: $e');
+      debugPrint('Error updating HHT status: $e');
       return false;
     }
   }
@@ -198,7 +199,7 @@ class PutawayRepository {
 
       return response.statusCode == 200 && response.data != null;
     } catch (e) {
-      print('Error updating HHT status to empty: $e');
+      debugPrint('Error updating HHT status to empty: $e');
       return false;
     }
   }
@@ -207,7 +208,6 @@ class PutawayRepository {
 
   static const String _putawayOrdersKey = 'putawayOrders';
   static const String _putawayLinesKey = 'putawayLines';
-  static const String _offlineDataKey = 'offlinePutawayData';
 
   Future<void> savePutawayOrders(List<PutawayOrder> orders) async {
     final String jsonString =

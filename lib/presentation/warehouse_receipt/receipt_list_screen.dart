@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../config/theme_config.dart';
 import '../../routes/route_names.dart';
-import '../../l10n/app_strings.dart';
 import 'vendor_screen.dart';
 
 class ReceiptListScreen extends StatefulWidget {
-  const ReceiptListScreen({Key? key}) : super(key: key);
+  const ReceiptListScreen({super.key});
 
   @override
   State<ReceiptListScreen> createState() => _ReceiptListScreenState();
@@ -22,7 +21,6 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final strings = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.lighter,
       appBar: AppBar(
@@ -57,13 +55,14 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    final messenger = ScaffoldMessenger.of(context);
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const VendorScreen()),
                     );
                     if (result == 1) {
                       // Reload data if Vendor download returns 1
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reload after Vendor download')));
+                      messenger.showSnackBar(const SnackBar(content: Text('Reload after Vendor download')));
                     }
                   },
                   child: const Text('DL'),
@@ -86,7 +85,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                   onTap: () {
                     setState(() => _selectedIndex = index);
                   },
-                  tileColor: selected ? AppColors.menuColors[0].withOpacity(0.15) : null,
+                  tileColor: selected ? AppColors.menuColors[0].withValues(alpha: 0.15) : null,
                 );
               },
             ),

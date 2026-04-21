@@ -14,9 +14,9 @@ class TenantSelectionScreen extends StatefulWidget {
   final String? funcNumber; // "3" for Picking, null or other for Warehouse Receipt
 
   const TenantSelectionScreen({
-    Key? key,
+    super.key,
     this.funcNumber,
-  }) : super(key: key);
+  });
 
   @override
   State<TenantSelectionScreen> createState() => _TenantSelectionScreenState();
@@ -69,7 +69,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
       } else {
         colors = _generateColors(tenants.length);
         await localStorage.saveJson('dataColor', 
-            colors.map((c) => c.value).toList());
+            colors.map((c) => c.toARGB32()).toList());
       }
 
       // Ensure colors list matches tenants length
@@ -84,7 +84,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading tenants: $e');
+      debugPrint('Error loading tenants: $e');
       setState(() {
         _isLoading = false;
       });

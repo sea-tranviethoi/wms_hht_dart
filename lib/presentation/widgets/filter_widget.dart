@@ -33,12 +33,12 @@ class FilterWidget extends StatefulWidget {
   final bool showResetButton;
 
   const FilterWidget({
-    Key? key,
+    super.key,
     required this.fields,
     this.onFilter,
     this.onReset,
     this.showResetButton = true,
-  }) : super(key: key);
+  });
 
   @override
   State<FilterWidget> createState() => _FilterWidgetState();

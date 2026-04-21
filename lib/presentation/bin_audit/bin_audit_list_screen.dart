@@ -295,7 +295,7 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: textColor
-                                                  .withOpacity(0.7),
+                                                  .withValues(alpha: 0.7),
                                               fontFamily: 'MSPGothic',
                                               fontStyle: FontStyle.italic,
                                             ),
@@ -334,7 +334,7 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: textColor
-                                                  .withOpacity(0.7),
+                                                  .withValues(alpha: 0.7),
                                               fontFamily: 'MSPGothic',
                                             ),
                                           ),

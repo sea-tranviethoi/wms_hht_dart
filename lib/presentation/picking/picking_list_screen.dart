@@ -6,17 +6,16 @@ import '../../config/theme_config.dart';
 import '../../routes/route_names.dart';
 import '../providers/picking_provider.dart';
 import '../../l10n/app_strings.dart';
-import '../widgets/loading_indicator.dart';
 
 class PickingListScreen extends StatefulWidget {
   final int tenantId;
   final String company;
 
   const PickingListScreen({
-    Key? key,
+    super.key,
     required this.tenantId,
     this.company = '',
-  }) : super(key: key);
+  });
 
   @override
   State<PickingListScreen> createState() => _PickingListScreenState();
@@ -71,8 +70,6 @@ class _PickingListScreenState extends State<PickingListScreen> {
     // Check if handled by other device
     final isHandledByOther = await provider.checkPickingListStatus(pickNo);
     if (isHandledByOther) {
-      final hhtInfo = rowData[3].toString();
-      final otherUser = hhtInfo.split('-').first;
       if (mounted) {
         showDialog(
           context: context,

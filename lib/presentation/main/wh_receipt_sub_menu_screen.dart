@@ -5,7 +5,7 @@ import '../../routes/route_names.dart';
 import '../../l10n/app_strings.dart';
 
 class WhReceiptSubMenuScreen extends StatelessWidget {
-  const WhReceiptSubMenuScreen({Key? key}) : super(key: key);
+  const WhReceiptSubMenuScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class WhReceiptSubMenuScreen extends StatelessWidget {
       ),
       _SubMenuItem(
         title: 'LL',
-        onTap: () => context.go(RouteNames.warehouseReceiptList + '?ll=1'), // Example: add query for LL
+        onTap: () => context.go('${RouteNames.warehouseReceiptList}?ll=1'), // Example: add query for LL
       ),
       _SubMenuItem(
         title: AppStrings.of(context).back,

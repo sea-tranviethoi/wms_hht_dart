@@ -4,11 +4,10 @@ import 'package:provider/provider.dart';
 import '../../config/theme_config.dart';
 import '../../routes/route_names.dart';
 import '../providers/language_provider.dart';
-import '../../l10n/app_strings.dart';
 import 'main_menu_screen.dart';
 
 class SubMenuScreen extends StatelessWidget {
-  const SubMenuScreen({Key? key}) : super(key: key);
+  const SubMenuScreen({super.key});
 
   List<MenuItem> _getMenuItems(BuildContext context) {
     return [
@@ -28,7 +27,7 @@ class SubMenuScreen extends StatelessWidget {
         id: 3,
         title: 'Stock Take',
         color: AppColors.menuColors[2],
-        route: RouteNames.stocktake,
+        route: RouteNames.binAuditList,
       ),
       MenuItem(
         id: 4,
