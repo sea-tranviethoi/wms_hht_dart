@@ -4,7 +4,6 @@ import 'dart:convert';
 import '../../core/storage/local_storage.dart';
 import '../../data/models/picking/picking_line.dart';
 import '../../data/models/picking/picking_list.dart';
-import '../../data/models/picking/picking_staging.dart';
 import '../../data/repositories/picking_repository.dart';
 
 class PickingProvider with ChangeNotifier {
@@ -19,7 +18,7 @@ class PickingProvider with ChangeNotifier {
   List<PickingList> _pickingLists = [];
   List<PickingList> get pickingLists => _pickingLists;
 
-  List<PickingLine> _pickingLines = [];
+  final List<PickingLine> _pickingLines = [];
   List<PickingLine> get pickingLines => _pickingLines;
 
   // Table data: [pickNo, binCount, scanStatus, hhtInfo]
@@ -122,7 +121,7 @@ class PickingProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _errorMessage = 'Failed to load data: $e';
-      print('ERROR: Failed to load picking data: $e');
+      debugPrint('ERROR: Failed to load picking data: $e');
       _isLoading = false;
       notifyListeners();
     }
@@ -209,7 +208,7 @@ class PickingProvider with ChangeNotifier {
 
       return handledByOther.isNotEmpty;
     } catch (e) {
-      print('Error checking picking list status: $e');
+      debugPrint('Error checking picking list status: $e');
       return false;
     }
   }

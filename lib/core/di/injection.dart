@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,17 +69,20 @@ Future<void> initDependencies() async {
   // CryptoService chỉ có static methods — không cần register vào sl
   // Gọi trực tiếp: CryptoService.decryptQRCode(...)
 
-  // ─── Core: Hardware ───────────────────────────────────────────
+  // ─── Core: Hardware (Android only) ───────────────────────────
   sl.registerSingleton<KeyboardEventBus>(KeyboardEventBus.instance);
   sl.registerSingleton<KeyenceScanner>(KeyenceScanner.instance);
-  await sl<KeyenceScanner>().init();
-
-  // Native keyboard events (Keyence side buttons) → KeyboardEventBus
-  NativeKeyboardChannel.instance.startListening();
+  if (!kIsWeb) {
+    await sl<KeyenceScanner>().init();
+    // Native keyboard events (Keyence side buttons) → KeyboardEventBus
+    NativeKeyboardChannel.instance.startListening();
+  }
 
   // ─── Core: Audio ──────────────────────────────────────────────
   sl.registerSingleton<SoundManager>(SoundManager.instance);
-  await sl<SoundManager>().init();
+  if (!kIsWeb) {
+    await sl<SoundManager>().init();
+  }
 
   // ─── Core: Update ─────────────────────────────────────────────
   sl.registerSingleton<AppUpdater>(AppUpdater(sl<DioClient>()));

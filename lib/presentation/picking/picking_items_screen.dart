@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
 
 import '../../config/theme_config.dart';
 import '../../routes/route_names.dart';
 import '../providers/picking_provider.dart';
-import '../../l10n/strings_en.dart';
 
 class PickingItemsScreen extends StatefulWidget {
   final String pickNo;
@@ -14,11 +12,11 @@ class PickingItemsScreen extends StatefulWidget {
   final String company;
 
   const PickingItemsScreen({
-    Key? key,
+    super.key,
     required this.pickNo,
     required this.tenantId,
     this.company = '',
-  }) : super(key: key);
+  });
 
   @override
   State<PickingItemsScreen> createState() => _PickingItemsScreenState();

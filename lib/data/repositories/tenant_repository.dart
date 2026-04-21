@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
 import '../models/tenant.dart';
@@ -18,7 +20,7 @@ class TenantRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching tenants: $e');
+      debugPrint('Error fetching tenants: $e');
       return [];
     }
   }
@@ -34,7 +36,7 @@ class TenantRepository {
       }
       return null;
     } catch (e) {
-      print('Error fetching tenant by id: $e');
+      debugPrint('Error fetching tenant by id: $e');
       return null;
     }
   }

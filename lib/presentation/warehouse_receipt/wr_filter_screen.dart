@@ -12,10 +12,10 @@ class WRFilterScreen extends StatefulWidget {
   final String company;
 
   const WRFilterScreen({
-    Key? key,
+    super.key,
     required this.tenantId,
     this.company = '',
-  }) : super(key: key);
+  });
 
   @override
   State<WRFilterScreen> createState() => _WRFilterScreenState();
@@ -30,7 +30,6 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
   final TextEditingController _arrivalNumberController = TextEditingController();
 
   List<Map<String, dynamic>> _vendors = [];
-  bool _isLoadingVendors = true;
   String? _selectedVendorFrom;
   String? _selectedVendorTo;
   String? _janCodeProductCode; // Store product code from JAN code
@@ -56,18 +55,10 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
               'name': s['supplierName'] ?? '',
             };
           }).toList();
-          _isLoadingVendors = false;
-        });
-      } else {
-        setState(() {
-          _isLoadingVendors = false;
         });
       }
     } catch (e) {
-      print('Error loading vendors: $e');
-      setState(() {
-        _isLoadingVendors = false;
-      });
+      debugPrint('Error loading vendors: $e');
     }
   }
 
@@ -127,7 +118,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
         }
       }
     } catch (e) {
-      print('Error checking JAN code: $e');
+      debugPrint('Error checking JAN code: $e');
     }
   }
 
@@ -139,7 +130,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        child: Container(
+        child: SizedBox(
           height: 400,
           child: Stack(
             children: [

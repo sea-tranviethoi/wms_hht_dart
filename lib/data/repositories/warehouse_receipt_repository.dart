@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart';
 
-import 'dart:convert';
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
 import '../../core/storage/local_storage.dart';
@@ -32,7 +32,7 @@ class WarehouseReceiptRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching warehouse receipt orders: $e');
+      debugPrint('Error fetching warehouse receipt orders: $e');
       return [];
     }
   }
@@ -51,7 +51,7 @@ class WarehouseReceiptRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching warehouse receipt order by receipt no: $e');
+      debugPrint('Error fetching warehouse receipt order by receipt no: $e');
       return [];
     }
   }
@@ -74,7 +74,7 @@ class WarehouseReceiptRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching warehouse receipt order lines: $e');
+      debugPrint('Error fetching warehouse receipt order lines: $e');
       return [];
     }
   }
@@ -93,7 +93,7 @@ class WarehouseReceiptRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching warehouse receipt order lines by receipt no: $e');
+      debugPrint('Error fetching warehouse receipt order lines by receipt no: $e');
       return [];
     }
   }
@@ -108,7 +108,7 @@ class WarehouseReceiptRepository {
 
       return response.statusCode == 200 && response.data != null;
     } catch (e) {
-      print('Error updating warehouse receipt order line: $e');
+      debugPrint('Error updating warehouse receipt order line: $e');
       return false;
     }
   }
@@ -127,7 +127,7 @@ class WarehouseReceiptRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching warehouse receipt staging by receipt no: $e');
+      debugPrint('Error fetching warehouse receipt staging by receipt no: $e');
       return [];
     }
   }
@@ -142,7 +142,7 @@ class WarehouseReceiptRepository {
 
       return response.statusCode == 200;
     } catch (e) {
-      print('Error deleting warehouse receipt staging: $e');
+      debugPrint('Error deleting warehouse receipt staging: $e');
       return false;
     }
   }
@@ -160,7 +160,7 @@ class WarehouseReceiptRepository {
           response.data != null &&
           response.data['succeeded'] == true;
     } catch (e) {
-      print('Error adding range warehouse receipt staging: $e');
+      debugPrint('Error adding range warehouse receipt staging: $e');
       return false;
     }
   }
@@ -178,7 +178,7 @@ class WarehouseReceiptRepository {
           response.data != null &&
           response.data['succeeded'] == true;
     } catch (e) {
-      print('Error uploading product error images: $e');
+      debugPrint('Error uploading product error images: $e');
       return false;
     }
   }
@@ -191,7 +191,7 @@ class WarehouseReceiptRepository {
 
       return response.statusCode == 200;
     } catch (e) {
-      print('Error completing warehouse receipt: $e');
+      debugPrint('Error completing warehouse receipt: $e');
       return false;
     }
   }
@@ -210,7 +210,7 @@ class WarehouseReceiptRepository {
 
       return response.statusCode == 200;
     } catch (e) {
-      print('Error updating HHT status: $e');
+      debugPrint('Error updating HHT status: $e');
       return false;
     }
   }
@@ -230,7 +230,7 @@ class WarehouseReceiptRepository {
 
       return response.statusCode == 200;
     } catch (e) {
-      print('Error updating HHT status to empty: $e');
+      debugPrint('Error updating HHT status to empty: $e');
       return false;
     }
   }
@@ -247,7 +247,7 @@ class WarehouseReceiptRepository {
         existingData.map((e) => e.toJson()).toList(),
       );
     } catch (e) {
-      print('Error saving offline receipt data: $e');
+      debugPrint('Error saving offline receipt data: $e');
     }
   }
 
@@ -260,7 +260,7 @@ class WarehouseReceiptRepository {
       }
       return [];
     } catch (e) {
-      print('Error getting offline receipt data list: $e');
+      debugPrint('Error getting offline receipt data list: $e');
       return [];
     }
   }
@@ -272,7 +272,7 @@ class WarehouseReceiptRepository {
       final allData = await getOfflineReceiptDataList();
       return allData.where((data) => data.tenantId == tenantId).toList();
     } catch (e) {
-      print('Error getting offline receipt data by tenant: $e');
+      debugPrint('Error getting offline receipt data by tenant: $e');
       return [];
     }
   }
@@ -288,7 +288,7 @@ class WarehouseReceiptRepository {
         existingData.map((e) => e.toJson()).toList(),
       );
     } catch (e) {
-      print('Error removing offline receipt data: $e');
+      debugPrint('Error removing offline receipt data: $e');
     }
   }
 
@@ -302,7 +302,7 @@ class WarehouseReceiptRepository {
         existingData.map((e) => e.toJson()).toList(),
       );
     } catch (e) {
-      print('Error removing offline receipt data by tenant: $e');
+      debugPrint('Error removing offline receipt data by tenant: $e');
     }
   }
 
@@ -311,7 +311,7 @@ class WarehouseReceiptRepository {
     try {
       await _localStorage.remove('WHReceiptLineScanned');
     } catch (e) {
-      print('Error clearing offline receipt data: $e');
+      debugPrint('Error clearing offline receipt data: $e');
     }
   }
 
@@ -323,7 +323,7 @@ class WarehouseReceiptRepository {
         orders.map((e) => e.toJson()).toList(),
       );
     } catch (e) {
-      print('Error saving warehouse receipt orders: $e');
+      debugPrint('Error saving warehouse receipt orders: $e');
     }
   }
 
@@ -336,7 +336,7 @@ class WarehouseReceiptRepository {
       }
       return [];
     } catch (e) {
-      print('Error getting warehouse receipt orders from local: $e');
+      debugPrint('Error getting warehouse receipt orders from local: $e');
       return [];
     }
   }
@@ -349,7 +349,7 @@ class WarehouseReceiptRepository {
         lines.map((e) => e.toJson()).toList(),
       );
     } catch (e) {
-      print('Error saving warehouse receipt lines: $e');
+      debugPrint('Error saving warehouse receipt lines: $e');
     }
   }
 
@@ -362,7 +362,7 @@ class WarehouseReceiptRepository {
       }
       return [];
     } catch (e) {
-      print('Error getting warehouse receipt lines from local: $e');
+      debugPrint('Error getting warehouse receipt lines from local: $e');
       return [];
     }
   }
@@ -376,7 +376,7 @@ class WarehouseReceiptRepository {
         lines.map((e) => e.toJson()).toList(),
       );
     } catch (e) {
-      print('Error saving warehouse receipt line for receipt: $e');
+      debugPrint('Error saving warehouse receipt line for receipt: $e');
     }
   }
 
@@ -389,7 +389,7 @@ class WarehouseReceiptRepository {
       }
       return [];
     } catch (e) {
-      print('Error getting warehouse receipt line for receipt: $e');
+      debugPrint('Error getting warehouse receipt line for receipt: $e');
       return [];
     }
   }

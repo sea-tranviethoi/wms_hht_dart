@@ -12,14 +12,14 @@ class ImageUploadWidget extends StatefulWidget {
   final bool isRequired;
 
   const ImageUploadWidget({
-    Key? key,
+    super.key,
     this.onImageSelected,
     this.initialImage,
     this.label,
     this.width,
     this.height,
     this.isRequired = false,
-  }) : super(key: key);
+  });
 
   @override
   State<ImageUploadWidget> createState() => _ImageUploadWidgetState();
@@ -45,6 +45,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
         widget.onImageSelected?.call(_selectedImage);
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to select image: $e')),
       );
@@ -127,7 +128,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(8),
-              color: AppColors.lighter.withOpacity(0.3),
+              color: AppColors.lighter.withValues(alpha: 0.3),
             ),
             child: _selectedImage != null
                 ? ClipRRect(

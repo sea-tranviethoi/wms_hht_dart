@@ -20,13 +20,13 @@ class PickingDetailScreen extends StatefulWidget {
   final String company;
 
   const PickingDetailScreen({
-    Key? key,
+    super.key,
     required this.pickNo,
     this.pickingLine,
     this.currentIndex = 0,
     required this.tenantId,
     this.company = '',
-  }) : super(key: key);
+  });
 
   @override
   State<PickingDetailScreen> createState() => _PickingDetailScreenState();
@@ -137,6 +137,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
     final currentLine = _lines[_currentIndex];
     if (currentLine.bin != null &&
         currentLine.bin!.toLowerCase() != binCode.toLowerCase()) {
+      if (!mounted) return;
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -378,7 +379,6 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final provider = context.read<PickingProvider>();
       // TODO: Implement full sync logic similar to React Native
       // This would involve:
       // 1. Get data from pickingScanned
@@ -518,8 +518,6 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
         ),
       );
     }
-
-    final currentLine = _lines[_currentIndex];
 
     return Scaffold(
       backgroundColor: AppColors.lighter,

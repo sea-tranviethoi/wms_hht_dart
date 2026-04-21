@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../config/app_config.dart';
 import '../../config/theme_config.dart';
 import '../../routes/route_names.dart';
 import '../providers/auth_provider.dart';
@@ -9,7 +8,7 @@ import '../providers/language_provider.dart';
 import '../../l10n/app_strings.dart';
 
 class MainMenuScreen extends StatelessWidget {
-  const MainMenuScreen({Key? key}) : super(key: key);
+  const MainMenuScreen({super.key});
 
   List<MenuItem> _getMenuItems(BuildContext context) {
     return [
@@ -17,7 +16,7 @@ class MainMenuScreen extends StatelessWidget {
         id: 1,
         title: 'WH Receipt',
         color: AppColors.menuColors[0],
-        route: RouteNames.whReceiptSubMenu, // New route for WH Receipt submenu
+        route: RouteNames.warehouseReceiptList,
       ),
       MenuItem(
         id: 2,
@@ -41,7 +40,7 @@ class MainMenuScreen extends StatelessWidget {
         id: 5,
         title: 'Sub Menu',
         color: AppColors.menuColors[4],
-        route: RouteNames.subMenu,
+        route: '/sub-menu',
       ),
       MenuItem(
         id: 6,

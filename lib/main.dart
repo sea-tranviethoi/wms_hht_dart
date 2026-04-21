@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,17 +17,27 @@ import 'presentation/blocs/picking/picking_bloc.dart';
 import 'routes/app_router.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  await runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // Khóa màn hình dọc cho thiết bị HHT
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+    FlutterError.onError = (details) {
+      debugPrint('🔴 Flutter error: ${details.exception}');
+      debugPrint(details.stack.toString());
+    };
 
-  // Khởi tạo tất cả dependencies qua get_it
-  await initDependencies();
+    // Khóa màn hình dọc cho thiết bị HHT
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
 
-  runApp(const FbtHhtApp());
+    // Khởi tạo tất cả dependencies qua get_it
+    await initDependencies();
+
+    runApp(const FbtHhtApp());
+  }, (error, stack) {
+    debugPrint('🔴 Uncaught error: $error');
+    debugPrint(stack.toString());
+  });
 }
 
 class FbtHhtApp extends StatelessWidget {

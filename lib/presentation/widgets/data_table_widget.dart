@@ -23,7 +23,7 @@ class DataTableWidget extends StatelessWidget {
   final double? rowHeight;
 
   const DataTableWidget({
-    Key? key,
+    super.key,
     required this.columns,
     required this.rows,
     this.isScrollable = true,
@@ -31,7 +31,7 @@ class DataTableWidget extends StatelessWidget {
     this.rowColor,
     this.onRowTap,
     this.rowHeight,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class DataTableWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: index.isEven
                   ? (rowColor ?? AppColors.white)
-                  : AppColors.lighter.withOpacity(0.3),
+                  : AppColors.lighter.withValues(alpha: 0.3),
             ),
             children: row.map((cell) {
               return InkWell(

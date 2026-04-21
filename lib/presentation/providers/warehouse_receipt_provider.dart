@@ -242,6 +242,7 @@ class WarehouseReceiptProvider with ChangeNotifier {
                 }
               }
             } catch (e) {
+              debugPrint('Error parsing product: $e');
             }
           }
         }
@@ -334,7 +335,7 @@ class WarehouseReceiptProvider with ChangeNotifier {
       }
       return false;
     } catch (e) {
-      print('Error checking receipt status: $e');
+      debugPrint('Error checking receipt status: $e');
       return false;
     }
   }

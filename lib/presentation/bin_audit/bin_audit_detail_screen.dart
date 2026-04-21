@@ -191,7 +191,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
     });
 
     _showMessage(
-      '${line.itemCode}: ${current} → ${current + 1}',
+      '${line.itemCode}: $current → ${current + 1}',
       isError: false,
     );
   }

@@ -384,7 +384,7 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
                                                   style: TextStyle(
                                                     fontSize: 12,
                                                     color: textColor
-                                                        .withOpacity(0.7),
+                                                        .withValues(alpha: 0.7),
                                                     fontFamily:
                                                         'MSPGothic',
                                                     fontStyle:

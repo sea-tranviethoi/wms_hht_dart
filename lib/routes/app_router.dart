@@ -250,17 +250,15 @@ final appRouter = GoRouter(
     ),
 
     // ── Legacy routes (deprecated, kept for old screens) ──────
-    // ignore: deprecated_member_use
     GoRoute(
-      path: RouteNames.whReceiptSubMenu,
+      path: RouteNames.whReceiptSubMenu, // ignore: deprecated_member_use_from_same_package
       builder: (context, state) {
         final funcNumber = state.uri.queryParameters['funcNumber'] ?? '1';
         return TenantSelectionScreen(funcNumber: funcNumber);
       },
     ),
-    // ignore: deprecated_member_use
     GoRoute(
-      path: RouteNames.subMenu,
+      path: RouteNames.subMenu, // ignore: deprecated_member_use_from_same_package
       builder: (_, __) => const _PlaceholderScreen(title: 'サブメニュー'),
     ),
   ],

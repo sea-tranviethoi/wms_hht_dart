@@ -1,5 +1,6 @@
-import 'package:dio/dio.dart';
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
@@ -31,7 +32,7 @@ class PickingRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching picking lists: $e');
+      debugPrint('Error fetching picking lists: $e');
       return [];
     }
   }
@@ -49,7 +50,7 @@ class PickingRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching picking list by picking no: $e');
+      debugPrint('Error fetching picking list by picking no: $e');
       return [];
     }
   }
@@ -71,7 +72,7 @@ class PickingRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching picking lines: $e');
+      debugPrint('Error fetching picking lines: $e');
       return [];
     }
   }
@@ -89,7 +90,7 @@ class PickingRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching picking lines by picking no: $e');
+      debugPrint('Error fetching picking lines by picking no: $e');
       return [];
     }
   }
@@ -111,7 +112,7 @@ class PickingRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching all picking staging: $e');
+      debugPrint('Error fetching all picking staging: $e');
       return [];
     }
   }
@@ -130,7 +131,7 @@ class PickingRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching picking staging by picking no: $e');
+      debugPrint('Error fetching picking staging by picking no: $e');
       return [];
     }
   }
@@ -148,7 +149,7 @@ class PickingRepository {
           response.data != null &&
           response.data['succeeded'] == true;
     } catch (e) {
-      print('Error adding range of picking staging: $e');
+      debugPrint('Error adding range of picking staging: $e');
       return false;
     }
   }
@@ -162,7 +163,7 @@ class PickingRepository {
           response.data != null &&
           response.data['succeeded'] == true;
     } catch (e) {
-      print('Error completing picking: $e');
+      debugPrint('Error completing picking: $e');
       return false;
     }
   }
@@ -181,7 +182,7 @@ class PickingRepository {
 
       return response.statusCode == 200 && response.data != null;
     } catch (e) {
-      print('Error updating HHT status: $e');
+      debugPrint('Error updating HHT status: $e');
       return false;
     }
   }
@@ -202,7 +203,7 @@ class PickingRepository {
 
       return response.statusCode == 200 && response.data != null;
     } catch (e) {
-      print('Error updating HHT status to empty: $e');
+      debugPrint('Error updating HHT status to empty: $e');
       return false;
     }
   }

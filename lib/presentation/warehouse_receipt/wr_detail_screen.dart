@@ -50,7 +50,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
   ReceiptLine? _currentLine;
   List<ReceiptLine> _lines = [];
   bool _isLoading = true;
-  List<File> _capturedImages = [];
+  final List<File> _capturedImages = [];
   MobileScannerController? _scannerController;
 
   @override

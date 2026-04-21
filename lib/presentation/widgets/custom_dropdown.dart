@@ -25,7 +25,7 @@ class CustomDropdown<T> extends StatelessWidget {
   final Widget? prefixIcon;
 
   const CustomDropdown({
-    Key? key,
+    super.key,
     this.label,
     this.hint,
     this.value,
@@ -35,7 +35,7 @@ class CustomDropdown<T> extends StatelessWidget {
     this.enabled = true,
     this.borderColor,
     this.prefixIcon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

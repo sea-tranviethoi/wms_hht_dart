@@ -1,5 +1,6 @@
-import 'package:dio/dio.dart';
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 
 import '../../core/network/api_client.dart';
 import '../../core/network/api_endpoints.dart';
@@ -30,7 +31,7 @@ class BundleRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching bundles: $e');
+      debugPrint('Error fetching bundles: $e');
       return [];
     }
   }
@@ -46,7 +47,7 @@ class BundleRepository {
       }
       return null;
     } catch (e) {
-      print('Error fetching bundle by trans no: $e');
+      debugPrint('Error fetching bundle by trans no: $e');
       return null;
     }
   }
@@ -68,7 +69,7 @@ class BundleRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching bundle lines: $e');
+      debugPrint('Error fetching bundle lines: $e');
       return [];
     }
   }
@@ -86,7 +87,7 @@ class BundleRepository {
       }
       return [];
     } catch (e) {
-      print('Error fetching bundle lines by trans no: $e');
+      debugPrint('Error fetching bundle lines by trans no: $e');
       return [];
     }
   }
@@ -103,7 +104,7 @@ class BundleRepository {
           response.data != null &&
           response.data['succeeded'] == true;
     } catch (e) {
-      print('Error adding range of bundle lines: $e');
+      debugPrint('Error adding range of bundle lines: $e');
       return false;
     }
   }
@@ -120,7 +121,7 @@ class BundleRepository {
           response.data != null &&
           response.data['succeeded'] == true;
     } catch (e) {
-      print('Error uploading from handheld: $e');
+      debugPrint('Error uploading from handheld: $e');
       return false;
     }
   }
@@ -139,7 +140,7 @@ class BundleRepository {
 
       return response.statusCode == 200 && response.data != null;
     } catch (e) {
-      print('Error updating HHT status: $e');
+      debugPrint('Error updating HHT status: $e');
       return false;
     }
   }
@@ -160,7 +161,7 @@ class BundleRepository {
 
       return response.statusCode == 200 && response.data != null;
     } catch (e) {
-      print('Error updating HHT status to empty: $e');
+      debugPrint('Error updating HHT status to empty: $e');
       return false;
     }
   }

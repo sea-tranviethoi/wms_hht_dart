@@ -9,13 +9,13 @@ class CustomCheckbox extends StatelessWidget {
   final bool tristate;
 
   const CustomCheckbox({
-    Key? key,
+    super.key,
     required this.value,
     this.onChanged,
     this.label,
     this.activeColor,
     this.tristate = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
