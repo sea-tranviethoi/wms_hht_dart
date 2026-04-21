@@ -61,7 +61,12 @@ class _LoginScreenState extends State<LoginScreen> {
           refreshToken: result['refreshToken'] as String? ?? '',
           loginType: 'NORMAL',
         );
-        context.read<AuthBloc>().add(LoggedIn(user));
+        final authBloc = context.read<AuthBloc>();
+        authBloc.add(LoggedIn(user));
+        // Đợi bloc xử lý xong event → state chuyển AuthAuthenticated
+        // trước khi navigate, tránh router redirect kick về login.
+        await authBloc.stream.firstWhere((s) => s is AuthAuthenticated);
+        if (!mounted) return;
         context.go(RouteNames.tenantSelection);
       } else {
         setState(() => _errorMessage =

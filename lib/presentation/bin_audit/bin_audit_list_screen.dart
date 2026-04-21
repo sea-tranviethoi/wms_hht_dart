@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../config/theme_config.dart';
 import '../../core/di/injection.dart';
-import '../../data/datasources/remote/bin_audit_remote_datasource.dart';
+import '../../data/repositories/bin_audit_repository.dart';
 import '../../routes/route_names.dart';
 import '../blocs/bin_audit/bin_audit_bloc.dart';
 
@@ -16,7 +16,7 @@ class BinAuditListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => BinAuditBloc(remote: sl<BinAuditRemoteDataSource>())
+      create: (_) => BinAuditBloc(repository: sl<BinAuditRepository>())
         ..add(FetchBinAuditList()),
       child: const _BinAuditListView(),
     );

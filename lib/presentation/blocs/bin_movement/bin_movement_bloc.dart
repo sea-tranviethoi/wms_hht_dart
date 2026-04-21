@@ -1,20 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/datasources/remote/bin_movement_remote_datasource.dart';
 import '../../../data/models/bin_movement/invent_transfer.dart';
 import '../../../data/models/bin_movement/invent_transfer_line.dart';
+import '../../../data/repositories/bin_movement_repository.dart';
 
 part 'bin_movement_event.dart';
 part 'bin_movement_state.dart';
 
 class BinMovementBloc extends Bloc<BinMovementEvent, BinMovementState> {
-  final BinMovementRemoteDataSource _remote;
+  final BinMovementRepository _repository;
 
   List<BinMovementRow> _allRows = [];
   String _hhtInfo = '';
 
-  BinMovementBloc({required BinMovementRemoteDataSource remote})
-      : _remote = remote,
+  BinMovementBloc({required BinMovementRepository repository})
+      : _repository = repository,
         super(BinMovementInitial()) {
     on<FetchBinMovementLists>(_onFetch);
     on<SearchBinMovementLists>(_onSearch);
@@ -33,8 +33,8 @@ class BinMovementBloc extends Bloc<BinMovementEvent, BinMovementState> {
 
     try {
       final results = await Future.wait([
-        _remote.getTransfers(),
-        _remote.getLines(),
+        _repository.getTransfers(),
+        _repository.getLines(),
       ]);
 
       final allTransfers = results[0] as List<InventTransfer>;
@@ -125,7 +125,7 @@ class BinMovementBloc extends Bloc<BinMovementEvent, BinMovementState> {
     if (event.row.id <= 0) return;
     emit(BinMovementResetting());
     try {
-      await _remote.updateHHTStatus(
+      await _repository.updateHHTStatus(
         status: 0,
         masterId: event.row.id,
         detailId: 0,

@@ -5,7 +5,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../config/theme_config.dart';
 import '../../core/di/injection.dart';
-import '../../data/datasources/remote/bin_audit_remote_datasource.dart';
+import '../../data/repositories/bin_audit_repository.dart';
 import '../../data/models/stocktake/invent_stocktake_recording.dart';
 import '../../routes/route_names.dart';
 
@@ -60,7 +60,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
       _error = null;
     });
     try {
-      final rec = await sl<BinAuditRemoteDataSource>()
+      final rec = await sl<BinAuditRepository>()
           .getRecordingById(widget.id);
 
       final lines = List<InventStockTakeRecordingLine>.from(
@@ -230,7 +230,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
         }
       }
 
-      await sl<BinAuditRemoteDataSource>().updateRangeLines(updates);
+      await sl<BinAuditRepository>().updateRangeLines(updates);
 
       if (!mounted) return;
       _pendingKeys.clear();
