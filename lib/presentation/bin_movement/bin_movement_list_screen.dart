@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../config/theme_config.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
-import '../../data/datasources/remote/bin_movement_remote_datasource.dart';
+import '../../data/repositories/bin_movement_repository.dart';
 import '../../routes/route_names.dart';
 import '../blocs/bin_movement/bin_movement_bloc.dart';
 
@@ -16,7 +16,8 @@ class BinMovementListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => BinMovementBloc(remote: sl<BinMovementRemoteDataSource>()),
+      create: (_) =>
+          BinMovementBloc(repository: sl<BinMovementRepository>()),
       child: const _BinMovementListView(),
     );
   }

@@ -22,6 +22,8 @@ import '../../data/datasources/remote/wr_remote_datasource.dart';
 import '../../data/datasources/remote/bin_movement_remote_datasource.dart';
 import '../../data/datasources/remote/bin_audit_remote_datasource.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../../data/repositories/bin_audit_repository.dart';
+import '../../data/repositories/bin_movement_repository.dart';
 import '../../data/repositories/master_repository.dart';
 
 /// Service Locator toàn app — thay thế Context API của React Native
@@ -126,8 +128,14 @@ Future<void> initDependencies() async {
   sl.registerSingleton<BinMovementRemoteDataSource>(
     BinMovementRemoteDataSource(sl<DioClient>()),
   );
+  sl.registerSingleton<BinMovementRepository>(
+    BinMovementRepository(remote: sl<BinMovementRemoteDataSource>()),
+  );
 
   sl.registerSingleton<BinAuditRemoteDataSource>(
     BinAuditRemoteDataSource(sl<DioClient>()),
+  );
+  sl.registerSingleton<BinAuditRepository>(
+    BinAuditRepository(remote: sl<BinAuditRemoteDataSource>()),
   );
 }

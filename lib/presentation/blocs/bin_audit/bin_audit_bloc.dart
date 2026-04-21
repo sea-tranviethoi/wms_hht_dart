@@ -1,16 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/datasources/remote/bin_audit_remote_datasource.dart';
+import '../../../data/repositories/bin_audit_repository.dart';
 
 part 'bin_audit_event.dart';
 part 'bin_audit_state.dart';
 
 class BinAuditBloc extends Bloc<BinAuditEvent, BinAuditState> {
-  final BinAuditRemoteDataSource _remote;
+  final BinAuditRepository _repository;
   List<BinAuditRow> _allRows = [];
 
-  BinAuditBloc({required BinAuditRemoteDataSource remote})
-      : _remote = remote,
+  BinAuditBloc({required BinAuditRepository repository})
+      : _repository = repository,
         super(BinAuditInitial()) {
     on<FetchBinAuditList>(_onFetch);
     on<SearchBinAuditList>(_onSearch);
@@ -25,7 +25,7 @@ class BinAuditBloc extends Bloc<BinAuditEvent, BinAuditState> {
   ) async {
     emit(BinAuditLoading());
     try {
-      final recordings = await _remote.getRecordings();
+      final recordings = await _repository.getRecordings();
 
       // Sort: largest stockTakeNo number first (descending)
       recordings.sort((a, b) {

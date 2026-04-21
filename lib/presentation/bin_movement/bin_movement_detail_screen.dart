@@ -6,7 +6,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../config/theme_config.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
-import '../../data/datasources/remote/bin_movement_remote_datasource.dart';
+import '../../data/repositories/bin_movement_repository.dart';
 import '../../data/models/bin_movement/invent_transfer_line.dart';
 import '../../routes/route_names.dart';
 
@@ -159,7 +159,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
 
     setState(() => _isSyncing = true);
     try {
-      final remote = sl<BinMovementRemoteDataSource>();
+      final remote = sl<BinMovementRepository>();
       final hhtInfo = sl<CacheStorage>().getString('hhtInfo') ?? '';
 
       // 1. Delete existing staging for this transfer
