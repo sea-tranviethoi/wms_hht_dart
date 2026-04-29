@@ -8,6 +8,7 @@ import '../../../core/storage/cache_storage.dart';
 import '../../blocs/master/master_bloc.dart';
 import '../../../data/models/master/location.dart';
 import '../../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ screens/LocationSelection.js (nếu có trong RN)
 ///
@@ -234,19 +235,19 @@ class _LocationTile extends StatelessWidget {
         ),
         title: Text(
           location.locationCode,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'MSPGothic',
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: location.locationName.isNotEmpty
             ? Text(
                 location.locationName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'MSPGothic',
                   color: AppColors.grayTextColor,
-                  fontSize: 13,
+                  fontSize: 13.sp,
                 ),
               )
             : null,

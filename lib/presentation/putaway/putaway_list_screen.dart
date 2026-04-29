@@ -8,6 +8,7 @@ import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/putaway_remote_datasource.dart';
 import '../../routes/route_names.dart';
 import '../blocs/putaway/putaway_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 棚上げ一覧 — BLoC version (Phase 5)
 class PutawayListScreen extends StatelessWidget {
@@ -159,11 +160,11 @@ class _PutawayListViewState extends State<_PutawayListView> {
                         right: BorderSide(color: AppColors.borderTable),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       '商品番号',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontFamily: 'MSPGothic',
                       ),
                       textAlign: TextAlign.center,
@@ -174,11 +175,11 @@ class _PutawayListViewState extends State<_PutawayListView> {
                   flex: 1,
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    child: const Text(
+                    child: Text(
                       '数量',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontFamily: 'MSPGothic',
                       ),
                       textAlign: TextAlign.center,
@@ -255,7 +256,7 @@ class _PutawayListViewState extends State<_PutawayListView> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                child: const Text('戻る', style: TextStyle(fontSize: 16)),
+                child: Text('戻る', style: TextStyle(fontSize: 16.sp)),
               ),
             ),
           ),
@@ -344,7 +345,7 @@ class _PutawayRowTile extends StatelessWidget {
                             style: TextStyle(
                               color: textColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontFamily: 'MSPGothic',
                             ),
                           ),
@@ -356,7 +357,7 @@ class _PutawayRowTile extends StatelessWidget {
                                     ? '${row.productName.substring(0, 25)}...'
                                     : row.productName,
                                 style: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 13.sp,
                                   color: textColor,
                                   fontFamily: 'MSPGothic',
                                 ),
@@ -378,7 +379,7 @@ class _PutawayRowTile extends StatelessWidget {
                   '${row.scannedQty.toStringAsFixed(0)}/${row.totalQty.toStringAsFixed(0)}',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontFamily: 'MSPGothic',
                   ),
                   textAlign: TextAlign.center,

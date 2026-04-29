@@ -9,6 +9,7 @@ import '../../core/network/api_client.dart';
 import '../../core/storage/local_storage.dart';
 import '../../l10n/app_strings.dart';
 import '../widgets/loading_indicator.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TenantSelectionScreen extends StatefulWidget {
   final String? funcNumber; // "3" for Picking, null or other for Warehouse Receipt
@@ -208,7 +209,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                               children: [
                                 Text(
                                   strings.tenantLoadFailed,
-                                  style: const TextStyle(fontSize: 16),
+                                  style: TextStyle(fontSize: 16.sp),
                                 ),
                                 const SizedBox(height: 16),
                                 ElevatedButton(
@@ -245,9 +246,9 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                                   alignment: Alignment.center,
                                   child: Text(
                                     '${index + 1}. ${tenant.tenantFullName}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 30,
+                                      fontSize: 30.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

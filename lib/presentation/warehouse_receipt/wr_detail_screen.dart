@@ -10,6 +10,7 @@ import '../../data/datasources/remote/wr_remote_datasource.dart';
 import '../../data/models/warehouse_receipt/receipt_line.dart';
 import '../../routes/route_names.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WRDetailsScreen extends StatefulWidget {
   /// Receipt number — used for display and to load lines
@@ -283,10 +284,10 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         '明細データがありません',
                         style:
-                            TextStyle(fontFamily: 'MSPGothic', fontSize: 16),
+                            TextStyle(fontFamily: 'MSPGothic', fontSize: 16.sp),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
@@ -315,10 +316,10 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Text(
+                          Text(
                             '入荷番号:',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontFamily: 'MSPGothic',
                               color: AppColors.black,
                             ),
@@ -326,8 +327,8 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                           const SizedBox(width: 8),
                           Text(
                             widget.receiptNo,
-                            style: const TextStyle(
-                              fontSize: 16,
+                            style: TextStyle(
+                              fontSize: 16.sp,
                               fontFamily: 'MSPGothic',
                               fontWeight: FontWeight.bold,
                               color: AppColors.black,
@@ -336,8 +337,8 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                           const Spacer(),
                           Text(
                             '${_currentIndex + 1} / ${_lines.length}',
-                            style: const TextStyle(
-                              fontSize: 14,
+                            style: TextStyle(
+                              fontSize: 14.sp,
                               fontFamily: 'MSPGothic',
                               color: AppColors.black,
                             ),
@@ -427,7 +428,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                     Text(
                                       '商品写真撮り:',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 16.sp,
                                         color: Colors.blue.shade700,
                                         fontFamily: 'MSPGothic',
                                       ),
@@ -439,7 +440,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                         child: Text(
                                           '${_capturedImages.length} 枚',
                                           style: TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 14.sp,
                                             color: Colors.blue.shade700,
                                           ),
                                         ),
@@ -521,10 +522,10 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
                               ),
-                              child: const Text(
+                              child: Text(
                                 '入荷一覧',
                                 style: TextStyle(
-                                    fontSize: 16, fontFamily: 'MSPGothic'),
+                                    fontSize: 16.sp, fontFamily: 'MSPGothic'),
                               ),
                             ),
                           ),
@@ -582,10 +583,10 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
                               ),
-                              child: const Text(
+                              child: Text(
                                 '保存',
                                 style: TextStyle(
-                                    fontSize: 16, fontFamily: 'MSPGothic'),
+                                    fontSize: 16.sp, fontFamily: 'MSPGothic'),
                               ),
                             ),
                           ),
@@ -613,8 +614,8 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
+          style: TextStyle(
+              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Row(
@@ -669,10 +670,10 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '商品',
           style: TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(
@@ -732,8 +733,8 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
+          style: TextStyle(
+              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         TextField(
@@ -763,10 +764,10 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '賞味期限',
           style: TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         TextField(
@@ -805,10 +806,10 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '状態',
           style: TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(

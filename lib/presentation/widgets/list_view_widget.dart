@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../config/theme_config.dart';
 import '../../l10n/app_strings.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ListViewWidget<T> extends StatelessWidget {
   final List<T> items;
@@ -42,8 +43,8 @@ class ListViewWidget<T> extends StatelessWidget {
               padding: const EdgeInsets.all(24.0),
               child: Text(
                 emptyMessage ?? AppStrings.of(context).noData,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: 16.sp,
                   color: AppColors.textPlaceholder,
                 ),
               ),

@@ -7,6 +7,7 @@ import '../../../core/di/injection.dart';
 import '../../blocs/master/master_bloc.dart';
 import '../../../data/models/tenant.dart';
 import '../../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ screens/TenantSelection.js
 ///
@@ -101,10 +102,10 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
         ),
         title: Text(
           widget.title,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'MSPGothic',
             color: AppColors.white,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -250,10 +251,10 @@ class _TenantTile extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               '${index + 1}. ${tenant.tenantFullName}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'MSPGothic',
                 color: AppColors.white,
-                fontSize: 22,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.bold,
                 shadows: [
                   Shadow(color: Colors.black26, offset: Offset(1, 1), blurRadius: 2),

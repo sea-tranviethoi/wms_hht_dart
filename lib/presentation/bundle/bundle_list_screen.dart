@@ -8,6 +8,7 @@ import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
 import '../../routes/route_names.dart';
 import '../blocs/bundle/bundle_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 事前セット一覧 — BLoC version (Phase 6)
 class BundleListScreen extends StatelessWidget {
@@ -155,11 +156,11 @@ class _BundleListViewState extends State<_BundleListView> {
                         right: BorderSide(color: AppColors.borderTable),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       '事前セット',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontFamily: 'MSPGothic',
                       ),
                       textAlign: TextAlign.center,
@@ -170,11 +171,11 @@ class _BundleListViewState extends State<_BundleListView> {
                   flex: 1,
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    child: const Text(
+                    child: Text(
                       '明細数',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontFamily: 'MSPGothic',
                       ),
                       textAlign: TextAlign.center,
@@ -251,7 +252,7 @@ class _BundleListViewState extends State<_BundleListView> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                child: const Text('戻る', style: TextStyle(fontSize: 16)),
+                child: Text('戻る', style: TextStyle(fontSize: 16.sp)),
               ),
             ),
           ),
@@ -340,7 +341,7 @@ class _BundleRowTile extends StatelessWidget {
                             style: TextStyle(
                               color: textColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontFamily: 'MSPGothic',
                             ),
                           ),
@@ -352,7 +353,7 @@ class _BundleRowTile extends StatelessWidget {
                                     ? '${row.productName.substring(0, 25)}...'
                                     : row.productName,
                                 style: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 13.sp,
                                   color: textColor,
                                   fontFamily: 'MSPGothic',
                                 ),
@@ -374,7 +375,7 @@ class _BundleRowTile extends StatelessWidget {
                   row.countLine.toString(),
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontFamily: 'MSPGothic',
                   ),
                   textAlign: TextAlign.center,

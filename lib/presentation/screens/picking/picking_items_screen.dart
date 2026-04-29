@@ -7,6 +7,7 @@ import '../../../core/di/injection.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../data/models/picking/picking_line.dart';
 import '../../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ screens/Picking/PickingItems.js
 ///
@@ -66,11 +67,11 @@ class _PickingItemsView extends StatelessWidget {
         ),
         title: Text(
           'ピッキング: $pickNo',
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'MSPGothic',
             color: AppColors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 15,
+            fontSize: 15.sp,
           ),
         ),
       ),
@@ -138,10 +139,10 @@ class _PickingItemsView extends StatelessWidget {
           color: Colors.white,
           child: Text(
             '合計: ${lines.length} 件',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'MSPGothic',
               color: AppColors.grayTextColor,
-              fontSize: 13,
+              fontSize: 13.sp,
             ),
           ),
         ),
@@ -189,11 +190,11 @@ class _PickingItemsView extends StatelessWidget {
               );
             },
             icon: const Icon(Icons.play_arrow),
-            label: const Text(
+            label: Text(
               'ピッキング開始',
               style: TextStyle(
                   fontFamily: 'MSPGothic',
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold),
             ),
             style: ElevatedButton.styleFrom(
@@ -254,10 +255,10 @@ class _LineCard extends StatelessWidget {
                     ? const Icon(Icons.check, color: Colors.white, size: 20)
                     : Text(
                         '${index + 1}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                         ),
                       ),
               ),
@@ -269,10 +270,10 @@ class _LineCard extends StatelessWidget {
                   children: [
                     Text(
                       line.productCode,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'MSPGothic',
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: 15.sp,
                       ),
                     ),
                     if (line.productName != null &&
@@ -280,10 +281,10 @@ class _LineCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         line.productName!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'MSPGothic',
                           color: AppColors.grayTextColor,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -298,9 +299,9 @@ class _LineCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             line.bin!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'MSPGothic',
-                              fontSize: 12,
+                              fontSize: 12.sp,
                               color: AppColors.grayTextColor,
                             ),
                           ),
@@ -313,7 +314,7 @@ class _LineCard extends StatelessWidget {
                           '${actual.toStringAsFixed(0)} / ${line.pickQty.toStringAsFixed(0)}',
                           style: TextStyle(
                             fontFamily: 'MSPGothic',
-                            fontSize: 12,
+                            fontSize: 12.sp,
                             color: isDone
                                 ? AppColors.wageningenGreen
                                 : AppColors.textWarning,

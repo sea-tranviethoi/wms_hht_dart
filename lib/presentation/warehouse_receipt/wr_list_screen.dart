@@ -8,6 +8,7 @@ import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/wr_remote_datasource.dart';
 import '../../routes/route_names.dart';
 import '../blocs/wr/wr_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 入荷一覧 — BLoC version (Phase 4)
 class WRListScreen extends StatelessWidget {
@@ -226,11 +227,11 @@ class _WRListViewState extends State<_WRListView> {
                           right: BorderSide(color: AppColors.borderTable),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         '入荷番号',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontFamily: 'MSPGothic',
                         ),
                         textAlign: TextAlign.center,
@@ -241,11 +242,11 @@ class _WRListViewState extends State<_WRListView> {
                     flex: 1,
                     child: Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Text(
+                      child: Text(
                         '仕入先名',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontFamily: 'MSPGothic',
                         ),
                         textAlign: TextAlign.center,
@@ -325,8 +326,8 @@ class _WRListViewState extends State<_WRListView> {
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      child: const Text('戻る',
-                          style: TextStyle(fontSize: 16)),
+                      child: Text('戻る',
+                          style: TextStyle(fontSize: 16.sp)),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -352,8 +353,8 @@ class _WRListViewState extends State<_WRListView> {
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      child: const Text('絞り込み',
-                          style: TextStyle(fontSize: 16)),
+                      child: Text('絞り込み',
+                          style: TextStyle(fontSize: 16.sp)),
                     ),
                   ),
                 ],
@@ -462,7 +463,7 @@ class _WRRowTile extends StatelessWidget {
                                 style: TextStyle(
                                   color: textColor,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   fontFamily: 'MSPGothic',
                                 ),
                               ),
@@ -480,7 +481,7 @@ class _WRRowTile extends StatelessWidget {
                                               ? '${n.trim().substring(0, 25)}...'
                                               : n.trim(),
                                           style: TextStyle(
-                                            fontSize: 13,
+                                            fontSize: 13.sp,
                                             color: textColor,
                                             fontFamily: 'MSPGothic',
                                           ),
@@ -504,7 +505,7 @@ class _WRRowTile extends StatelessWidget {
                       row.supplierName ?? '',
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontFamily: 'MSPGothic',
                       ),
                       maxLines: 3,

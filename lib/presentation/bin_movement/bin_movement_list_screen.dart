@@ -8,6 +8,7 @@ import '../../core/storage/cache_storage.dart';
 import '../../data/repositories/bin_movement_repository.dart';
 import '../../routes/route_names.dart';
 import '../blocs/bin_movement/bin_movement_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 棚移動一覧 — BLoC version (Phase 7)
 class BinMovementListScreen extends StatelessWidget {
@@ -195,11 +196,11 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
                           right: BorderSide(color: AppColors.borderTable),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         '移動番号',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontFamily: 'MSPGothic',
                         ),
                         textAlign: TextAlign.center,
@@ -210,11 +211,11 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
                     flex: 2,
                     child: Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Text(
+                      child: Text(
                         '移動元→先',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontFamily: 'MSPGothic',
                         ),
                         textAlign: TextAlign.center,
@@ -297,8 +298,8 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
                     padding:
                         const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text('戻る',
-                      style: TextStyle(fontSize: 16)),
+                  child: Text('戻る',
+                      style: TextStyle(fontSize: 16.sp)),
                 ),
               ),
             ),
@@ -397,7 +398,7 @@ class _BinMovementRowTile extends StatelessWidget {
                             style: TextStyle(
                               color: textColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontFamily: 'MSPGothic',
                             ),
                           ),
@@ -410,7 +411,7 @@ class _BinMovementRowTile extends StatelessWidget {
                                     ? '${row.productNames!.substring(0, 30)}...'
                                     : row.productNames!,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                   color: textColor,
                                   fontFamily: 'MSPGothic',
                                 ),
@@ -423,7 +424,7 @@ class _BinMovementRowTile extends StatelessWidget {
                               child: Text(
                                 row.description!,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                   color: textColor.withValues(alpha: 0.7),
                                   fontFamily: 'MSPGothic',
                                   fontStyle: FontStyle.italic,
@@ -450,7 +451,7 @@ class _BinMovementRowTile extends StatelessWidget {
                       row.fromBin ?? '—',
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontFamily: 'MSPGothic',
                       ),
                       textAlign: TextAlign.center,
@@ -461,7 +462,7 @@ class _BinMovementRowTile extends StatelessWidget {
                       row.toBin ?? '—',
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontFamily: 'MSPGothic',
                       ),
                       textAlign: TextAlign.center,

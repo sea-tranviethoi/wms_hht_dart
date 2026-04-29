@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/di/injection.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ screens/Picking/PickingList.js
 ///
@@ -66,11 +67,11 @@ class _PickingListViewState extends State<_PickingListView> {
         ),
         title: Text(
           'ピッキング一覧${widget.company.isNotEmpty ? ' (${widget.company})' : ''}',
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'MSPGothic',
             color: AppColors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 16,
+            fontSize: 16.sp,
           ),
         ),
         actions: [
@@ -155,12 +156,12 @@ class _PickingListViewState extends State<_PickingListView> {
                   right: BorderSide(color: AppColors.borderTable),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'ピッキング番号',
                 style: TextStyle(
                   fontFamily: 'MSPGothic',
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -172,12 +173,12 @@ class _PickingListViewState extends State<_PickingListView> {
               decoration: BoxDecoration(
                 border: Border(bottom: BorderSide(color: AppColors.borderTable)),
               ),
-              child: const Text(
+              child: Text(
                 '棚数',
                 style: TextStyle(
                   fontFamily: 'MSPGothic',
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -303,11 +304,11 @@ class _PickingListViewState extends State<_PickingListView> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text(
+              child: Text(
                 '戻る',
                 style: TextStyle(
                     fontFamily: 'MSPGothic',
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -371,7 +372,7 @@ class _PickingRowTile extends StatelessWidget {
                         row.pickNo,
                         style: TextStyle(
                           fontFamily: 'MSPGothic',
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                           color: textColor,
                         ),
@@ -389,7 +390,7 @@ class _PickingRowTile extends StatelessWidget {
                   '${row.binCount}',
                   style: TextStyle(
                     fontFamily: 'MSPGothic',
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     color: textColor,
                   ),
                   textAlign: TextAlign.center,

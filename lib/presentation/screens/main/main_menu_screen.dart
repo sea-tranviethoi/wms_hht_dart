@@ -8,6 +8,7 @@ import '../../../core/constants/key_codes.dart';
 import '../../../core/hardware/keyboard_event_bus.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ screens/MainMenu.js
 ///
@@ -203,10 +204,10 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             child: Center(
               child: Text(
                 'v${AppConstants.appVersion}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'MSPGothic',
                   color: AppColors.lighter,
-                  fontSize: 12,
+                  fontSize: 12.sp,
                 ),
               ),
             ),
@@ -277,10 +278,10 @@ class _MenuTile extends StatelessWidget {
                     children: [
                       Text(
                         item.label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'MSPGothic',
                           color: AppColors.white,
-                          fontSize: 24,
+                          fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
                           shadows: [
                             Shadow(
@@ -293,10 +294,10 @@ class _MenuTile extends StatelessWidget {
                       ),
                       Text(
                         item.subtitle,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'MSPGothic',
                           color: AppColors.white,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ),
                       ),
                     ],

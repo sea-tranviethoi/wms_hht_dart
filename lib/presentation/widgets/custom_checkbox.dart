@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/theme_config.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomCheckbox extends StatelessWidget {
   final bool value;
@@ -36,8 +37,8 @@ class CustomCheckbox extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label!,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: 14.sp,
                 color: AppColors.blackText,
               ),
             ),

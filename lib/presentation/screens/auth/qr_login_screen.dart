@@ -8,6 +8,7 @@ import '../../../core/security/crypto_service.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../core/di/injection.dart';
 import '../../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ screens/Login.js — phần handleScan
 /// Quét QR → decrypt TripleDES → đăng nhập loginByQR
@@ -99,9 +100,9 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.themeBackground,
         foregroundColor: Colors.white,
-        title: const Text(
+        title: Text(
           'QRコードでログイン',
-          style: TextStyle(fontFamily: 'MSPGothic', fontSize: 16),
+          style: TextStyle(fontFamily: 'MSPGothic', fontSize: 16.sp),
         ),
       ),
       body: Stack(
@@ -147,10 +148,10 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
                 ),
                 child: Text(
                   _errorMessage!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'MSPGothic',
                     color: Colors.white,
-                    fontSize: 13,
+                    fontSize: 13.sp,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -167,7 +168,7 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
               style: TextStyle(
                 fontFamily: 'MSPGothic',
                 color: Colors.white.withAlpha(180),
-                fontSize: 13,
+                fontSize: 13.sp,
               ),
               textAlign: TextAlign.center,
             ),
