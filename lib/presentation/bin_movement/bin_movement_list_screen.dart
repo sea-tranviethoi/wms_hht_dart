@@ -149,15 +149,18 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
                 decoration: InputDecoration(
                   hintText: 'フィルターする内容を入力してください。',
                   prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _searchController.clear();
-                            _handleSearch('');
-                          },
-                        )
-                      : null,
+                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _searchController,
+                    builder: (_, value, __) => value.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              _handleSearch('');
+                            },
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                   border: const OutlineInputBorder(
                     borderSide:
                         BorderSide(color: AppColors.lighter, width: 2),
@@ -171,10 +174,7 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
                         color: AppColors.primaryLight, width: 2),
                   ),
                 ),
-                onChanged: (v) {
-                  setState(() {});
-                  _handleSearch(v);
-                },
+                onChanged: _handleSearch,
               ),
             ),
 
@@ -268,177 +268,12 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
 
                   return ListView.builder(
                     itemCount: rows.length,
-                    itemBuilder: (context, index) {
-                      final row = rows[index];
-                      final isSelected = _selectedIndex == index;
-                      final scanStatus = row.scanStatus;
-
-                      Color textColor = AppColors.black;
-                      Widget? leadingIcon;
-
-                      if (scanStatus == 1) {
-                        textColor = AppColors.text_warning;
-                        leadingIcon = IconButton(
-                          icon: const Icon(Icons.refresh),
-                          color: AppColors.blackText,
-                          iconSize: 35,
-                          onPressed: () => _handleReset(row),
-                        );
-                      } else if (scanStatus == 3) {
-                        textColor = AppColors.text_placeholder;
-                        leadingIcon = IconButton(
-                          icon: const Icon(Icons.construction),
-                          color: AppColors.blackText,
-                          iconSize: 35,
-                          onPressed: () =>
-                              _handleRowTap(context, index, row),
-                        );
-                      }
-
-                      return InkWell(
-                        onTap: () =>
-                            _handleRowTap(context, index, row),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.headerColor
-                                : Colors.white,
-                            border: Border(
-                              bottom: BorderSide(
-                                  color: AppColors.borderTable),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              // 移動番号 + 商品名
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                    top: 10,
-                                    bottom: 10,
-                                    left: scanStatus != -1 ? 0 : 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      right: BorderSide(
-                                          color: AppColors.borderTable),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (scanStatus != -1)
-                                        SizedBox(
-                                          width: 50,
-                                          child: leadingIcon ??
-                                              const SizedBox(),
-                                        ),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              row.transferNo,
-                                              style: TextStyle(
-                                                color: textColor,
-                                                fontWeight:
-                                                    FontWeight.bold,
-                                                fontSize: 16,
-                                                fontFamily: 'MSPGothic',
-                                              ),
-                                            ),
-                                            if (row.productNames !=
-                                                    null &&
-                                                row.productNames!
-                                                    .isNotEmpty)
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.only(
-                                                        top: 2),
-                                                child: Text(
-                                                  row.productNames!
-                                                              .length >
-                                                          30
-                                                      ? '${row.productNames!.substring(0, 30)}...'
-                                                      : row.productNames!,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: textColor,
-                                                    fontFamily:
-                                                        'MSPGothic',
-                                                  ),
-                                                ),
-                                              ),
-                                            if (row.description !=
-                                                    null &&
-                                                row.description!
-                                                    .isNotEmpty)
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.only(
-                                                        top: 2),
-                                                child: Text(
-                                                  row.description!,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: textColor
-                                                        .withValues(alpha: 0.7),
-                                                    fontFamily:
-                                                        'MSPGothic',
-                                                    fontStyle:
-                                                        FontStyle.italic,
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              // 移動元→先
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 8),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        row.fromBin ?? '—',
-                                        style: TextStyle(
-                                          color: textColor,
-                                          fontSize: 13,
-                                          fontFamily: 'MSPGothic',
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const Icon(Icons.arrow_downward,
-                                          size: 16, color: Colors.grey),
-                                      Text(
-                                        row.toBin ?? '—',
-                                        style: TextStyle(
-                                          color: textColor,
-                                          fontSize: 13,
-                                          fontFamily: 'MSPGothic',
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                    itemBuilder: (context, index) => _BinMovementRowTile(
+                      row: rows[index],
+                      isSelected: _selectedIndex == index,
+                      onTap: () => _handleRowTap(context, index, rows[index]),
+                      onReset: () => _handleReset(rows[index]),
+                    ),
                   );
                 },
               ),
@@ -477,5 +312,167 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+}
+
+// ── Row tile ──────────────────────────────────────────────────────────────────
+
+class _BinMovementRowTile extends StatelessWidget {
+  final BinMovementRow row;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final VoidCallback onReset;
+
+  const _BinMovementRowTile({
+    required this.row,
+    required this.isSelected,
+    required this.onTap,
+    required this.onReset,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scanStatus = row.scanStatus;
+
+    Color textColor = AppColors.black;
+    Widget? leadingIcon;
+
+    if (scanStatus == 1) {
+      textColor = AppColors.text_warning;
+      leadingIcon = IconButton(
+        icon: const Icon(Icons.refresh),
+        color: AppColors.blackText,
+        iconSize: 35,
+        onPressed: onReset,
+      );
+    } else if (scanStatus == 3) {
+      textColor = AppColors.text_placeholder;
+      leadingIcon = IconButton(
+        icon: const Icon(Icons.construction),
+        color: AppColors.blackText,
+        iconSize: 35,
+        onPressed: onTap,
+      );
+    }
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.headerColor : Colors.white,
+          border: Border(
+            bottom: BorderSide(color: AppColors.borderTable),
+          ),
+        ),
+        child: Row(
+          children: [
+            // 移動番号 + 商品名
+            Expanded(
+              flex: 3,
+              child: Container(
+                padding: EdgeInsets.only(
+                  top: 10,
+                  bottom: 10,
+                  left: scanStatus != -1 ? 0 : 8,
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(color: AppColors.borderTable),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (scanStatus != -1)
+                      SizedBox(
+                        width: 50,
+                        child: leadingIcon ?? const SizedBox(),
+                      ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            row.transferNo,
+                            style: TextStyle(
+                              color: textColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              fontFamily: 'MSPGothic',
+                            ),
+                          ),
+                          if (row.productNames != null &&
+                              row.productNames!.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                row.productNames!.length > 30
+                                    ? '${row.productNames!.substring(0, 30)}...'
+                                    : row.productNames!,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: textColor,
+                                  fontFamily: 'MSPGothic',
+                                ),
+                              ),
+                            ),
+                          if (row.description != null &&
+                              row.description!.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                row.description!,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: textColor.withValues(alpha: 0.7),
+                                  fontFamily: 'MSPGothic',
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // 移動元→先
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      row.fromBin ?? '—',
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 13,
+                        fontFamily: 'MSPGothic',
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const Icon(Icons.arrow_downward,
+                        size: 16, color: Colors.grey),
+                    Text(
+                      row.toBin ?? '—',
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 13,
+                        fontFamily: 'MSPGothic',
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

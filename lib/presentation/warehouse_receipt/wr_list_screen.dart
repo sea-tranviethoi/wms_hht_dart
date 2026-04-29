@@ -180,15 +180,18 @@ class _WRListViewState extends State<_WRListView> {
                 decoration: InputDecoration(
                   hintText: 'フィルターする内容を入力してください。',
                   prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _searchController.clear();
-                            _handleSearch('');
-                          },
-                        )
-                      : null,
+                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _searchController,
+                    builder: (_, value, __) => value.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              _handleSearch('');
+                            },
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                   border: const OutlineInputBorder(
                     borderSide:
                         BorderSide(color: AppColors.lighter, width: 2),
@@ -202,10 +205,7 @@ class _WRListViewState extends State<_WRListView> {
                         BorderSide(color: AppColors.primaryLight, width: 2),
                   ),
                 ),
-                onChanged: (v) {
-                  setState(() {});
-                  _handleSearch(v);
-                },
+                onChanged: _handleSearch,
               ),
             ),
 
@@ -296,175 +296,12 @@ class _WRListViewState extends State<_WRListView> {
 
                   return ListView.builder(
                     itemCount: rows.length,
-                    itemBuilder: (context, index) {
-                      final row = rows[index];
-                      final isSelected = _selectedIndex == index;
-                      final scanStatus = row.scanStatus;
-
-                      Color textColor = AppColors.black;
-                      Widget? leadingIcon;
-
-                      if (scanStatus == 2) {
-                        // Scanned by this device — orange
-                        textColor = AppColors.text_warning;
-                        leadingIcon = IconButton(
-                          icon: const Icon(Icons.refresh),
-                          color: AppColors.blackText,
-                          iconSize: 35,
-                          onPressed: () => _handleReset(row),
-                        );
-                      } else if (scanStatus == 3) {
-                        // Handled by other device — grey
-                        textColor = AppColors.text_placeholder;
-                        leadingIcon = IconButton(
-                          icon: const Icon(Icons.construction),
-                          color: AppColors.blackText,
-                          iconSize: 35,
-                          onPressed: () => _handleRowTap(context, index, row),
-                        );
-                      }
-
-                      Color statusCircleColor() {
-                        if (scanStatus == 2) return AppColors.text_warning;
-                        if (scanStatus == 3) return AppColors.text_placeholder;
-                        return AppColors.black;
-                      }
-
-                      return InkWell(
-                        onTap: () => _handleRowTap(context, index, row),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.headerColor
-                                : Colors.white,
-                            border: Border(
-                              bottom:
-                                  BorderSide(color: AppColors.borderTable),
-                            ),
-                          ),
-                          child: Stack(
-                            children: [
-                              Row(
-                                children: [
-                                  // Receipt No + Product Names
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                        left: (scanStatus == 2 ||
-                                                scanStatus == 3)
-                                            ? 0
-                                            : 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          right: BorderSide(
-                                              color: AppColors.borderTable),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          if (scanStatus == 2 ||
-                                              scanStatus == 3)
-                                            SizedBox(
-                                              width: 50,
-                                              child: leadingIcon ??
-                                                  const SizedBox(),
-                                            ),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  row.receiptNo,
-                                                  style: TextStyle(
-                                                    color: textColor,
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                    fontSize: 16,
-                                                    fontFamily: 'MSPGothic',
-                                                  ),
-                                                ),
-                                                if (row.productNames != null &&
-                                                    row.productNames!
-                                                        .isNotEmpty)
-                                                  ...row.productNames!
-                                                      .split(',')
-                                                      .where((n) =>
-                                                          n.trim().isNotEmpty)
-                                                      .map(
-                                                        (n) => Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(top: 2),
-                                                          child: Text(
-                                                            n.trim().length >
-                                                                    25
-                                                                ? '${n.trim().substring(0, 25)}...'
-                                                                : n.trim(),
-                                                            style: TextStyle(
-                                                              fontSize: 13,
-                                                              color: textColor,
-                                                              fontFamily:
-                                                                  'MSPGothic',
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  // Supplier Name
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 8),
-                                      child: Text(
-                                        row.supplierName ?? '',
-                                        style: TextStyle(
-                                          color: textColor,
-                                          fontSize: 14,
-                                          fontFamily: 'MSPGothic',
-                                        ),
-                                        maxLines: 3,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              // Status circle indicator (top-right)
-                              Positioned(
-                                top: 10,
-                                right: 10,
-                                child: Container(
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: statusCircleColor(),
-                                      width: 3,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                    itemBuilder: (context, index) => _WRRowTile(
+                      row: rows[index],
+                      isSelected: _selectedIndex == index,
+                      onTap: () => _handleRowTap(context, index, rows[index]),
+                      onReset: () => _handleReset(rows[index]),
+                    ),
                   );
                 },
               ),
@@ -532,5 +369,171 @@ class _WRListViewState extends State<_WRListView> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+}
+
+// ── Row tile ──────────────────────────────────────────────────────────────────
+
+class _WRRowTile extends StatelessWidget {
+  final WRRow row;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final VoidCallback onReset;
+
+  const _WRRowTile({
+    required this.row,
+    required this.isSelected,
+    required this.onTap,
+    required this.onReset,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scanStatus = row.scanStatus;
+
+    Color textColor = AppColors.black;
+    Widget? leadingIcon;
+
+    if (scanStatus == 2) {
+      textColor = AppColors.text_warning;
+      leadingIcon = IconButton(
+        icon: const Icon(Icons.refresh),
+        color: AppColors.blackText,
+        iconSize: 35,
+        onPressed: onReset,
+      );
+    } else if (scanStatus == 3) {
+      textColor = AppColors.text_placeholder;
+      leadingIcon = IconButton(
+        icon: const Icon(Icons.construction),
+        color: AppColors.blackText,
+        iconSize: 35,
+        onPressed: onTap,
+      );
+    }
+
+    Color statusCircleColor() {
+      if (scanStatus == 2) return AppColors.text_warning;
+      if (scanStatus == 3) return AppColors.text_placeholder;
+      return AppColors.black;
+    }
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.headerColor : Colors.white,
+          border: Border(
+            bottom: BorderSide(color: AppColors.borderTable),
+          ),
+        ),
+        child: Stack(
+          children: [
+            Row(
+              children: [
+                // Receipt No + Product Names
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                      left: (scanStatus == 2 || scanStatus == 3) ? 0 : 8,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        right: BorderSide(color: AppColors.borderTable),
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (scanStatus == 2 || scanStatus == 3)
+                          SizedBox(
+                            width: 50,
+                            child: leadingIcon ?? const SizedBox(),
+                          ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                row.receiptNo,
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  fontFamily: 'MSPGothic',
+                                ),
+                              ),
+                              if (row.productNames != null &&
+                                  row.productNames!.isNotEmpty)
+                                ...row.productNames!
+                                    .split(',')
+                                    .where((n) => n.trim().isNotEmpty)
+                                    .map(
+                                      (n) => Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 2),
+                                        child: Text(
+                                          n.trim().length > 25
+                                              ? '${n.trim().substring(0, 25)}...'
+                                              : n.trim(),
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: textColor,
+                                            fontFamily: 'MSPGothic',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Supplier Name
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 8),
+                    child: Text(
+                      row.supplierName ?? '',
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 14,
+                        fontFamily: 'MSPGothic',
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // Status circle indicator (top-right)
+            Positioned(
+              top: 10,
+              right: 10,
+              child: Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  border: Border.all(
+                    color: statusCircleColor(),
+                    width: 3,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

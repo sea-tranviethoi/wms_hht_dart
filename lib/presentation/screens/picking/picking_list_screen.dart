@@ -113,15 +113,18 @@ class _PickingListViewState extends State<_PickingListView> {
           hintText: 'フィルターする内容を入力してください。',
           hintStyle: const TextStyle(fontFamily: 'MSPGothic', color: AppColors.gray),
           prefixIcon: const Icon(Icons.search, color: AppColors.gray),
-          suffixIcon: _searchCtrl.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchCtrl.clear();
-                    context.read<PickingBloc>().add(SearchPickingLists(''));
-                  },
-                )
-              : null,
+          suffixIcon: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _searchCtrl,
+            builder: (_, value, __) => value.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchCtrl.clear();
+                      context.read<PickingBloc>().add(SearchPickingLists(''));
+                    },
+                  )
+                : const SizedBox.shrink(),
+          ),
           filled: true,
           fillColor: AppColors.ghostWhiteColor,
           contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -130,10 +133,8 @@ class _PickingListViewState extends State<_PickingListView> {
             borderSide: BorderSide.none,
           ),
         ),
-        onChanged: (v) {
-          setState(() {});
-          context.read<PickingBloc>().add(SearchPickingLists(v));
-        },
+        onChanged: (v) =>
+            context.read<PickingBloc>().add(SearchPickingLists(v)),
       ),
     );
   }
