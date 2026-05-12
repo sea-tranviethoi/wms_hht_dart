@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../core/di/injection.dart';
 import '../../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ screens/Login.js
 /// Login bằng username/password + nút chuyển sang QR login
@@ -92,11 +93,11 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               // ── Header ──────────────────────────────────────
               const SizedBox(height: 40),
-              const Text(
+              Text(
                 'FBTHHT',
                 style: TextStyle(
                   fontFamily: 'MSPGothic',
-                  fontSize: 36,
+                  fontSize: 36.sp,
                   fontWeight: FontWeight.bold,
                   color: AppColors.white,
                   letterSpacing: 4,
@@ -104,11 +105,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 '倉庫管理システム',
                 style: TextStyle(
                   fontFamily: 'MSPGothic',
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   color: AppColors.lighter,
                 ),
                 textAlign: TextAlign.center,
@@ -171,10 +172,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 8),
                       Text(
                         _errorMessage!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'MSPGothic',
                           color: AppColors.textError,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -202,11 +203,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Text(
+                            : Text(
                                 'ログイン',
                                 style: TextStyle(
                                   fontFamily: 'MSPGothic',
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -237,12 +238,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Version info
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'V1.10.2 — Development',
                 style: TextStyle(
                   fontFamily: 'MSPGothic',
                   color: AppColors.lighter,
-                  fontSize: 11,
+                  fontSize: 11.sp,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -255,9 +256,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildLabel(String text) => Text(
         text,
-        style: const TextStyle(
+        style: TextStyle(
           fontFamily: 'MSPGothic',
-          fontSize: 13,
+          fontSize: 13.sp,
           color: AppColors.blackTextColor,
           fontWeight: FontWeight.w600,
         ),
@@ -266,10 +267,10 @@ class _LoginScreenState extends State<LoginScreen> {
   InputDecoration _inputDecoration(String hint, IconData icon, {Widget? suffix}) =>
       InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(
+        hintStyle: TextStyle(
           fontFamily: 'MSPGothic',
           color: AppColors.textPlaceholder,
-          fontSize: 13,
+          fontSize: 13.sp,
         ),
         prefixIcon: Icon(icon, color: AppColors.gray, size: 20),
         suffixIcon: suffix,

@@ -31,6 +31,7 @@ import '../data/models/bin_movement/invent_transfer_line.dart';
 import '../presentation/bin_audit/bin_audit_list_screen.dart';
 import '../presentation/bin_audit/bin_audit_detail_screen.dart';
 import 'route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 final appRouter = GoRouter(
   initialLocation: RouteNames.splash,
@@ -275,7 +276,7 @@ class _PlaceholderScreen extends StatelessWidget {
         body: Center(
           child: Text(
             '$title\n(実装中...)',
-            style: const TextStyle(fontFamily: 'MSPGothic', fontSize: 16),
+            style: TextStyle(fontFamily: 'MSPGothic', fontSize: 16.sp),
             textAlign: TextAlign.center,
           ),
         ),

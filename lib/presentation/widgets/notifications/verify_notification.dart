@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/audio/sound_manager.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ components/Notification.js — VerifyNotification
 /// Dialog đa năng: thông báo, xác nhận, download progress
@@ -72,9 +73,9 @@ class VerifyNotification extends StatelessWidget {
                   // Title
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'MSPGothic',
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: AppColors.blackTextColor,
                     ),
@@ -84,9 +85,9 @@ class VerifyNotification extends StatelessWidget {
                   // Message
                   Text(
                     message,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'MSPGothic',
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       color: AppColors.grayTextColor,
                     ),
                     textAlign: TextAlign.center,
@@ -103,9 +104,9 @@ class VerifyNotification extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       '${(progressValue * 100).toStringAsFixed(0)}%',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'MSPGothic',
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         color: AppColors.grayTextColor,
                       ),
                     ),
@@ -142,7 +143,7 @@ class VerifyNotification extends StatelessWidget {
       ),
       child: Text(
         btn.text,
-        style: const TextStyle(fontFamily: 'MSPGothic', fontSize: 14),
+        style: TextStyle(fontFamily: 'MSPGothic', fontSize: 14.sp),
       ),
     );
   }

@@ -6,6 +6,7 @@ import '../../config/theme_config.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/local_storage.dart';
 import '../../l10n/app_strings.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WRFilterScreen extends StatefulWidget {
   final int tenantId;
@@ -240,10 +241,10 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                 color: AppColors.orange_light,
                 border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
               ),
-              child: const Text(
+              child: Text(
                 '仕入先番号',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -280,11 +281,11 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                     },
                   ),
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   child: Text(
                     '~',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp),
                   ),
                 ),
                 Expanded(
@@ -327,10 +328,10 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                 color: AppColors.orange_light,
                 border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
               ),
-              child: const Text(
+              child: Text(
                 '商品JANコード',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -380,10 +381,10 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                 color: AppColors.orange_light,
                 border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
               ),
-              child: const Text(
+              child: Text(
                 '入荷予定番号',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -413,10 +414,10 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                 color: AppColors.orange_light,
                 border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
               ),
-              child: const Text(
+              child: Text(
                 '商品番号',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -460,10 +461,10 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                 color: AppColors.orange_light,
                 border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
               ),
-              child: const Text(
+              child: Text(
                 '商品名',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -502,7 +503,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                         final strings = AppStrings.of(context);
                         return Text(
                           strings.cancel,
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16.sp),
                         );
                       },
                     ),
@@ -522,7 +523,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                         final strings = AppStrings.of(context);
                         return Text(
                           strings.clear,
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16.sp),
                         );
                       },
                     ),
@@ -542,7 +543,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                         final strings = AppStrings.of(context);
                         return Text(
                           strings.apply,
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16.sp),
                         );
                       },
                     ),

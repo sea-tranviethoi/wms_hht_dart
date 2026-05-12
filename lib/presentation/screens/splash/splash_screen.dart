@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Màn hình splash — hiển thị khi app đang kiểm tra token
 /// Port từ loginState.isLoading block trong App.js
@@ -57,11 +58,11 @@ class _SplashScreenState extends State<SplashScreen>
               // Logo / App name
               FadeTransition(
                 opacity: _fadeAnim,
-                child: const Text(
+                child: Text(
                   'FBTHHT',
                   style: TextStyle(
                     fontFamily: 'MSPGothic',
-                    fontSize: 32,
+                    fontSize: 32.sp,
                     fontWeight: FontWeight.bold,
                     color: AppColors.white,
                     letterSpacing: 4,
@@ -69,11 +70,11 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 '倉庫管理システム',
                 style: TextStyle(
                   fontFamily: 'MSPGothic',
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   color: AppColors.white,
                 ),
               ),

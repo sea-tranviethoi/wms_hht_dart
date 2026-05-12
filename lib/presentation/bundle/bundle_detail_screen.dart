@@ -9,6 +9,7 @@ import '../../data/datasources/remote/bundle_remote_datasource.dart';
 import '../../data/models/bundle/bundle_line.dart';
 import '../../routes/route_names.dart';
 import '../../core/utils/qr_code_parser.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 事前セット詳細 — standalone, no Provider/BLoC needed (Phase 6)
 class BundleDetailScreen extends StatefulWidget {
@@ -366,14 +367,14 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
             ),
             child: Row(
               children: [
-                const Text('事前セット:',
+                Text('事前セット:',
                     style: TextStyle(
-                        fontSize: 16, fontFamily: 'MSPGothic')),
+                        fontSize: 16.sp, fontFamily: 'MSPGothic')),
                 const SizedBox(width: 8),
                 Text(
                   widget.transNo,
-                  style: const TextStyle(
-                      fontSize: 16,
+                  style: TextStyle(
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'MSPGothic'),
                 ),
@@ -445,8 +446,8 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
                             padding:
                                 const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Text('前へ',
-                              style: TextStyle(fontSize: 16)),
+                          child: Text('前へ',
+                              style: TextStyle(fontSize: 16.sp)),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -467,7 +468,7 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
                             _currentIndex < _lines.length - 1
                                 ? '次へ'
                                 : '完了',
-                            style: const TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 16.sp),
                           ),
                         ),
                       ),
@@ -494,8 +495,8 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: const TextStyle(
-                fontSize: 14,
+            style: TextStyle(
+                fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'MSPGothic')),
         const SizedBox(height: 8),
@@ -530,8 +531,8 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: const TextStyle(
-                fontSize: 14,
+            style: TextStyle(
+                fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'MSPGothic')),
         const SizedBox(height: 8),
@@ -557,8 +558,8 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: const TextStyle(
-                fontSize: 14,
+            style: TextStyle(
+                fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'MSPGothic')),
         const SizedBox(height: 8),

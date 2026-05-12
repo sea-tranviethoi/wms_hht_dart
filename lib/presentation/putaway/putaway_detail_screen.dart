@@ -10,6 +10,7 @@ import '../../data/datasources/remote/putaway_remote_datasource.dart';
 import '../../data/models/putaway/putaway_line.dart';
 import '../../data/models/putaway/putaway_staging.dart';
 import '../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 棚上げ詳細 — Phase 5b
 /// 商品ごとの棚上げ明細を一覧表示し、bin・数量・ロット・期限を入力して完了登録する。
@@ -358,8 +359,8 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                           children: [
                             Text(
                               widget.productCode,
-                              style: const TextStyle(
-                                fontSize: 16,
+                              style: TextStyle(
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'MSPGothic',
                                 color: AppColors.black,
@@ -368,8 +369,8 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                             if (widget.productName.isNotEmpty)
                               Text(
                                 widget.productName,
-                                style: const TextStyle(
-                                  fontSize: 13,
+                                style: TextStyle(
+                                  fontSize: 13.sp,
                                   fontFamily: 'MSPGothic',
                                   color: AppColors.black,
                                 ),
@@ -390,8 +391,8 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                         ),
                         child: Text(
                           '${_currentIndex + 1} / ${_editedLines.length}',
-                          style: const TextStyle(
-                            fontSize: 13,
+                          style: TextStyle(
+                            fontSize: 13.sp,
                             fontFamily: 'MSPGothic',
                             fontWeight: FontWeight.bold,
                           ),
@@ -491,9 +492,9 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
                               ),
-                              child: const Text('戻る',
+                              child: Text('戻る',
                                   style: TextStyle(
-                                      fontSize: 15, fontFamily: 'MSPGothic')),
+                                      fontSize: 15.sp, fontFamily: 'MSPGothic')),
                             ),
                           ),
                           const SizedBox(width: 6),
@@ -542,9 +543,9 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8)),
                               ),
-                              child: const Text('保存',
+                              child: Text('保存',
                                   style: TextStyle(
-                                      fontSize: 15, fontFamily: 'MSPGothic')),
+                                      fontSize: 15.sp, fontFamily: 'MSPGothic')),
                             ),
                           ),
                         ],
@@ -556,10 +557,10 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                         child: ElevatedButton.icon(
                           onPressed: _handleComplete,
                           icon: const Icon(Icons.check_circle_outline),
-                          label: const Text(
+                          label: Text(
                             '棚上げ完了',
                             style: TextStyle(
-                                fontSize: 16, fontFamily: 'MSPGothic'),
+                                fontSize: 16.sp, fontFamily: 'MSPGothic'),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.teal,
@@ -593,8 +594,8 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: const TextStyle(
-                fontSize: 13,
+            style: TextStyle(
+                fontSize: 13.sp,
                 fontFamily: 'MSPGothic',
                 color: AppColors.black)),
         const SizedBox(height: 4),
@@ -614,8 +615,8 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
               ],
               Text(
                 value,
-                style: const TextStyle(
-                    fontSize: 15,
+                style: TextStyle(
+                    fontSize: 15.sp,
                     fontFamily: 'MSPGothic',
                     fontWeight: FontWeight.w500),
               ),
@@ -639,8 +640,8 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: const TextStyle(
-                fontSize: 13,
+            style: TextStyle(
+                fontSize: 13.sp,
                 fontFamily: 'MSPGothic',
                 color: AppColors.black)),
         const SizedBox(height: 4),
@@ -697,9 +698,9 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('賞味期限',
+        Text('賞味期限',
             style: TextStyle(
-                fontSize: 13,
+                fontSize: 13.sp,
                 fontFamily: 'MSPGothic',
                 color: AppColors.black)),
         const SizedBox(height: 4),

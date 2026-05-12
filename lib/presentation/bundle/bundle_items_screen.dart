@@ -8,6 +8,7 @@ import '../../data/datasources/remote/bundle_remote_datasource.dart';
 import '../../data/models/bundle/bundle_line.dart';
 import '../../routes/route_names.dart';
 import '../blocs/bundle/bundle_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 事前セット明細 — BLoC version (Phase 6)
 class BundleItemsScreen extends StatelessWidget {
@@ -107,18 +108,18 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                   children: [
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           '事前セット：',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                               fontFamily: 'MSPGothic'),
                         ),
                         Text(
                           widget.transNo,
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                              fontSize: 12.sp,
                               fontFamily: 'MSPGothic'),
                         ),
                       ],
@@ -127,7 +128,7 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                       '$completedCount/${lines.length}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         fontFamily: 'MSPGothic',
                         color: completedCount == lines.length
                             ? AppColors.greenDark
@@ -187,17 +188,17 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                                     const SizedBox(height: 8),
                                     Row(
                                       children: [
-                                        const Text(
+                                        Text(
                                           'ステータス：',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 14,
+                                              fontSize: 14.sp,
                                               fontFamily: 'MSPGothic'),
                                         ),
                                         Text(
                                           statusLabel,
                                           style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 14.sp,
                                               fontFamily: 'MSPGothic',
                                               color: statusColor,
                                               fontWeight: FontWeight.bold),
@@ -224,9 +225,9 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontFamily: 'MSPGothic'),
         ),
         const SizedBox(width: 8),
@@ -234,7 +235,7 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
           child: Text(
             value,
             style:
-                const TextStyle(fontSize: 14, fontFamily: 'MSPGothic'),
+                TextStyle(fontSize: 14.sp, fontFamily: 'MSPGothic'),
             maxLines: maxLines,
             overflow: TextOverflow.ellipsis,
           ),

@@ -8,6 +8,7 @@ import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/putaway_remote_datasource.dart';
 import '../../routes/route_names.dart';
 import '../blocs/putaway/putaway_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 棚上げ一覧 — BLoC version (Phase 5)
 class PutawayListScreen extends StatelessWidget {
@@ -116,15 +117,18 @@ class _PutawayListViewState extends State<_PutawayListView> {
               decoration: InputDecoration(
                 hintText: 'フィルターする内容を入力してください。',
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          _handleSearch('');
-                        },
-                      )
-                    : null,
+                suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: _searchController,
+                  builder: (_, value, __) => value.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            _handleSearch('');
+                          },
+                        )
+                      : const SizedBox.shrink(),
+                ),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: AppColors.lighter, width: 2),
                 ),
@@ -135,10 +139,7 @@ class _PutawayListViewState extends State<_PutawayListView> {
                   borderSide: BorderSide(color: AppColors.primaryLight, width: 2),
                 ),
               ),
-              onChanged: (v) {
-                setState(() {});
-                _handleSearch(v);
-              },
+              onChanged: _handleSearch,
             ),
           ),
 
@@ -159,11 +160,11 @@ class _PutawayListViewState extends State<_PutawayListView> {
                         right: BorderSide(color: AppColors.borderTable),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       '商品番号',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontFamily: 'MSPGothic',
                       ),
                       textAlign: TextAlign.center,
@@ -174,11 +175,11 @@ class _PutawayListViewState extends State<_PutawayListView> {
                   flex: 1,
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    child: const Text(
+                    child: Text(
                       '数量',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontFamily: 'MSPGothic',
                       ),
                       textAlign: TextAlign.center,
@@ -229,122 +230,11 @@ class _PutawayListViewState extends State<_PutawayListView> {
 
                 return ListView.builder(
                   itemCount: rows.length,
-                  itemBuilder: (context, index) {
-                    final row = rows[index];
-                    final isSelected = _selectedIndex == index;
-
-                    Color textColor = AppColors.black;
-                    Widget? leadingIcon;
-
-                    if (row.scanStatus == 1) {
-                      textColor = AppColors.text_warning;
-                      leadingIcon = const Icon(Icons.refresh,
-                          color: AppColors.blackText, size: 35);
-                    } else if (row.scanStatus == 0) {
-                      textColor = AppColors.btnGreen;
-                      leadingIcon = const Icon(Icons.refresh,
-                          color: AppColors.blackText, size: 35);
-                    } else if (row.scanStatus == 3) {
-                      textColor = AppColors.text_placeholder;
-                      leadingIcon = const Icon(Icons.construction,
-                          color: AppColors.blackText, size: 35);
-                    }
-
-                    return InkWell(
-                      onTap: () => _handleRowTap(context, index, row),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.headerColor
-                              : Colors.white,
-                          border: Border(
-                            bottom:
-                                BorderSide(color: AppColors.borderTable),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                  top: 10,
-                                  bottom: 10,
-                                  left: row.scanStatus != -1 ? 0 : 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    right: BorderSide(
-                                        color: AppColors.borderTable),
-                                  ),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    if (row.scanStatus != -1)
-                                      SizedBox(
-                                        width: 50,
-                                        child:
-                                            leadingIcon ?? const SizedBox(),
-                                      ),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            row.productCode,
-                                            style: TextStyle(
-                                              color: textColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              fontFamily: 'MSPGothic',
-                                            ),
-                                          ),
-                                          if (row.productName.isNotEmpty)
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 2),
-                                              child: Text(
-                                                row.productName.length > 25
-                                                    ? '${row.productName.substring(0, 25)}...'
-                                                    : row.productName,
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  color: textColor,
-                                                  fontFamily: 'MSPGothic',
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 8),
-                                child: Text(
-                                  '${row.scannedQty.toStringAsFixed(0)}/${row.totalQty.toStringAsFixed(0)}',
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontSize: 14,
-                                    fontFamily: 'MSPGothic',
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                  itemBuilder: (context, index) => _PutawayRowTile(
+                    row: rows[index],
+                    isSelected: _selectedIndex == index,
+                    onTap: () => _handleRowTap(context, index, rows[index]),
+                  ),
                 );
               },
             ),
@@ -366,7 +256,7 @@ class _PutawayListViewState extends State<_PutawayListView> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                child: const Text('戻る', style: TextStyle(fontSize: 16)),
+                child: Text('戻る', style: TextStyle(fontSize: 16.sp)),
               ),
             ),
           ),
@@ -379,5 +269,126 @@ class _PutawayListViewState extends State<_PutawayListView> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+}
+
+// ── Row tile ──────────────────────────────────────────────────────────────────
+
+class _PutawayRowTile extends StatelessWidget {
+  final PutawayRow row;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _PutawayRowTile({
+    required this.row,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Color textColor = AppColors.black;
+    Widget? leadingIcon;
+
+    if (row.scanStatus == 1) {
+      textColor = AppColors.text_warning;
+      leadingIcon = const Icon(Icons.refresh,
+          color: AppColors.blackText, size: 35);
+    } else if (row.scanStatus == 0) {
+      textColor = AppColors.btnGreen;
+      leadingIcon = const Icon(Icons.refresh,
+          color: AppColors.blackText, size: 35);
+    } else if (row.scanStatus == 3) {
+      textColor = AppColors.text_placeholder;
+      leadingIcon = const Icon(Icons.construction,
+          color: AppColors.blackText, size: 35);
+    }
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.headerColor : Colors.white,
+          border: Border(
+            bottom: BorderSide(color: AppColors.borderTable),
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: EdgeInsets.only(
+                  top: 10,
+                  bottom: 10,
+                  left: row.scanStatus != -1 ? 0 : 8,
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(color: AppColors.borderTable),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (row.scanStatus != -1)
+                      SizedBox(
+                        width: 50,
+                        child: leadingIcon ?? const SizedBox(),
+                      ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            row.productCode,
+                            style: TextStyle(
+                              color: textColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.sp,
+                              fontFamily: 'MSPGothic',
+                            ),
+                          ),
+                          if (row.productName.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                row.productName.length > 25
+                                    ? '${row.productName.substring(0, 25)}...'
+                                    : row.productName,
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: textColor,
+                                  fontFamily: 'MSPGothic',
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 8),
+                child: Text(
+                  '${row.scannedQty.toStringAsFixed(0)}/${row.totalQty.toStringAsFixed(0)}',
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 14.sp,
+                    fontFamily: 'MSPGothic',
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

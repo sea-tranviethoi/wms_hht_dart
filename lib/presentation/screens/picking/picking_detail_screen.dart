@@ -14,6 +14,7 @@ import '../../../core/utils/qr_code_parser.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../data/models/picking/picking_line.dart';
 import '../../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ screens/Picking/PickingDetail.js
 ///
@@ -372,10 +373,10 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
         ),
         title: Text(
           'ピッキング: ${widget.pickNo}  ${_currentIndex + 1}/$total',
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'MSPGothic',
             color: AppColors.white,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -436,14 +437,14 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('進捗: $done / $total 件完了',
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'MSPGothic',
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     color: AppColors.grayTextColor)),
             Text('${(done / total * 100).toStringAsFixed(0)}%',
-                style: const TextStyle(
+                style: TextStyle(
                     fontFamily: 'MSPGothic',
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.bold,
                     color: AppColors.themeBackground)),
           ],
@@ -495,9 +496,9 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
             width: 100,
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'MSPGothic',
-                  fontSize: 13,
+                  fontSize: 13.sp,
                   color: AppColors.grayTextColor),
             ),
           ),
@@ -506,7 +507,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
               value,
               style: TextStyle(
                 fontFamily: 'MSPGothic',
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: bold ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -551,10 +552,10 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                 const Icon(Icons.format_list_numbered,
                     color: AppColors.themeBackground),
                 const SizedBox(width: 8),
-                const Text('実数量',
+                Text('実数量',
                     style: TextStyle(
                         fontFamily: 'MSPGothic',
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         color: AppColors.blackTextColor)),
                 const SizedBox(width: 12),
                 Expanded(
@@ -563,9 +564,9 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                     focusNode: _qtyFocus,
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'MSPGothic',
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                       color: AppColors.themeBackground,
                     ),
@@ -627,10 +628,10 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                   isLast
                       ? (allDone ? '完了・送信' : '完了確認')
                       : '次へ',
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontFamily: 'MSPGothic',
                       fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                      fontSize: 16.sp),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isLast && allDone
@@ -685,18 +686,18 @@ class _ScanField extends StatelessWidget {
                 focusNode: focusNode,
                 textInputAction: TextInputAction.done,
                 onSubmitted: onSubmitted,
-                style: const TextStyle(fontFamily: 'MSPGothic', fontSize: 14),
+                style: TextStyle(fontFamily: 'MSPGothic', fontSize: 14.sp),
                 decoration: InputDecoration(
                   labelText: label,
-                  labelStyle: const TextStyle(
+                  labelStyle: TextStyle(
                       fontFamily: 'MSPGothic',
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       color: AppColors.grayTextColor),
                   hintText: hintText,
-                  hintStyle: const TextStyle(
+                  hintStyle: TextStyle(
                       fontFamily: 'MSPGothic',
                       color: AppColors.gray,
-                      fontSize: 12),
+                      fontSize: 12.sp),
                   border: InputBorder.none,
                   suffixIcon: controller.text.isNotEmpty
                       ? IconButton(

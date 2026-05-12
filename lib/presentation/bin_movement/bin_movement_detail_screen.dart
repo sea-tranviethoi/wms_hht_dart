@@ -9,6 +9,7 @@ import '../../core/storage/cache_storage.dart';
 import '../../data/repositories/bin_movement_repository.dart';
 import '../../data/models/bin_movement/invent_transfer_line.dart';
 import '../../routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 棚移動詳細 — Phase 7
 /// 移動番号に紐づく明細を一件ずつ確認・入力し、最後に棚移動完了を登録する。
@@ -350,8 +351,8 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                           children: [
                             Text(
                               widget.transferNo,
-                              style: const TextStyle(
-                                fontSize: 16,
+                              style: TextStyle(
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'MSPGothic',
                                 color: AppColors.black,
@@ -361,8 +362,8 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                                 widget.description!.isNotEmpty)
                               Text(
                                 widget.description!,
-                                style: const TextStyle(
-                                  fontSize: 12,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
                                   fontFamily: 'MSPGothic',
                                   color: AppColors.black,
                                 ),
@@ -383,8 +384,8 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                         ),
                         child: Text(
                           '${_currentIndex + 1} / ${_editedLines.length}',
-                          style: const TextStyle(
-                            fontSize: 13,
+                          style: TextStyle(
+                            fontSize: 13.sp,
                             fontFamily: 'MSPGothic',
                             fontWeight: FontWeight.bold,
                           ),
@@ -425,7 +426,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                         const SizedBox(height: 12),
 
                         // Arrow indicator
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.arrow_downward,
@@ -435,7 +436,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                                 style: TextStyle(
                                     color: Colors.teal,
                                     fontFamily: 'MSPGothic',
-                                    fontSize: 14)),
+                                    fontSize: 14.sp)),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -516,9 +517,9 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                                     borderRadius:
                                         BorderRadius.circular(8)),
                               ),
-                              child: const Text('戻る',
+                              child: Text('戻る',
                                   style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 15.sp,
                                       fontFamily: 'MSPGothic')),
                             ),
                           ),
@@ -571,9 +572,9 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                                     borderRadius:
                                         BorderRadius.circular(8)),
                               ),
-                              child: const Text('保存',
+                              child: Text('保存',
                                   style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 15.sp,
                                       fontFamily: 'MSPGothic')),
                             ),
                           ),
@@ -586,10 +587,10 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                         child: ElevatedButton.icon(
                           onPressed: _handleComplete,
                           icon: const Icon(Icons.swap_horiz),
-                          label: const Text(
+                          label: Text(
                             '棚移動完了',
                             style: TextStyle(
-                                fontSize: 16, fontFamily: 'MSPGothic'),
+                                fontSize: 16.sp, fontFamily: 'MSPGothic'),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.teal,
@@ -622,8 +623,8 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: const TextStyle(
-                fontSize: 13,
+            style: TextStyle(
+                fontSize: 13.sp,
                 fontFamily: 'MSPGothic',
                 color: AppColors.black)),
         const SizedBox(height: 4),
@@ -643,8 +644,8 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
               Expanded(
                 child: Text(
                   value,
-                  style: const TextStyle(
-                      fontSize: 15,
+                  style: TextStyle(
+                      fontSize: 15.sp,
                       fontFamily: 'MSPGothic',
                       fontWeight: FontWeight.w500),
                 ),
@@ -669,8 +670,8 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: const TextStyle(
-                fontSize: 13,
+            style: TextStyle(
+                fontSize: 13.sp,
                 fontFamily: 'MSPGothic',
                 color: AppColors.black)),
         const SizedBox(height: 4),
@@ -727,9 +728,9 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('賞味期限',
+        Text('賞味期限',
             style: TextStyle(
-                fontSize: 13,
+                fontSize: 13.sp,
                 fontFamily: 'MSPGothic',
                 color: AppColors.black)),
         const SizedBox(height: 4),

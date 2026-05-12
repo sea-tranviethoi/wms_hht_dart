@@ -8,6 +8,7 @@ import '../../core/di/injection.dart';
 import '../../data/repositories/bin_audit_repository.dart';
 import '../../routes/route_names.dart';
 import '../blocs/bin_audit/bin_audit_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 棚卸一覧 — BLoC version (Phase 8)
 class BinAuditListScreen extends StatelessWidget {
@@ -33,8 +34,6 @@ class _BinAuditListView extends StatefulWidget {
 class _BinAuditListViewState extends State<_BinAuditListView> {
   final TextEditingController _searchController = TextEditingController();
   int? _selectedIndex;
-
-  static final _dateFormat = DateFormat('yyyy/MM/dd');
 
   void _handleSearch(String keyword) {
     context.read<BinAuditBloc>().add(SearchBinAuditList(keyword));
@@ -95,15 +94,18 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
                 decoration: InputDecoration(
                   hintText: 'フィルターする内容を入力してください。',
                   prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _searchController.clear();
-                            _handleSearch('');
-                          },
-                        )
-                      : null,
+                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _searchController,
+                    builder: (_, value, __) => value.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              _handleSearch('');
+                            },
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                   border: const OutlineInputBorder(
                     borderSide:
                         BorderSide(color: AppColors.lighter, width: 2),
@@ -117,10 +119,7 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
                         color: AppColors.primaryLight, width: 2),
                   ),
                 ),
-                onChanged: (v) {
-                  setState(() {});
-                  _handleSearch(v);
-                },
+                onChanged: _handleSearch,
               ),
             ),
 
@@ -141,11 +140,11 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
                           right: BorderSide(color: AppColors.borderTable),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         '棚卸No',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontFamily: 'MSPGothic',
                         ),
                         textAlign: TextAlign.center,
@@ -156,11 +155,11 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
                     flex: 2,
                     child: Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Text(
+                      child: Text(
                         '担当者',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontFamily: 'MSPGothic',
                         ),
                         textAlign: TextAlign.center,
@@ -213,141 +212,11 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
 
                   return ListView.builder(
                     itemCount: rows.length,
-                    itemBuilder: (context, index) {
-                      final row = rows[index];
-                      final isSelected = _selectedIndex == index;
-
-                      // Color based on status
-                      Color textColor;
-                      if (row.isPending) {
-                        textColor = AppColors.text_warning; // orange
-                      } else if (row.isDone) {
-                        textColor = AppColors.text_placeholder; // grey
-                      } else {
-                        textColor = AppColors.black;
-                      }
-
-                      final dateStr = row.transactionDate != null
-                          ? _dateFormat.format(row.transactionDate!)
-                          : null;
-                      final recStr = row.recordNo != null
-                          ? '#${row.recordNo}'
-                          : null;
-
-                      return InkWell(
-                        onTap: () => _handleRowTap(index, row),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.headerColor
-                                : Colors.white,
-                            border: Border(
-                              bottom: BorderSide(
-                                  color: AppColors.borderTable),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              // ── 棚卸No + recordNo + date ──
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 10),
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      right: BorderSide(
-                                          color: AppColors.borderTable),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        row.stockTakeNo,
-                                        style: TextStyle(
-                                          color: textColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          fontFamily: 'MSPGothic',
-                                        ),
-                                      ),
-                                      if (recStr != null)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 2),
-                                          child: Text(
-                                            recStr,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: textColor,
-                                              fontFamily: 'MSPGothic',
-                                            ),
-                                          ),
-                                        ),
-                                      if (dateStr != null)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 2),
-                                          child: Text(
-                                            dateStr,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: textColor
-                                                  .withValues(alpha: 0.7),
-                                              fontFamily: 'MSPGothic',
-                                              fontStyle: FontStyle.italic,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              // ── 担当者 + 場所 ─────────────
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        row.personInCharge ?? '—',
-                                        style: TextStyle(
-                                          color: textColor,
-                                          fontSize: 13,
-                                          fontFamily: 'MSPGothic',
-                                        ),
-                                      ),
-                                      if (row.location != null &&
-                                          row.location!.isNotEmpty)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 2),
-                                          child: Text(
-                                            row.location!,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: textColor
-                                                  .withValues(alpha: 0.7),
-                                              fontFamily: 'MSPGothic',
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                    itemBuilder: (context, index) => _BinAuditRowTile(
+                      row: rows[index],
+                      isSelected: _selectedIndex == index,
+                      onTap: () => _handleRowTap(index, rows[index]),
+                    ),
                   );
                 },
               ),
@@ -370,8 +239,8 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text('戻る',
-                      style: TextStyle(fontSize: 16)),
+                  child: Text('戻る',
+                      style: TextStyle(fontSize: 16.sp)),
                 ),
               ),
             ),
@@ -385,5 +254,140 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+}
+
+// ── Row tile ──────────────────────────────────────────────────────────────────
+
+class _BinAuditRowTile extends StatelessWidget {
+  final BinAuditRow row;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  static final _dateFormat = DateFormat('yyyy/MM/dd');
+
+  const _BinAuditRowTile({
+    required this.row,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Color textColor;
+    if (row.isPending) {
+      textColor = AppColors.text_warning;
+    } else if (row.isDone) {
+      textColor = AppColors.text_placeholder;
+    } else {
+      textColor = AppColors.black;
+    }
+
+    final dateStr = row.transactionDate != null
+        ? _dateFormat.format(row.transactionDate!)
+        : null;
+    final recStr = row.recordNo != null ? '#${row.recordNo}' : null;
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.headerColor : Colors.white,
+          border: Border(
+            bottom: BorderSide(color: AppColors.borderTable),
+          ),
+        ),
+        child: Row(
+          children: [
+            // ── 棚卸No + recordNo + date ──
+            Expanded(
+              flex: 3,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(color: AppColors.borderTable),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      row.stockTakeNo,
+                      style: TextStyle(
+                        color: textColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                        fontFamily: 'MSPGothic',
+                      ),
+                    ),
+                    if (recStr != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          recStr,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: textColor,
+                            fontFamily: 'MSPGothic',
+                          ),
+                        ),
+                      ),
+                    if (dateStr != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          dateStr,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: textColor.withValues(alpha: 0.7),
+                            fontFamily: 'MSPGothic',
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+
+            // ── 担当者 + 場所 ─────────────
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 8, vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      row.personInCharge ?? '—',
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 13.sp,
+                        fontFamily: 'MSPGothic',
+                      ),
+                    ),
+                    if (row.location != null && row.location!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          row.location!,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: textColor.withValues(alpha: 0.7),
+                            fontFamily: 'MSPGothic',
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
