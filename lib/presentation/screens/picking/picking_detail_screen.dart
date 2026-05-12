@@ -366,7 +366,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
     return Scaffold(
       backgroundColor: AppColors.lighter,
       appBar: AppBar(
-        backgroundColor: AppColors.themeBackground,
+        backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.white),
           onPressed: () => context.pop(),
@@ -388,7 +388,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: AppColors.themeBackground),
+                  CircularProgressIndicator(color: AppColors.settingsColor3),
                   SizedBox(height: 16),
                   Text('データ同期中...',
                       style: TextStyle(fontFamily: 'MSPGothic')),
@@ -446,14 +446,14 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                     fontFamily: 'MSPGothic',
                     fontSize: 13.sp,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.themeBackground)),
+                    color: AppColors.settingsColor3)),
           ],
         ),
         const SizedBox(height: 4),
         LinearProgressIndicator(
           value: total > 0 ? done / total : 0,
           backgroundColor: AppColors.lighter,
-          color: AppColors.themeBackground,
+          color: AppColors.settingsColor3,
           minHeight: 6,
           borderRadius: BorderRadius.circular(3),
         ),
@@ -550,7 +550,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
             child: Row(
               children: [
                 const Icon(Icons.format_list_numbered,
-                    color: AppColors.themeBackground),
+                    color: AppColors.settingsColor3),
                 const SizedBox(width: 8),
                 Text('実数量',
                     style: TextStyle(
@@ -568,7 +568,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                       fontFamily: 'MSPGothic',
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.themeBackground,
+                      color: AppColors.settingsColor3,
                     ),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
@@ -604,8 +604,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                   label: const Text('前へ',
                       style: TextStyle(fontFamily: 'MSPGothic')),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.themeBackground,
-                    side: const BorderSide(color: AppColors.themeBackground),
+                    foregroundColor: AppColors.settingsColor3,
+                    side: const BorderSide(color: AppColors.settingsColor3),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
@@ -636,7 +636,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isLast && allDone
                       ? AppColors.wageningenGreen
-                      : AppColors.themeBackground,
+                      : AppColors.settingsColor3,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -678,7 +678,7 @@ class _ScanField extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.themeBackground),
+            Icon(icon, color: AppColors.settingsColor3),
             const SizedBox(width: 8),
             Expanded(
               child: TextField(

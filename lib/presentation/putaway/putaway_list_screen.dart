@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../config/theme_config.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/putaway_remote_datasource.dart';
 import '../../routes/route_names.dart';
 import '../blocs/putaway/putaway_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../widgets/app_empty.dart';
+import '../widgets/app_error.dart';
+import '../widgets/app_loading.dart';
+import '../widgets/app_search_bar.dart';
+import '../widgets/back_to_menu_button.dart';
+import '../widgets/module_list_tile.dart';
 
-/// 棚上げ一覧 — BLoC version (Phase 5)
 class PutawayListScreen extends StatelessWidget {
   const PutawayListScreen({super.key});
 
@@ -25,21 +29,24 @@ class PutawayListScreen extends StatelessWidget {
 
 class _PutawayListView extends StatefulWidget {
   const _PutawayListView();
-
   @override
   State<_PutawayListView> createState() => _PutawayListViewState();
 }
 
 class _PutawayListViewState extends State<_PutawayListView> {
-  final TextEditingController _searchController = TextEditingController();
+  final _searchCtrl = TextEditingController();
   int? _selectedIndex;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _loadData();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadData());
+  }
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
   }
 
   void _loadData() {
@@ -47,348 +54,103 @@ class _PutawayListViewState extends State<_PutawayListView> {
     context.read<PutawayBloc>().add(FetchPutawayLists(hhtInfo: hhtInfo));
   }
 
-  void _handleSearch(String keyword) {
-    context.read<PutawayBloc>().add(SearchPutawayLists(keyword));
-  }
+  void _backToMenu() => context.go(RouteNames.mainMenu);
 
   void _handleRowTap(BuildContext context, int index, PutawayRow row) {
     if (row.scanStatus == 3) {
-      // Handled by other device
-      final otherUser = row.hhtInfoOther.split('-').first;
+      final other = row.hhtInfoOther.split('-').first;
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Notification'),
+          title: const Text('通知', style: TextStyle(fontFamily: 'MSPGothic')),
           content: Text(
-            'ユーザー「$otherUser」は別デバイスで ${row.productCode} を対応してます。ご確認ください。',
+            'ユーザー「$other」は別デバイスで ${row.productCode} を対応してます。ご確認ください。',
+            style: const TextStyle(fontFamily: 'MSPGothic'),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(foregroundColor: Colors.blue),
-              child: const Text('Close'),
+              style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor2),
+              child: const Text('閉じる', style: TextStyle(fontFamily: 'MSPGothic')),
             ),
           ],
         ),
       );
       return;
     }
-
     setState(() => _selectedIndex = index);
-
-    context.push(
-      RouteNames.putawayDetail,
-      extra: {
-        'productCode': row.productCode,
-        'productName': row.productName,
-        'lines': row.lines,
-      },
-    );
+    context.push(RouteNames.putawayDetail, extra: {
+      'productCode': row.productCode,
+      'productName': row.productName,
+      'lines': row.lines,
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: const Text('棚上げ一覧'),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: AppColors.settingsColor2,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go(RouteNames.mainMenu),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          onPressed: _backToMenu,
+        ),
+        title: const Text(
+          '棚上げ一覧',
+          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 16),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadData,
-          ),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white), onPressed: _loadData),
         ],
       ),
       body: Column(
         children: [
-          // Search bar
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
-            ),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'フィルターする内容を入力してください。',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: ValueListenableBuilder<TextEditingValue>(
-                  valueListenable: _searchController,
-                  builder: (_, value, __) => value.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _searchController.clear();
-                            _handleSearch('');
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                ),
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.lighter, width: 2),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.lighter, width: 2),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.primaryLight, width: 2),
-                ),
-              ),
-              onChanged: _handleSearch,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
+            child: AppSearchBar(
+              controller: _searchCtrl,
+              hintText: 'フィルターする内容を入力してください。',
+              onChanged: (v) => context.read<PutawayBloc>().add(SearchPutawayLists(v)),
             ),
           ),
-
-          // Table header
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: AppColors.borderTable),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        right: BorderSide(color: AppColors.borderTable),
-                      ),
-                    ),
-                    child: Text(
-                      '商品番号',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.sp,
-                        fontFamily: 'MSPGothic',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      '数量',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.sp,
-                        fontFamily: 'MSPGothic',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // List
-          Expanded(
-            child: BlocBuilder<PutawayBloc, PutawayState>(
-              builder: (context, state) {
-                if (state is PutawayLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (state is PutawayError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(state.message,
-                            style: const TextStyle(color: Colors.red)),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _loadData,
-                          child: const Text('再読み込み'),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                final rows = state is PutawayListsLoaded
-                    ? state.rows
-                    : <PutawayRow>[];
-
-                if (rows.isEmpty && state is PutawayListsLoaded) {
-                  return const Center(
-                    child: Text(
-                      '棚上げデータがありません',
-                      style: TextStyle(fontFamily: 'MSPGothic'),
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  itemCount: rows.length,
-                  itemBuilder: (context, index) => _PutawayRowTile(
-                    row: rows[index],
-                    isSelected: _selectedIndex == index,
-                    onTap: () => _handleRowTap(context, index, rows[index]),
-                  ),
-                );
-              },
-            ),
-          ),
-
-          // Back button
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              border: Border(top: BorderSide(color: Colors.grey.shade400)),
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => context.go(RouteNames.mainMenu),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.btn_red,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: Text('戻る', style: TextStyle(fontSize: 16.sp)),
-              ),
-            ),
-          ),
+          Expanded(child: _buildBody()),
+          BackToMenuButton(color: AppColors.settingsColor2, onPressed: _backToMenu),
         ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-}
-
-// ── Row tile ──────────────────────────────────────────────────────────────────
-
-class _PutawayRowTile extends StatelessWidget {
-  final PutawayRow row;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _PutawayRowTile({
-    required this.row,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    Color textColor = AppColors.black;
-    Widget? leadingIcon;
-
-    if (row.scanStatus == 1) {
-      textColor = AppColors.text_warning;
-      leadingIcon = const Icon(Icons.refresh,
-          color: AppColors.blackText, size: 35);
-    } else if (row.scanStatus == 0) {
-      textColor = AppColors.btnGreen;
-      leadingIcon = const Icon(Icons.refresh,
-          color: AppColors.blackText, size: 35);
-    } else if (row.scanStatus == 3) {
-      textColor = AppColors.text_placeholder;
-      leadingIcon = const Icon(Icons.construction,
-          color: AppColors.blackText, size: 35);
-    }
-
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.headerColor : Colors.white,
-          border: Border(
-            bottom: BorderSide(color: AppColors.borderTable),
-          ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Container(
-                padding: EdgeInsets.only(
-                  top: 10,
-                  bottom: 10,
-                  left: row.scanStatus != -1 ? 0 : 8,
-                ),
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(color: AppColors.borderTable),
-                  ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (row.scanStatus != -1)
-                      SizedBox(
-                        width: 50,
-                        child: leadingIcon ?? const SizedBox(),
-                      ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            row.productCode,
-                            style: TextStyle(
-                              color: textColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
-                              fontFamily: 'MSPGothic',
-                            ),
-                          ),
-                          if (row.productName.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 2),
-                              child: Text(
-                                row.productName.length > 25
-                                    ? '${row.productName.substring(0, 25)}...'
-                                    : row.productName,
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  color: textColor,
-                                  fontFamily: 'MSPGothic',
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10, horizontal: 8),
-                child: Text(
-                  '${row.scannedQty.toStringAsFixed(0)}/${row.totalQty.toStringAsFixed(0)}',
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: 14.sp,
-                    fontFamily: 'MSPGothic',
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget _buildBody() {
+    return BlocBuilder<PutawayBloc, PutawayState>(
+      builder: (context, state) {
+        if (state is PutawayLoading) return AppLoading.centered(message: '読み込み中...');
+        if (state is PutawayError) return AppError.generic(message: state.message, onRetry: _loadData);
+        final rows = state is PutawayListsLoaded ? state.rows : <PutawayRow>[];
+        if (rows.isEmpty && state is PutawayListsLoaded) return AppEmpty.list(message: '棚上げデータがありません');
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          itemCount: rows.length,
+          separatorBuilder: (_, __) => const ModuleListDivider(),
+          itemBuilder: (context, index) {
+            final row = rows[index];
+            final (Color statusColor, String statusLabel) = switch (row.scanStatus) {
+              1 => (AppColors.textWarning,    '進行中'),
+              3 => (AppColors.gray,           'ロック'),
+              _ => (AppColors.settingsColor2, '未開始'),
+            };
+            return ModuleListTile(
+              title: row.productCode,
+              subtitle: row.productName.isNotEmpty ? row.productName : null,
+              trailingText: '',
+              statusColor: statusColor,
+              statusLabel: statusLabel,
+              isSelected: _selectedIndex == index,
+              onTap: () => _handleRowTap(context, index, row),
+            );
+          },
+        );
+      },
     );
   }
 }

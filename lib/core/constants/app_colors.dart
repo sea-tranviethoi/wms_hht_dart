@@ -79,13 +79,13 @@ class AppColors {
   static const Color rowCompleted         = Color(0xFFEBFFD8);
 
   // ─── Settings Tiles (MainMenu) ────────────────────────────────
-  static const Color settingsColor1       = Color(0xFF3b60f3); // 入荷
-  static const Color settingsColor2       = Color(0xFFef3bf3); // 棚上げ
-  static const Color settingsColor3       = Color(0xFFfd9627); // ピッキング
-  static const Color settingsColor4       = Color(0xFFf33b3b); // 事前セット
-  static const Color settingsColor5       = Color(0xFFff85eb); // 棚移動
-  static const Color settingsColor6       = Color(0xFF76f33b); // 棚卸
-  static const Color settingsColor7       = Color(0xFFf3ec3b); // ログアウト
+  static const Color settingsColor1       = Color(0xFF2563EB); // Blue 600   — 入荷
+  static const Color settingsColor2       = Color(0xFF9333EA); // Purple 600 — 棚上げ
+  static const Color settingsColor3       = Color(0xFFEA580C); // Orange 600 — ピッキング
+  static const Color settingsColor4       = Color(0xFFDB2777); // Pink 600   — 事前セット
+  static const Color settingsColor5       = Color(0xFF0891B2); // Cyan 600   — 棚移動
+  static const Color settingsColor6       = Color(0xFF059669); // Emerald 600— 棚卸
+  static const Color settingsColor7       = Color(0xFF475569); // Slate 600  — ログアウト
 
   /// Danh sách màu cho 7 tile MainMenu (index 0-6)
   static const List<Color> menuTileColors = [

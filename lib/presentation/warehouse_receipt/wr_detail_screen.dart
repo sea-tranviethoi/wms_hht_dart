@@ -4,7 +4,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-import '../../config/theme_config.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/di/injection.dart';
 import '../../data/datasources/remote/wr_remote_datasource.dart';
 import '../../data/models/warehouse_receipt/receipt_line.dart';
@@ -257,7 +257,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       body: _isLoading
           ? Center(
               child: Column(
@@ -293,7 +293,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                       ElevatedButton(
                         onPressed: _handleBackToList,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.btn_red,
+                          backgroundColor: AppColors.btnRed,
                           foregroundColor: Colors.white,
                         ),
                         child: const Text('入荷一覧'),
@@ -415,21 +415,21 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Colors.blue.shade50,
+                                  color: AppColors.settingsColor1.withValues(alpha: 0.05),
                                   border: Border.all(
-                                      color: Colors.blue.shade200),
+                                      color: AppColors.settingsColor1.withValues(alpha: 0.3)),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(
                                   children: [
                                     const Icon(Icons.camera_alt,
-                                        color: Colors.blue),
+                                        color: AppColors.settingsColor1),
                                     const SizedBox(width: 8),
                                     Text(
                                       '商品写真撮り:',
                                       style: TextStyle(
                                         fontSize: 16.sp,
-                                        color: Colors.blue.shade700,
+                                        color: AppColors.settingsColor1,
                                         fontFamily: 'MSPGothic',
                                       ),
                                     ),
@@ -441,7 +441,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                           '${_capturedImages.length} 枚',
                                           style: TextStyle(
                                             fontSize: 14.sp,
-                                            color: Colors.blue.shade700,
+                                            color: AppColors.settingsColor1,
                                           ),
                                         ),
                                       ),
@@ -515,7 +515,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             child: ElevatedButton(
                               onPressed: _handleBackToList,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.btn_red,
+                                backgroundColor: AppColors.btnRed,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 12),
@@ -657,7 +657,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
               child: IconButton(
                 icon: const Icon(Icons.qr_code_scanner),
                 onPressed: onBarcodeTap,
-                color: AppColors.blackText,
+                color: AppColors.blackTextColor,
               ),
             ),
           ],

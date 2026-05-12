@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../../config/theme_config.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/di/injection.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
 import '../../data/models/bundle/bundle_line.dart';
@@ -328,7 +328,7 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('事前セット詳細'),
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: AppColors.settingsColor4,
         ),
         body: const Center(
           child: Text('明細データがありません',
@@ -344,7 +344,7 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         title: Text(
             '事前セット詳細 (${_currentIndex + 1}/${_lines.length})'),
@@ -441,7 +441,7 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
                               _currentIndex > 0 ? _handlePrev : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _currentIndex > 0
-                                ? AppColors.btn_brown
+                                ? AppColors.btnBrown
                                 : Colors.grey,
                             padding:
                                 const EdgeInsets.symmetric(vertical: 12),
@@ -459,8 +459,8 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 _currentIndex < _lines.length - 1
-                                    ? AppColors.btn_brown
-                                    : AppColors.greenDark,
+                                    ? AppColors.btnBrown
+                                    : AppColors.btnGreen,
                             padding:
                                 const EdgeInsets.symmetric(vertical: 12),
                           ),

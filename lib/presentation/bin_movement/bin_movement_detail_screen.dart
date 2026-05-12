@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../../config/theme_config.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/repositories/bin_movement_repository.dart';
@@ -313,10 +313,10 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
     final isLast = _currentIndex == _editedLines.length - 1;
 
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         title: const Text('棚移動詳細'),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: AppColors.settingsColor5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go(RouteNames.binMovementList),
@@ -430,11 +430,11 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.arrow_downward,
-                                color: Colors.teal, size: 28),
+                                color: AppColors.settingsColor5, size: 28),
                             SizedBox(width: 6),
                             Text('移動',
                                 style: TextStyle(
-                                    color: Colors.teal,
+                                    color: AppColors.settingsColor5,
                                     fontFamily: 'MSPGothic',
                                     fontSize: 14.sp)),
                           ],
@@ -509,7 +509,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                               onPressed: () => context
                                   .go(RouteNames.binMovementList),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.btn_red,
+                                backgroundColor: AppColors.btnRed,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 12),
@@ -593,7 +593,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                                 fontSize: 16.sp, fontFamily: 'MSPGothic'),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
+                            backgroundColor: AppColors.settingsColor5,
                             foregroundColor: Colors.white,
                             padding:
                                 const EdgeInsets.symmetric(vertical: 13),
@@ -638,7 +638,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
           child: Row(
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 18, color: AppColors.blackText),
+                Icon(icon, size: 18, color: AppColors.blackTextColor),
                 const SizedBox(width: 8),
               ],
               Expanded(
@@ -715,7 +715,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
               child: IconButton(
                 icon: const Icon(Icons.qr_code_scanner),
                 onPressed: onScanTap,
-                color: AppColors.blackText,
+                color: AppColors.blackTextColor,
               ),
             ),
           ],

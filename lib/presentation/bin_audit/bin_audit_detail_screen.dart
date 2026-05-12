@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../../config/theme_config.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/di/injection.dart';
 import '../../data/repositories/bin_audit_repository.dart';
 import '../../data/models/stocktake/invent_stocktake_recording.dart';
@@ -265,10 +265,10 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
         widget.stockTakeNo?.isNotEmpty == true ? widget.stockTakeNo! : '棚卸詳細';
 
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: AppColors.settingsColor6,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go(RouteNames.binAuditList),
@@ -707,7 +707,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                 child: ElevatedButton(
                   onPressed: () => context.go(RouteNames.binAuditList),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.btn_red,
+                    backgroundColor: AppColors.btnRed,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -759,7 +759,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                             fontSize: 15.sp, fontFamily: 'MSPGothic')),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _pendingKeys.isNotEmpty
-                          ? Colors.teal
+                          ? AppColors.settingsColor6
                           : Colors.grey.shade400,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),

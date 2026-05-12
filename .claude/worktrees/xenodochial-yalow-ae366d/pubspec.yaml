@@ -1,0 +1,110 @@
+name: fbt_hht
+description: "Warehouse Management System HHT - Flutter version"
+publish_to: 'none'
+
+# Version: major.minor.patch+buildNumber
+# Sync với version server để OTA update kiểm tra
+version: 1.0.0+7
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+
+  # ─── UI & Icons ───────────────────────────────────────────────
+  cupertino_icons: ^1.0.8
+  flutter_svg: ^2.0.9
+  flutter_screenutil: ^5.9.3          # Responsive sizing (= react-native-responsive-screen)
+  cached_network_image: ^3.4.1
+  dropdown_button2: ^2.3.9            # Custom dropdown (= react-native-element-dropdown)
+  flutter_animate: ^4.5.0             # Animations (= react-native-animatable)
+
+  # ─── State Management ─────────────────────────────────────────
+  flutter_bloc: ^8.1.6                # BLoC pattern (= useReducer + Context API)
+  equatable: ^2.0.5                   # Value equality cho BLoC states/events
+
+  # ─── Dependency Injection ─────────────────────────────────────
+  get_it: ^8.0.2                      # Service locator (thay Context API)
+
+  # ─── Navigation ───────────────────────────────────────────────
+  go_router: ^14.6.2                  # Declarative routing (= React Navigation)
+
+  # ─── Network ──────────────────────────────────────────────────
+  dio: ^5.7.0                         # HTTP client với interceptor (= fetchDataModule.js)
+  pretty_dio_logger: ^1.4.0           # Logging interceptor cho dev
+
+  # ─── Storage ──────────────────────────────────────────────────
+  flutter_secure_storage: ^9.2.2      # Token lưu an toàn (= AsyncStorage cho token)
+  shared_preferences: ^2.3.3          # Config đơn giản (settings, language...)
+  sqflite: ^2.4.1                     # SQLite cho master data cache (= AsyncStorage JSON)
+  path: ^1.9.0                        # Path utilities cho sqflite
+
+  # ─── Cryptography ─────────────────────────────────────────────
+  encrypt: ^5.0.3                     # TripleDES decrypt QR login (= crypto-js TripleDES)
+  crypto: ^3.0.3                      # MD5 hashing (= crypto-js MD5)
+  convert: ^3.1.1                     # Hex/base64 encoding utilities
+
+  # ─── Scanner & Camera ─────────────────────────────────────────
+  mobile_scanner: ^5.2.3              # QR/Barcode scan bằng camera (= react-native-qrcode-scanner)
+  camera: ^0.11.0+2                   # Camera raw access (= react-native-camera)
+  image_picker: ^1.1.2                # Chọn ảnh / chụp ảnh (= react-native-image-picker)
+
+  # ─── Audio ────────────────────────────────────────────────────
+  audioplayers: ^6.1.0                # Phát sound feedback (= react-native-sound)
+
+  # ─── File System & OTA ────────────────────────────────────────
+  path_provider: ^2.1.5               # App directories (= react-native-fs)
+  open_file: ^3.5.10                  # Mở APK sau khi download (= InstallPermissionModule)
+
+  # ─── Permissions ──────────────────────────────────────────────
+  permission_handler: ^11.3.1         # Runtime permissions Android/iOS
+
+  # ─── Network Info ─────────────────────────────────────────────
+  connectivity_plus: ^6.1.1           # Wifi check (= @react-native-community/netinfo)
+
+  # ─── Device & App Info ────────────────────────────────────────
+  device_info_plus: ^10.1.2           # Device info (= react-native-device-info)
+  package_info_plus: ^8.1.1           # App version (dùng cho OTA version check)
+
+  # ─── Date & Time ──────────────────────────────────────────────
+  intl: ^0.20.0                       # i18n + date formatting (= Intl JS) — pinned by flutter_localizations
+
+  # ─── Cryptography (low-level) ────────────────────────────────
+  pointycastle: ^3.9.1                # TripleDES ECB (dùng trong CryptoService)
+
+  # ─── Utils ────────────────────────────────────────────────────
+  collection: ^1.19.1                 # Extended collections (firstWhereOrNull, etc.)
+  rxdart: ^0.28.0                     # Reactive streams cho KeyboardEventBus
+
+  # ─── Serialization & State (direct dependencies) ─────────────
+  json_annotation: ^4.9.0             # Used directly in model files
+  provider: ^6.1.5+1                  # Used directly in screens/providers
+  http: ^1.6.0                        # Used directly in api_service.dart
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  json_serializable: ^6.8.0
+  mocktail: ^1.0.4                    # Mocking cho unit tests
+
+flutter:
+  uses-material-design: true
+
+  # ─── Assets ───────────────────────────────────────────────────
+  assets:
+    - assets/images/
+    - assets/sounds/                  # correct.mp3, error.mp3, warning.mp3
+    - assets/fonts/                   # MS P Gothic font files
+
+  # ─── Fonts ────────────────────────────────────────────────────
+  fonts:
+    - family: MSPGothic              # Font chính cho Japanese text
+      fonts:
+        - asset: assets/fonts/MSPGothic.ttf

@@ -188,7 +188,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       backgroundColor: AppColors.lighter,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.themeBackground,
+        backgroundColor: AppColors.settingsColor7,
         title: const Text(
           'メニュー',
           style: TextStyle(
@@ -214,16 +214,34 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        itemCount: _items.length,
-        itemBuilder: (context, index) {
-          final item = _items[index];
-          return _MenuTile(
-            item: item,
-            onTap: () => _handleTap(item),
-          );
-        },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        child: Column(
+          children: [
+            // 6 modules — 2-col grid
+            Expanded(
+              child: GridView.builder(
+                itemCount: _items.length - 1, // exclude logout
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 2.0,
+                ),
+                itemBuilder: (context, index) {
+                  final item = _items[index];
+                  return _MenuTile(item: item, onTap: () => _handleTap(item));
+                },
+              ),
+            ),
+            // Logout — full width
+            _MenuTile(
+              item: _items.last,
+              onTap: () => _handleTap(_items.last),
+            ),
+            const SizedBox(height: 4),
+          ],
+        ),
       ),
     );
   }

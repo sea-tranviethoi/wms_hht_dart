@@ -76,6 +76,10 @@ class FbtHhtApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(
               seedColor: const Color(0xFFc02941),
             ),
+            dialogTheme: const DialogThemeData(
+              backgroundColor: Color(0xFFFFFFFF),
+              surfaceTintColor: Colors.transparent,
+            ),
           ),
 
           // ── i18n (Japanese first) ──────────────────────────
