@@ -63,17 +63,17 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor6,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: _backToMenu,
         ),
         title: const Text(
           '棚卸一覧',
-          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
           BlocBuilder<BinAuditBloc, BinAuditState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: 32),
               onPressed: state is BinAuditLoading ? null : _loadData,
             ),
           ),

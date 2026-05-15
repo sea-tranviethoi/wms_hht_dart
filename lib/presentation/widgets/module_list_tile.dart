@@ -28,8 +28,8 @@ class ModuleListTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        color: isSelected ? AppColors.headerColor : Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        color: isSelected ? AppColors.lighter : Colors.transparent,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -50,7 +50,7 @@ class ModuleListTile extends StatelessWidget {
                           title,
                           style: const TextStyle(
                             fontFamily: 'MSPGothic',
-                            fontSize: 15,
+                            fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: AppColors.blackTextColor,
                           ),
@@ -63,7 +63,7 @@ class ModuleListTile extends StatelessWidget {
                         statusLabel,
                         style: TextStyle(
                           fontFamily: 'MSPGothic',
-                          fontSize: 11,
+                          fontSize: 13,
                           color: statusColor,
                           fontWeight: FontWeight.w500,
                         ),
@@ -76,7 +76,7 @@ class ModuleListTile extends StatelessWidget {
                       subtitle!,
                       style: const TextStyle(
                         fontFamily: 'MSPGothic',
-                        fontSize: 12,
+                        fontSize: 14,
                         color: AppColors.grayTextColor,
                       ),
                       maxLines: 1,
@@ -95,7 +95,7 @@ class ModuleListTile extends StatelessWidget {
                   trailingText,
                   style: TextStyle(
                     fontFamily: 'MSPGothic',
-                    fontSize: 14,
+                    fontSize: 17,
                     fontWeight: FontWeight.w700,
                     color: statusColor,
                   ),

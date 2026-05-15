@@ -10,7 +10,6 @@ import '../../data/datasources/remote/putaway_remote_datasource.dart';
 import '../../data/models/putaway/putaway_line.dart';
 import '../../data/models/putaway/putaway_staging.dart';
 import '../../routes/route_names.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 棚上げ詳細 — Phase 5b
 /// 商品ごとの棚上げ明細を一覧表示し、bin・数量・ロット・期限を入力して完了登録する。
@@ -113,10 +112,10 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
     }
     _saveCurrentToMemory();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('保存しました'),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 1),
+      SnackBar(
+        content: const Text('保存しました'),
+        backgroundColor: AppColors.settingsColor2,
+        duration: const Duration(seconds: 1),
       ),
     );
     if (_currentIndex < _editedLines.length - 1) _handleNext();
@@ -145,12 +144,12 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: AppColors.grayTextColor),
             child: const Text('キャンセル'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.green),
+            style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor2),
             child: const Text('完了'),
           ),
         ],
@@ -217,9 +216,9 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
       if (mounted) {
         setState(() => _isSyncing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('棚上げが完了しました'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: const Text('棚上げが完了しました'),
+            backgroundColor: AppColors.settingsColor2,
           ),
         );
         context.go(RouteNames.putawayList);
@@ -309,7 +308,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+      SnackBar(content: Text(msg), backgroundColor: AppColors.settingsColor7),
     );
   }
 
@@ -324,10 +323,11 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: const Text('棚上げ詳細'),
+        title: const Text('棚上げ詳細',
+            style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20)),
         backgroundColor: AppColors.settingsColor2,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: () => context.go(RouteNames.putawayList),
         ),
       ),
@@ -349,7 +349,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 10),
                   decoration: const BoxDecoration(
-                    color: AppColors.borderTable,
+                    color: AppColors.lighter,
                   ),
                   child: Row(
                     children: [
@@ -360,7 +360,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                             Text(
                               widget.productCode,
                               style: TextStyle(
-                                fontSize: 16.sp,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'MSPGothic',
                                 color: AppColors.black,
@@ -370,7 +370,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                               Text(
                                 widget.productName,
                                 style: TextStyle(
-                                  fontSize: 13.sp,
+                                  fontSize: 16,
                                   fontFamily: 'MSPGothic',
                                   color: AppColors.black,
                                 ),
@@ -384,15 +384,14 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border:
-                              Border.all(color: AppColors.borderTable, width: 1),
+                          border: Border.all(color: AppColors.light, width: 1),
                         ),
                         child: Text(
                           '${_currentIndex + 1} / ${_editedLines.length}',
                           style: TextStyle(
-                            fontSize: 13.sp,
+                            fontSize: 16,
                             fontFamily: 'MSPGothic',
                             fontWeight: FontWeight.bold,
                           ),
@@ -467,117 +466,121 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                 ),
 
                 // ── Bottom buttons ─────────────────────────────
-                Container(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                        top: BorderSide(color: AppColors.borderTable)),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Row 1: 戻る | ← | → | 保存
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () =>
-                                  context.go(RouteNames.putawayList),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.btnRed,
-                                foregroundColor: Colors.white,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                SafeArea(
+                  top: false,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                    decoration: const BoxDecoration(
+                      color: AppColors.white,
+                      border: Border(top: BorderSide(color: AppColors.light)),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Row 1: 戻る | ← | → | 保存
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () =>
+                                    context.go(RouteNames.putawayList),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.settingsColor7,
+                                  foregroundColor: Colors.white,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Text('戻る',
+                                    style: TextStyle(
+                                        fontSize: 16, fontFamily: 'MSPGothic', fontWeight: FontWeight.w700)),
                               ),
-                              child: Text('戻る',
-                                  style: TextStyle(
-                                      fontSize: 15.sp, fontFamily: 'MSPGothic')),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          SizedBox(
-                            width: 56,
-                            child: ElevatedButton(
-                              onPressed: isFirst ? null : _handlePrevious,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isFirst
-                                    ? Colors.grey.shade300
-                                    : AppColors.gray,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                            const SizedBox(width: 6),
+                            SizedBox(
+                              width: 52,
+                              child: ElevatedButton(
+                                onPressed: isFirst ? null : _handlePrevious,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isFirst
+                                      ? AppColors.gray
+                                      : AppColors.settingsColor2,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(13),
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Icon(Icons.arrow_back, size: 20),
                               ),
-                              child: const Icon(Icons.arrow_back),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          SizedBox(
-                            width: 56,
-                            child: ElevatedButton(
-                              onPressed: isLast ? null : _handleNext,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isLast
-                                    ? Colors.grey.shade300
-                                    : AppColors.gray,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                            const SizedBox(width: 6),
+                            SizedBox(
+                              width: 52,
+                              child: ElevatedButton(
+                                onPressed: isLast ? null : _handleNext,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isLast
+                                      ? AppColors.gray
+                                      : AppColors.settingsColor2,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(13),
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Icon(Icons.arrow_forward, size: 20),
                               ),
-                              child: const Icon(Icons.arrow_forward),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: _handleSave,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.btnGreen,
-                                foregroundColor: Colors.white,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: _handleSave,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.settingsColor2,
+                                  foregroundColor: Colors.white,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Text('保存',
+                                    style: TextStyle(
+                                        fontSize: 16, fontFamily: 'MSPGothic', fontWeight: FontWeight.w700)),
                               ),
-                              child: Text('保存',
-                                  style: TextStyle(
-                                      fontSize: 15.sp, fontFamily: 'MSPGothic')),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      // Row 2: 棚上げ完了
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: _handleComplete,
-                          icon: const Icon(Icons.check_circle_outline),
-                          label: Text(
-                            '棚上げ完了',
-                            style: TextStyle(
-                                fontSize: 16.sp, fontFamily: 'MSPGothic'),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.settingsColor2,
-                            foregroundColor: Colors.white,
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 13),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        // Row 2: 棚上げ完了
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: _handleComplete,
+                            icon: const Icon(Icons.check_circle_outline),
+                            label: const Text(
+                              '棚上げ完了',
+                              style: TextStyle(
+                                  fontSize: 16, fontFamily: 'MSPGothic', fontWeight: FontWeight.w700),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.settingsColor2,
+                              foregroundColor: Colors.white,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 13),
+                              elevation: 1,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-
-                // Safe area padding
-                const SizedBox(height: 4),
               ],
             ),
     );
@@ -594,17 +597,18 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(
-                fontSize: 13.sp,
+            style: const TextStyle(
+                fontSize: 16,
                 fontFamily: 'MSPGothic',
-                color: AppColors.black)),
+                fontWeight: FontWeight.w600,
+                color: AppColors.grayTextColor)),
         const SizedBox(height: 4),
         Container(
           padding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: AppColors.headerColor,
-            border: Border.all(color: AppColors.headerColor, width: 2),
+            color: AppColors.lighter,
+            border: Border.all(color: AppColors.light, width: 1),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
@@ -616,7 +620,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
               Text(
                 value,
                 style: TextStyle(
-                    fontSize: 15.sp,
+                    fontSize: 16,
                     fontFamily: 'MSPGothic',
                     fontWeight: FontWeight.w500),
               ),
@@ -640,10 +644,11 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(
-                fontSize: 13.sp,
+            style: const TextStyle(
+                fontSize: 16,
                 fontFamily: 'MSPGothic',
-                color: AppColors.black)),
+                fontWeight: FontWeight.w600,
+                color: AppColors.grayTextColor)),
         const SizedBox(height: 4),
         Row(
           children: [
@@ -654,20 +659,23 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                 keyboardType: keyboardType,
                 decoration: InputDecoration(
                   hintText: hintText,
-                  border: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.headerColor, width: 2),
+                  isDense: true,
+                  filled: true,
+                  fillColor: AppColors.lighter,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(color: AppColors.light, width: 1),
                   ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.headerColor, width: 2),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(color: AppColors.light, width: 1),
                   ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.primaryLight, width: 2),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(color: AppColors.settingsColor2, width: 2),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 10),
+                      horizontal: 12, vertical: 12),
                 ),
                 onSubmitted: onSubmitted,
               ),
@@ -677,9 +685,8 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                border:
-                    Border.all(color: AppColors.headerColor, width: 2),
-                color: Colors.white,
+                border: Border.all(color: AppColors.light, width: 1),
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: IconButton(
@@ -698,31 +705,35 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('賞味期限',
+        const Text('賞味期限',
             style: TextStyle(
-                fontSize: 13.sp,
+                fontSize: 16,
                 fontFamily: 'MSPGothic',
-                color: AppColors.black)),
+                fontWeight: FontWeight.w600,
+                color: AppColors.grayTextColor)),
         const SizedBox(height: 4),
         TextField(
           controller: _expirationDateController,
           readOnly: true,
           decoration: InputDecoration(
             hintText: 'YYYY-MM-DD',
-            border: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.headerColor, width: 2),
+            isDense: true,
+            filled: true,
+            fillColor: AppColors.lighter,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(color: AppColors.light, width: 1),
             ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.headerColor, width: 2),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(color: AppColors.light, width: 1),
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.primaryLight, width: 2),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(color: AppColors.settingsColor2, width: 2),
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             prefixIcon: const Icon(Icons.calendar_today),
             suffixIcon: Row(
               mainAxisSize: MainAxisSize.min,

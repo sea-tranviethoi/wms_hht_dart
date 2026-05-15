@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(cmd.exe /c \"rmdir /s /q \\\\\"D:\\\\Project\\\\wms_hht_dart\\\\.claude\\\\\"\")",
-      "Bash(awk -F: '{print $1}')",
-      "Bash(flutter analyze *)"
-    ]
-  }
-}

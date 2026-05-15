@@ -93,15 +93,15 @@ class _PutawayListViewState extends State<_PutawayListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor2,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: _backToMenu,
         ),
         title: const Text(
           '棚上げ一覧',
-          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white), onPressed: _loadData),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: 32), onPressed: _loadData),
         ],
       ),
       body: Column(

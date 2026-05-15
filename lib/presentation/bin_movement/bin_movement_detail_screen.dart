@@ -9,7 +9,6 @@ import '../../core/storage/cache_storage.dart';
 import '../../data/repositories/bin_movement_repository.dart';
 import '../../data/models/bin_movement/invent_transfer_line.dart';
 import '../../routes/route_names.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 棚移動詳細 — Phase 7
 /// 移動番号に紐づく明細を一件ずつ確認・入力し、最後に棚移動完了を登録する。
@@ -114,8 +113,8 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
     _saveCurrentToMemory();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('保存しました'),
-        backgroundColor: Colors.green,
+        content: Text('保存しました', style: TextStyle(fontFamily: 'MSPGothic')),
+        backgroundColor: AppColors.settingsColor5,
         duration: Duration(seconds: 1),
       ),
     );
@@ -145,13 +144,13 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('キャンセル'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.grayTextColor),
+            child: const Text('キャンセル', style: TextStyle(fontFamily: 'MSPGothic')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.green),
-            child: const Text('完了'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor5),
+            child: const Text('完了', style: TextStyle(fontFamily: 'MSPGothic')),
           ),
         ],
       ),
@@ -208,8 +207,8 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
         setState(() => _isSyncing = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('棚移動が完了しました'),
-            backgroundColor: Colors.green,
+            content: Text('棚移動が完了しました', style: TextStyle(fontFamily: 'MSPGothic')),
+            backgroundColor: AppColors.settingsColor5,
           ),
         );
         context.go(RouteNames.binMovementList);
@@ -300,7 +299,10 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(msg, style: const TextStyle(fontFamily: 'MSPGothic')),
+        backgroundColor: AppColors.settingsColor7,
+      ),
     );
   }
 
@@ -315,11 +317,19 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: const Text('棚移動詳細'),
         backgroundColor: AppColors.settingsColor5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: () => context.go(RouteNames.binMovementList),
+        ),
+        title: const Text(
+          '棚移動詳細',
+          style: TextStyle(
+            fontFamily: 'MSPGothic',
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
         ),
       ),
       body: _isSyncing
@@ -338,11 +348,10 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
               children: [
                 // ── Header ─────────────────────────────────────
                 Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 10),
-                  decoration: const BoxDecoration(
-                    color: AppColors.borderTable,
-                  ),
+                  color: AppColors.lighter,
                   child: Row(
                     children: [
                       Expanded(
@@ -352,20 +361,20 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                             Text(
                               widget.transferNo,
                               style: TextStyle(
-                                fontSize: 16.sp,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'MSPGothic',
-                                color: AppColors.black,
+                                color: AppColors.blackTextColor,
                               ),
                             ),
                             if (widget.description != null &&
                                 widget.description!.isNotEmpty)
                               Text(
                                 widget.description!,
-                                style: TextStyle(
-                                  fontSize: 12.sp,
+                                style: const TextStyle(
+                                  fontSize: 12,
                                   fontFamily: 'MSPGothic',
-                                  color: AppColors.black,
+                                  color: AppColors.grayTextColor,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -377,23 +386,24 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                              color: AppColors.borderTable, width: 1),
+                          border: Border.all(color: AppColors.light),
                         ),
                         child: Text(
                           '${_currentIndex + 1} / ${_editedLines.length}',
                           style: TextStyle(
-                            fontSize: 13.sp,
+                            fontSize: 13,
                             fontFamily: 'MSPGothic',
                             fontWeight: FontWeight.bold,
+                            color: AppColors.blackTextColor,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
+                const Divider(height: 1, color: AppColors.light),
 
                 // ── Form ───────────────────────────────────────
                 Expanded(
@@ -432,11 +442,11 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                             Icon(Icons.arrow_downward,
                                 color: AppColors.settingsColor5, size: 28),
                             SizedBox(width: 6),
-                            Text('移動',
+                            const Text('移動',
                                 style: TextStyle(
                                     color: AppColors.settingsColor5,
                                     fontFamily: 'MSPGothic',
-                                    fontSize: 14.sp)),
+                                    fontSize: 14)),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -491,122 +501,131 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                 ),
 
                 // ── Bottom buttons ─────────────────────────────
-                Container(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                        top: BorderSide(color: AppColors.borderTable)),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Row 1: 戻る | ← | → | 保存
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () => context
-                                  .go(RouteNames.binMovementList),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.btnRed,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(8)),
+                SafeArea(
+                  top: false,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                    decoration: const BoxDecoration(
+                      color: AppColors.white,
+                      border: Border(top: BorderSide(color: AppColors.light)),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Row 1: 戻る | ← | → | 保存
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () =>
+                                    context.go(RouteNames.binMovementList),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.settingsColor7,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 13),
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(12)),
+                                ),
+                                child: Text('戻る',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontFamily: 'MSPGothic',
+                                        fontWeight: FontWeight.w700)),
                               ),
-                              child: Text('戻る',
-                                  style: TextStyle(
-                                      fontSize: 15.sp,
-                                      fontFamily: 'MSPGothic')),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          SizedBox(
-                            width: 56,
-                            child: ElevatedButton(
-                              onPressed: isFirst ? null : _handlePrevious,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isFirst
-                                    ? Colors.grey.shade300
-                                    : AppColors.gray,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(8)),
+                            const SizedBox(width: 6),
+                            SizedBox(
+                              width: 52,
+                              child: ElevatedButton(
+                                onPressed: isFirst ? null : _handlePrevious,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isFirst
+                                      ? AppColors.gray
+                                      : AppColors.settingsColor5,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(13),
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(12)),
+                                ),
+                                child: const Icon(Icons.arrow_back, size: 20),
                               ),
-                              child: const Icon(Icons.arrow_back),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          SizedBox(
-                            width: 56,
-                            child: ElevatedButton(
-                              onPressed: isLast ? null : _handleNext,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isLast
-                                    ? Colors.grey.shade300
-                                    : AppColors.gray,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(8)),
+                            const SizedBox(width: 6),
+                            SizedBox(
+                              width: 52,
+                              child: ElevatedButton(
+                                onPressed: isLast ? null : _handleNext,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isLast
+                                      ? AppColors.gray
+                                      : AppColors.settingsColor5,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(13),
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(12)),
+                                ),
+                                child: const Icon(Icons.arrow_forward, size: 20),
                               ),
-                              child: const Icon(Icons.arrow_forward),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: _handleSave,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.btnGreen,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(8)),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: _handleSave,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.settingsColor5,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 13),
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(12)),
+                                ),
+                                child: Text('保存',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontFamily: 'MSPGothic',
+                                        fontWeight: FontWeight.w700)),
                               ),
-                              child: Text('保存',
-                                  style: TextStyle(
-                                      fontSize: 15.sp,
-                                      fontFamily: 'MSPGothic')),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      // Row 2: 棚移動完了
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: _handleComplete,
-                          icon: const Icon(Icons.swap_horiz),
-                          label: Text(
-                            '棚移動完了',
-                            style: TextStyle(
-                                fontSize: 16.sp, fontFamily: 'MSPGothic'),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.settingsColor5,
-                            foregroundColor: Colors.white,
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 13),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        // Row 2: 棚移動完了
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: _handleComplete,
+                            icon: const Icon(Icons.swap_horiz),
+                            label: Text(
+                              '棚移動完了',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: 'MSPGothic',
+                                  fontWeight: FontWeight.w700),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.settingsColor5,
+                              foregroundColor: Colors.white,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 13),
+                              elevation: 1,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-
-                const SizedBox(height: 4),
               ],
             ),
     );
@@ -623,16 +642,17 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(
-                fontSize: 13.sp,
+            style: const TextStyle(
+                fontSize: 16,
                 fontFamily: 'MSPGothic',
-                color: AppColors.black)),
+                fontWeight: FontWeight.w600,
+                color: AppColors.grayTextColor)),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: AppColors.headerColor,
-            border: Border.all(color: AppColors.headerColor, width: 2),
+            color: AppColors.lighter,
+            border: Border.all(color: AppColors.light, width: 1),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
@@ -645,7 +665,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                 child: Text(
                   value,
                   style: TextStyle(
-                      fontSize: 15.sp,
+                      fontSize: 15,
                       fontFamily: 'MSPGothic',
                       fontWeight: FontWeight.w500),
                 ),
@@ -670,10 +690,11 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(
-                fontSize: 13.sp,
+            style: const TextStyle(
+                fontSize: 16,
                 fontFamily: 'MSPGothic',
-                color: AppColors.black)),
+                fontWeight: FontWeight.w600,
+                color: AppColors.grayTextColor)),
         const SizedBox(height: 4),
         Row(
           children: [
@@ -684,20 +705,24 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                 keyboardType: keyboardType,
                 decoration: InputDecoration(
                   hintText: hintText,
-                  border: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: AppColors.headerColor, width: 2),
+                  isDense: true,
+                  filled: true,
+                  fillColor: AppColors.lighter,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(color: AppColors.light, width: 1),
                   ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: AppColors.headerColor, width: 2),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(color: AppColors.light, width: 1),
                   ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: AppColors.primaryLight, width: 2),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(
+                        color: AppColors.settingsColor5, width: 2),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 10),
+                      horizontal: 12, vertical: 12),
                 ),
                 onSubmitted: onSubmitted,
               ),
@@ -707,9 +732,8 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                border: Border.all(
-                    color: AppColors.headerColor, width: 2),
-                color: Colors.white,
+                border: Border.all(color: AppColors.light),
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: IconButton(
@@ -728,31 +752,35 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('賞味期限',
+        const Text('賞味期限',
             style: TextStyle(
-                fontSize: 13.sp,
+                fontSize: 16,
                 fontFamily: 'MSPGothic',
-                color: AppColors.black)),
+                fontWeight: FontWeight.w600,
+                color: AppColors.grayTextColor)),
         const SizedBox(height: 4),
         TextField(
           controller: _expirationDateController,
           readOnly: true,
           decoration: InputDecoration(
             hintText: 'YYYY-MM-DD',
-            border: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.headerColor, width: 2),
+            isDense: true,
+            filled: true,
+            fillColor: AppColors.lighter,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(color: AppColors.light, width: 1),
             ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.headerColor, width: 2),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(color: AppColors.light, width: 1),
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.primaryLight, width: 2),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: const BorderSide(color: AppColors.settingsColor5, width: 2),
             ),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             prefixIcon: const Icon(Icons.calendar_today),
             suffixIcon: Row(
               mainAxisSize: MainAxisSize.min,

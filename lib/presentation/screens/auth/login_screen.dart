@@ -87,6 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: AppColors.themeBackground,
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -6,6 +6,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
+import '../../data/models/bundle/bundle_line.dart';
 import '../../routes/route_names.dart';
 import '../blocs/bundle/bundle_bloc.dart';
 import '../widgets/app_empty.dart';
@@ -14,6 +15,55 @@ import '../widgets/app_loading.dart';
 import '../widgets/app_search_bar.dart';
 import '../widgets/back_to_menu_button.dart';
 import '../widgets/module_list_tile.dart';
+
+// ─── Mock data để test giao diện ─────────────────────────────────
+const _kMockTransNo = 'DEMO-TEST-001';
+final _kMockLines = [
+  BundleLine(
+    id: 'mock-1',
+    transNo: _kMockTransNo,
+    productCode: 'PROD-A001',
+    productName: 'サンプル商品 Alpha / テスト製品 001',
+    bin: '01-A101',
+    lotNo: 'LOT-2025-001',
+    demandQty: 5,
+    actualQty: 0,
+    expirationDate: '2026-12-31',
+  ),
+  BundleLine(
+    id: 'mock-2',
+    transNo: _kMockTransNo,
+    productCode: 'PROD-B002',
+    productName: 'サンプル商品 Beta / テスト製品 002',
+    bin: '02-B205',
+    lotNo: 'LOT-2025-002',
+    demandQty: 10,
+    actualQty: 6,
+    expirationDate: '2026-06-30',
+  ),
+  BundleLine(
+    id: 'mock-3',
+    transNo: _kMockTransNo,
+    productCode: 'PROD-C003',
+    productName: 'サンプル商品 Gamma',
+    bin: '03-C310',
+    lotNo: 'LOT-2025-003',
+    demandQty: 3,
+    actualQty: 3,
+    expirationDate: '2027-03-15',
+  ),
+  BundleLine(
+    id: 'mock-4',
+    transNo: _kMockTransNo,
+    productCode: 'PROD-D004',
+    productName: 'サンプル商品 Delta / 長い商品名のテスト用データ',
+    bin: '04-D412',
+    lotNo: 'LOT-2025-004',
+    demandQty: 8,
+    actualQty: 0,
+    expirationDate: '2026-09-01',
+  ),
+];
 
 class BundleListScreen extends StatelessWidget {
   const BundleListScreen({super.key});
@@ -89,15 +139,15 @@ class _BundleListViewState extends State<_BundleListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor4,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: _backToMenu,
         ),
         title: const Text(
           '事前セット一覧',
-          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white), onPressed: _loadData),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: 32), onPressed: _loadData),
         ],
       ),
       body: Column(
@@ -126,9 +176,21 @@ class _BundleListViewState extends State<_BundleListView> {
         if (rows.isEmpty && state is BundleListsLoaded) return AppEmpty.list(message: '事前セットデータがありません');
         return ListView.separated(
           padding: EdgeInsets.zero,
-          itemCount: rows.length,
+          itemCount: rows.length + 1,
           separatorBuilder: (_, __) => const ModuleListDivider(),
           itemBuilder: (context, index) {
+            // Demo tile ở cuối
+            if (index == rows.length) {
+              return _DemoTile(
+                onTap: () => context.push(
+                  RouteNames.bundleItems,
+                  extra: {
+                    'transNo': _kMockTransNo,
+                    'preloadedLines': _kMockLines,
+                  },
+                ),
+              );
+            }
             final row = rows[index];
             final (Color statusColor, String statusLabel) = switch (row.scanStatus) {
               1 => (AppColors.textWarning,    '進行中'),
@@ -147,6 +209,70 @@ class _BundleListViewState extends State<_BundleListView> {
           },
         );
       },
+    );
+  }
+}
+
+// ─── Demo tile ────────────────────────────────────────────────────────────────
+
+class _DemoTile extends StatelessWidget {
+  final VoidCallback onTap;
+  const _DemoTile({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: const BoxDecoration(
+          border: Border(
+            left: BorderSide(color: AppColors.settingsColor4, width: 3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.settingsColor4.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Text(
+                'DEMO',
+                style: TextStyle(
+                  fontFamily: 'MSPGothic',
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.settingsColor4,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Text(
+                _kMockTransNo,
+                style: TextStyle(
+                  fontFamily: 'MSPGothic',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: AppColors.blackTextColor,
+                ),
+              ),
+            ),
+            Text(
+              '${_kMockLines.length} 件',
+              style: const TextStyle(
+                fontFamily: 'MSPGothic',
+                fontSize: 13,
+                color: AppColors.grayTextColor,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right, color: AppColors.gray),
+          ],
+        ),
+      ),
     );
   }
 }

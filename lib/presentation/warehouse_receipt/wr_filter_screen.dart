@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../config/theme_config.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/local_storage.dart';
-import '../../l10n/app_strings.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WRFilterScreen extends StatefulWidget {
   final int tenantId;
@@ -23,17 +21,15 @@ class WRFilterScreen extends StatefulWidget {
 }
 
 class _WRFilterScreenState extends State<WRFilterScreen> {
-  final TextEditingController _vendorFromController = TextEditingController();
-  final TextEditingController _vendorToController = TextEditingController();
-  final TextEditingController _productNameController = TextEditingController();
-  final TextEditingController _productCodeController = TextEditingController();
-  final TextEditingController _janCodeController = TextEditingController();
-  final TextEditingController _arrivalNumberController = TextEditingController();
+  final _janCodeCtrl        = TextEditingController();
+  final _arrivalNumberCtrl  = TextEditingController();
+  final _productCodeCtrl    = TextEditingController();
+  final _productNameCtrl    = TextEditingController();
 
   List<Map<String, dynamic>> _vendors = [];
   String? _selectedVendorFrom;
   String? _selectedVendorTo;
-  String? _janCodeProductCode; // Store product code from JAN code
+  String? _janCodeProductCode;
   MobileScannerController? _scannerController;
 
   @override
@@ -42,19 +38,26 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
     _loadVendors();
   }
 
+  @override
+  void dispose() {
+    _janCodeCtrl.dispose();
+    _arrivalNumberCtrl.dispose();
+    _productCodeCtrl.dispose();
+    _productNameCtrl.dispose();
+    _scannerController?.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadVendors() async {
     try {
       final localStorage = LocalStorage(sl<SharedPreferences>());
       final suppliersJson = await localStorage.getJson('dataSuppliers');
-      
       if (suppliersJson != null) {
-        final suppliersList = _asList(suppliersJson);
+        final list = _asList(suppliersJson);
         setState(() {
-          _vendors = suppliersList.map<Map<String, dynamic>>((s) {
-            return {
-              'id': s['id']?.toString() ?? '',
-              'name': s['supplierName'] ?? '',
-            };
+          _vendors = list.map<Map<String, dynamic>>((s) => {
+            'id': s['id']?.toString() ?? '',
+            'name': s['supplierName'] ?? '',
           }).toList();
         });
       }
@@ -71,52 +74,29 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
   }
 
   Future<void> _checkJanCode(String janCode) async {
-    if (janCode.isEmpty) {
-      setState(() {
-        _janCodeProductCode = null;
-      });
-      return;
-    }
-
+    if (janCode.isEmpty) { setState(() => _janCodeProductCode = null); return; }
     try {
       final localStorage = LocalStorage(sl<SharedPreferences>());
       final productsJson = await localStorage.getJson('dataProductsWithInventory');
-      
       if (productsJson != null) {
-        final productsList = _asList(productsJson);
-        String? foundProductCode;
-        
-        for (var product in productsList) {
+        final list = _asList(productsJson);
+        for (var product in list) {
           if (product['productJanCode'] != null) {
-            final janCodes = _asList(product['productJanCode']);
-            final found = janCodes.any((jan) => 
-              jan['janCode']?.toString().toLowerCase() == janCode.toLowerCase()
-            );
+            final found = _asList(product['productJanCode'])
+                .any((jan) => jan['janCode']?.toString().toLowerCase() == janCode.toLowerCase());
             if (found) {
-              foundProductCode = product['productCode']?.toString();
-              break;
+              setState(() => _janCodeProductCode = product['productCode']?.toString());
+              return;
             }
           }
         }
-        
-        if (foundProductCode != null) {
-          setState(() {
-            _janCodeProductCode = foundProductCode;
-          });
-        } else {
-          // Show error
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('プロダクトコードが存在しません'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-          setState(() {
-            _janCodeProductCode = null;
-          });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('プロダクトコードが存在しません', style: TextStyle(fontFamily: 'MSPGothic')),
+            backgroundColor: AppColors.settingsColor7,
+          ));
         }
+        setState(() => _janCodeProductCode = null);
       }
     } catch (e) {
       debugPrint('Error checking JAN code: $e');
@@ -124,10 +104,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
   }
 
   void _startQRScanner(String field) {
-    setState(() {
-      _scannerController = MobileScannerController();
-    });
-
+    _scannerController = MobileScannerController();
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -138,8 +115,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
               MobileScanner(
                 controller: _scannerController,
                 onDetect: (capture) {
-                  final List<Barcode> barcodes = capture.barcodes;
-                  for (final barcode in barcodes) {
+                  for (final barcode in capture.barcodes) {
                     if (barcode.rawValue != null) {
                       _scannerController?.stop();
                       Navigator.pop(context);
@@ -150,14 +126,10 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                 },
               ),
               Positioned(
-                top: 16,
-                right: 16,
+                top: 16, right: 16,
                 child: IconButton(
                   icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () {
-                    _scannerController?.stop();
-                    Navigator.pop(context);
-                  },
+                  onPressed: () { _scannerController?.stop(); Navigator.pop(context); },
                 ),
               ),
             ],
@@ -167,405 +139,287 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
     );
   }
 
-  void _handleScannedBarcode(String scannedData, String field) {
+  void _handleScannedBarcode(String value, String field) {
     if (field == 'janCode') {
-      _janCodeController.text = scannedData;
-      _checkJanCode(scannedData);
+      _janCodeCtrl.text = value;
+      _checkJanCode(value);
     } else if (field == 'productCode') {
-      _productCodeController.text = scannedData;
+      _productCodeCtrl.text = value;
     }
   }
 
   void _handleApplyFilter() {
-    final filters = <String, dynamic>{
-      'tenantId': widget.tenantId,
-    };
-
-    if (_selectedVendorFrom != null && _selectedVendorFrom!.isNotEmpty) {
+    final filters = <String, dynamic>{'tenantId': widget.tenantId};
+    if (_selectedVendorFrom != null && _selectedVendorFrom!.isNotEmpty)
       filters['vendorId'] = _selectedVendorFrom;
-    }
-    if (_productNameController.text.isNotEmpty) {
-      filters['productName'] = _productNameController.text;
-    }
-    if (_productCodeController.text.isNotEmpty) {
-      filters['productCode'] = _productCodeController.text;
-    }
-    if (_janCodeController.text.isNotEmpty) {
-      // Use product code from JAN code if available
-      if (_janCodeProductCode != null) {
-        filters['janCode'] = _janCodeProductCode;
-      } else {
-        filters['janCode'] = _janCodeController.text;
-      }
-    }
-    if (_arrivalNumberController.text.isNotEmpty) {
-      filters['arrivalNumber'] = _arrivalNumberController.text;
-    }
-
+    if (_productNameCtrl.text.isNotEmpty)
+      filters['productName'] = _productNameCtrl.text;
+    if (_productCodeCtrl.text.isNotEmpty)
+      filters['productCode'] = _productCodeCtrl.text;
+    if (_janCodeCtrl.text.isNotEmpty)
+      filters['janCode'] = _janCodeProductCode ?? _janCodeCtrl.text;
+    if (_arrivalNumberCtrl.text.isNotEmpty)
+      filters['arrivalNumber'] = _arrivalNumberCtrl.text;
     Navigator.pop(context, filters);
   }
 
   void _handleClear() {
     setState(() {
       _selectedVendorFrom = null;
-      _selectedVendorTo = null;
-      _productNameController.clear();
-      _productCodeController.clear();
-      _janCodeController.clear();
-      _arrivalNumberController.clear();
+      _selectedVendorTo   = null;
       _janCodeProductCode = null;
     });
+    _janCodeCtrl.clear();
+    _arrivalNumberCtrl.clear();
+    _productCodeCtrl.clear();
+    _productNameCtrl.clear();
   }
+
+  // ─── Build ─────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: Builder(
-          builder: (context) {
-            final strings = AppStrings.of(context);
-            return Text('${strings.filterTitle} (${widget.company})');
-          },
+        backgroundColor: AppColors.settingsColor1,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          onPressed: () => Navigator.pop(context),
         ),
-        backgroundColor: AppColors.primary,
+        title: Text(
+          '絞り込み (${widget.company})',
+          style: const TextStyle(
+            fontFamily: 'MSPGothic',
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Supplier/Vendor (From ~ To)
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.orange_light,
-                border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
-              ),
-              child: Text(
-                '仕入先番号',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    initialValue: _selectedVendorFrom,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.primaryLight, width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    ),
-                    hint: const Text('Select Supplier'),
-                    items: _vendors.map((vendor) {
-                      return DropdownMenuItem<String>(
-                        value: vendor['id'],
-                        child: Text(vendor['name']),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedVendorFrom = value;
-                      });
-                    },
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // 仕入先番号 From
+                  _buildLabel('仕入先番号（開始）'),
+                  const SizedBox(height: 6),
+                  _buildDropdown(
+                    value: _selectedVendorFrom,
+                    hint: '開始仕入先を選択',
+                    onChanged: (v) => setState(() => _selectedVendorFrom = v),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    '~',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp),
-                  ),
-                ),
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    initialValue: _selectedVendorTo,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.primaryLight, width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    ),
-                    hint: const Text('Select Vendor'),
-                    items: _vendors.map((vendor) {
-                      return DropdownMenuItem<String>(
-                        value: vendor['id'],
-                        child: Text(vendor['name']),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedVendorTo = value;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
+                  const SizedBox(height: 12),
 
-            // JAN Code
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.orange_light,
-                border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
-              ),
-              child: Text(
-                '商品JANコード',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  flex: 6,
-                  child: TextField(
-                    controller: _janCodeController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.primaryLight, width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    ),
-                    onChanged: (value) {
-                      _checkJanCode(value);
-                    },
-                    onSubmitted: (value) {
-                      _checkJanCode(value);
-                    },
+                  // 仕入先番号 To
+                  _buildLabel('仕入先番号（終了）'),
+                  const SizedBox(height: 6),
+                  _buildDropdown(
+                    value: _selectedVendorTo,
+                    hint: '終了仕入先を選択',
+                    onChanged: (v) => setState(() => _selectedVendorTo = v),
                   ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: IconButton(
-                    icon: const Icon(Icons.qr_code_scanner),
-                    onPressed: () => _startQRScanner('janCode'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
-            // Arrival Number
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.orange_light,
-                border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
-              ),
-              child: Text(
-                '入荷予定番号',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _arrivalNumberController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.primaryLight, width: 2),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-              ),
-            ),
-            const SizedBox(height: 24),
+                  // 商品JANコード
+                  _buildLabel('商品JANコード'),
+                  const SizedBox(height: 6),
+                  _buildScanField(controller: _janCodeCtrl, field: 'janCode',
+                      onChanged: _checkJanCode),
+                  const SizedBox(height: 16),
 
-            // Product Code
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.orange_light,
-                border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
-              ),
-              child: Text(
-                '商品番号',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  flex: 6,
-                  child: TextField(
-                    controller: _productCodeController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.primaryLight, width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: IconButton(
-                    icon: const Icon(Icons.qr_code_scanner),
-                    onPressed: () => _startQRScanner('productCode'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
+                  // 入荷予定番号
+                  _buildLabel('入荷予定番号'),
+                  const SizedBox(height: 6),
+                  _buildTextField(controller: _arrivalNumberCtrl),
+                  const SizedBox(height: 16),
 
-            // Product Name
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.orange_light,
-                border: Border.all(color: AppColors.Settings_Colors_3, width: 2),
-              ),
-              child: Text(
-                '商品名',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _productNameController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.headerColor, width: 2),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.primaryLight, width: 2),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-              ),
-            ),
-            const SizedBox(height: 32),
+                  // 商品番号
+                  _buildLabel('商品番号'),
+                  const SizedBox(height: 6),
+                  _buildScanField(controller: _productCodeCtrl, field: 'productCode'),
+                  const SizedBox(height: 16),
 
-            // Action buttons
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.btn_red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: Builder(
-                      builder: (context) {
-                        final strings = AppStrings.of(context);
-                        return Text(
-                          strings.cancel,
-                          style: TextStyle(fontSize: 16.sp),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _handleClear,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: Builder(
-                      builder: (context) {
-                        final strings = AppStrings.of(context);
-                        return Text(
-                          strings.clear,
-                          style: TextStyle(fontSize: 16.sp),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _handleApplyFilter,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.btn_blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: Builder(
-                      builder: (context) {
-                        final strings = AppStrings.of(context);
-                        return Text(
-                          strings.apply,
-                          style: TextStyle(fontSize: 16.sp),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
+                  // 商品名
+                  _buildLabel('商品名'),
+                  const SizedBox(height: 6),
+                  _buildTextField(controller: _productNameCtrl),
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+
+          // ── Bottom bar ──────────────────────────────────────────
+          SafeArea(
+            top: false,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+                border: Border(top: BorderSide(color: AppColors.light)),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildButton(
+                      label: '戻る',
+                      icon: Icons.arrow_back,
+                      color: AppColors.settingsColor7,
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildButton(
+                      label: 'クリア',
+                      icon: Icons.clear_all,
+                      color: AppColors.gray,
+                      onPressed: _handleClear,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildButton(
+                      label: '適用',
+                      icon: Icons.check,
+                      color: AppColors.settingsColor1,
+                      onPressed: _handleApplyFilter,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _vendorFromController.dispose();
-    _vendorToController.dispose();
-    _productNameController.dispose();
-    _productCodeController.dispose();
-    _janCodeController.dispose();
-    _arrivalNumberController.dispose();
-    _scannerController?.dispose();
-    super.dispose();
-  }
+  // ─── Helpers ───────────────────────────────────────────────────
+
+  Widget _buildLabel(String text) => Text(
+        text,
+        style: const TextStyle(
+          fontFamily: 'MSPGothic',
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: AppColors.grayTextColor,
+        ),
+      );
+
+  InputDecoration _fieldDecoration() => InputDecoration(
+        isDense: true,
+        filled: true,
+        fillColor: AppColors.lighter,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: AppColors.light),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: AppColors.light),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: AppColors.settingsColor1, width: 2),
+        ),
+      );
+
+  Widget _buildTextField({required TextEditingController controller}) =>
+      TextField(
+        controller: controller,
+        style: const TextStyle(fontFamily: 'MSPGothic', fontSize: 15),
+        decoration: _fieldDecoration(),
+      );
+
+  Widget _buildDropdown({
+    required String? value,
+    required String hint,
+    required ValueChanged<String?> onChanged,
+  }) =>
+      DropdownButtonFormField<String>(
+        value: value,
+        isExpanded: true,
+        decoration: _fieldDecoration(),
+        hint: Text(hint,
+            style: const TextStyle(fontFamily: 'MSPGothic', fontSize: 14,
+                color: AppColors.grayTextColor)),
+        style: const TextStyle(fontFamily: 'MSPGothic', fontSize: 15,
+            color: AppColors.blackTextColor),
+        items: _vendors.map((v) => DropdownMenuItem<String>(
+          value: v['id'],
+          child: Text(v['name'], overflow: TextOverflow.ellipsis),
+        )).toList(),
+        onChanged: onChanged,
+      );
+
+  Widget _buildScanField({
+    required TextEditingController controller,
+    required String field,
+    ValueChanged<String>? onChanged,
+  }) =>
+      Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              style: const TextStyle(fontFamily: 'MSPGothic', fontSize: 15),
+              decoration: _fieldDecoration(),
+              onChanged: onChanged,
+              onSubmitted: onChanged,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Material(
+            color: AppColors.lighter,
+            borderRadius: BorderRadius.circular(6),
+            child: InkWell(
+              onTap: () => _startQRScanner(field),
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.light),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Icon(Icons.qr_code_scanner,
+                    color: AppColors.grayTextColor, size: 22),
+              ),
+            ),
+          ),
+        ],
+      );
+
+  Widget _buildButton({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) =>
+      SizedBox(
+        height: 48,
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: color,
+            foregroundColor: Colors.white,
+            elevation: 1,
+            padding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+          child: Text(label,
+              style: const TextStyle(
+                  fontFamily: 'MSPGothic',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700)),
+        ),
+      );
 }

@@ -8,7 +8,6 @@ import '../../core/di/injection.dart';
 import '../../data/repositories/bin_audit_repository.dart';
 import '../../data/models/stocktake/invent_stocktake_recording.dart';
 import '../../routes/route_names.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 棚卸詳細 — Phase 8
 ///
@@ -154,7 +153,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'MSPGothic',
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     shadows: [Shadow(blurRadius: 4, color: Colors.black)],
                   ),
                 ),
@@ -251,7 +250,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: isError ? Colors.red : Colors.green,
+        backgroundColor: isError ? AppColors.settingsColor7 : AppColors.settingsColor6,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -267,16 +266,16 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: Text(title),
+        title: Text(title, style: const TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20)),
         backgroundColor: AppColors.settingsColor6,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: () => context.go(RouteNames.binAuditList),
         ),
         actions: [
           if (!_loading && _canEdit && _pendingKeys.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.save),
+              icon: const Icon(Icons.save, color: AppColors.white, size: 32),
               tooltip: '保存',
               onPressed: _saving ? null : _save,
             ),
@@ -290,7 +289,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(_error!,
-                          style: const TextStyle(color: Colors.red),
+                          style: const TextStyle(color: AppColors.settingsColor7),
                           textAlign: TextAlign.center),
                       const SizedBox(height: 16),
                       ElevatedButton(
@@ -326,7 +325,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: const BoxDecoration(color: AppColors.borderTable),
+      decoration: const BoxDecoration(color: AppColors.lighter),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -340,17 +339,17 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                       '${rec.stockTakeNo ?? '—'}'
                       '${rec.recordNo != null ? '  #${rec.recordNo}' : ''}',
                       style: TextStyle(
-                        fontSize: 16.sp,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'MSPGothic',
-                        color: AppColors.black,
+                        color: AppColors.blackTextColor,
                       ),
                     ),
                     if (dateStr != null)
                       Text(
                         dateStr,
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 12,
                           fontFamily: 'MSPGothic',
                           color: AppColors.black,
                         ),
@@ -363,22 +362,20 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isDone
-                      ? Colors.green.shade100
-                      : Colors.orange.shade100,
+                  color: isDone ? AppColors.wageningenGreen.withOpacity(0.15) : AppColors.settingsColor6.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDone ? Colors.green : Colors.orange,
+                    color: isDone ? AppColors.wageningenGreen : AppColors.settingsColor6,
                     width: 1,
                   ),
                 ),
                 child: Text(
                   statusText,
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontFamily: 'MSPGothic',
                     fontWeight: FontWeight.bold,
-                    color: isDone ? Colors.green.shade700 : Colors.orange.shade700,
+                    color: isDone ? AppColors.wageningenGreen : AppColors.settingsColor6,
                   ),
                 ),
               ),
@@ -391,12 +388,16 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                   rec.personInCharge!.isNotEmpty) ...[
                 const Icon(Icons.person, size: 14, color: AppColors.black),
                 const SizedBox(width: 4),
-                Text(
-                  rec.personInCharge!,
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    fontFamily: 'MSPGothic',
-                    color: AppColors.black,
+                Flexible(
+                  child: Text(
+                    rec.personInCharge!,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontFamily: 'MSPGothic',
+                      color: AppColors.black,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -409,7 +410,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                   child: Text(
                     rec.location!,
                     style: TextStyle(
-                      fontSize: 13.sp,
+                      fontSize: 13,
                       fontFamily: 'MSPGothic',
                       color: AppColors.black,
                     ),
@@ -425,10 +426,10 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
             '明細: ${_lines.length}件'
             '${_pendingKeys.isNotEmpty ? '  (未保存: ${_pendingKeys.length}件)' : ''}',
             style: TextStyle(
-              fontSize: 12.sp,
+              fontSize: 12,
               fontFamily: 'MSPGothic',
               color: _pendingKeys.isNotEmpty
-                  ? Colors.orange.shade700
+                  ? AppColors.settingsColor6
                   : AppColors.black,
             ),
           ),
@@ -463,7 +464,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
             side: BorderSide(
-              color: isPending ? Colors.orange : Colors.transparent,
+              color: isPending ? AppColors.settingsColor6 : Colors.transparent,
               width: isPending ? 1.5 : 0,
             ),
           ),
@@ -483,7 +484,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                             '${idx + 1}. ${line.itemCode ?? '—'}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 15.sp,
+                              fontSize: 15,
                               fontFamily: 'MSPGothic',
                             ),
                           ),
@@ -492,9 +493,9 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                             Text(
                               line.description!,
                               style: TextStyle(
-                                fontSize: 12.sp,
+                                fontSize: 12,
                                 fontFamily: 'MSPGothic',
-                                color: Colors.black54,
+                                color: AppColors.grayTextColor,
                               ),
                             ),
                           ],
@@ -506,14 +507,14 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.orange.shade100,
+                          color: AppColors.lighter,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           '未保存',
                           style: TextStyle(
-                            fontSize: 11.sp,
-                            color: Colors.orange,
+                            fontSize: 11,
+                            color: AppColors.settingsColor6,
                             fontFamily: 'MSPGothic',
                           ),
                         ),
@@ -555,9 +556,9 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                           Text(
                             '予定数量',
                             style: TextStyle(
-                              fontSize: 11.sp,
+                              fontSize: 11,
                               fontFamily: 'MSPGothic',
-                              color: Colors.black54,
+                              color: AppColors.grayTextColor,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -565,13 +566,13 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 8),
                             decoration: BoxDecoration(
-                              color: AppColors.headerColor,
+                              color: AppColors.lighter,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               line.expectedQty?.toStringAsFixed(0) ?? '—',
                               style: TextStyle(
-                                fontSize: 15.sp,
+                                fontSize: 15,
                                 fontFamily: 'MSPGothic',
                                 fontWeight: FontWeight.w500,
                               ),
@@ -589,9 +590,9 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                           Text(
                             '実際数量',
                             style: TextStyle(
-                              fontSize: 11.sp,
+                              fontSize: 11,
                               fontFamily: 'MSPGothic',
-                              color: Colors.black54,
+                              color: AppColors.grayTextColor,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -607,8 +608,8 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                                 borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(
                                   color: isPending
-                                      ? Colors.orange
-                                      : AppColors.headerColor,
+                                      ? AppColors.settingsColor6
+                                      : AppColors.light,
                                   width: isPending ? 2 : 1,
                                 ),
                               ),
@@ -616,26 +617,26 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
                                 borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(
                                   color: isPending
-                                      ? Colors.orange
-                                      : AppColors.headerColor,
+                                      ? AppColors.settingsColor6
+                                      : AppColors.light,
                                   width: isPending ? 2 : 1,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
                                 borderSide: const BorderSide(
-                                  color: AppColors.primaryLight,
+                                  color: AppColors.settingsColor6,
                                   width: 2,
                                 ),
                               ),
                               disabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
                                 borderSide: const BorderSide(
-                                    color: AppColors.headerColor),
+                                    color: AppColors.light),
                               ),
                             ),
                             style: TextStyle(
-                              fontSize: 15.sp,
+                              fontSize: 15,
                               fontFamily: 'MSPGothic',
                               fontWeight: FontWeight.w500,
                             ),
@@ -660,7 +661,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: AppColors.headerColor,
+        color: AppColors.lighter,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -668,16 +669,16 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
           Text(
             '$label: ',
             style: TextStyle(
-              fontSize: 11.sp,
+              fontSize: 11,
               fontFamily: 'MSPGothic',
-              color: Colors.black54,
+              color: AppColors.grayTextColor,
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: TextStyle(
-                fontSize: 13.sp,
+                fontSize: 13,
                 fontFamily: 'MSPGothic',
               ),
               overflow: TextOverflow.ellipsis,
@@ -691,87 +692,83 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen> {
   // ─── Bottom bar ───────────────────────────────────────────────
 
   Widget _buildBottomBar() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.borderTable)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              // 戻る
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+        decoration: const BoxDecoration(
+          color: AppColors.white,
+          border: Border(top: BorderSide(color: AppColors.light)),
+        ),
+        child: Row(
+          children: [
+            // 戻る
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => context.go(RouteNames.binAuditList),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.settingsColor7,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('戻る',
+                    style: TextStyle(
+                        fontSize: 15, fontFamily: 'MSPGothic', fontWeight: FontWeight.w700)),
+              ),
+            ),
+            if (_canEdit) ...[
+              const SizedBox(width: 8),
+              // スキャン
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () => context.go(RouteNames.binAuditList),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.btnRed,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: Text('戻る',
+                child: ElevatedButton.icon(
+                  onPressed: _saving ? null : _startScan,
+                  icon: const Icon(Icons.qr_code_scanner, size: 18),
+                  label: const Text('スキャン',
                       style: TextStyle(
-                          fontSize: 15.sp, fontFamily: 'MSPGothic')),
+                          fontSize: 15, fontFamily: 'MSPGothic', fontWeight: FontWeight.w700)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.settingsColor6,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
                 ),
               ),
-              if (_canEdit) ...[
-                const SizedBox(width: 6),
-                // スキャン
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _saving ? null : _startScan,
-                    icon: const Icon(Icons.qr_code_scanner, size: 18),
-                    label: Text('スキャン',
-                        style: TextStyle(
-                            fontSize: 15.sp, fontFamily: 'MSPGothic')),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                    ),
+              const SizedBox(width: 8),
+              // 保存
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: (_saving || _pendingKeys.isEmpty) ? null : _save,
+                  icon: _saving
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Icon(Icons.save, size: 18),
+                  label: const Text('保存',
+                      style: TextStyle(
+                          fontSize: 15, fontFamily: 'MSPGothic', fontWeight: FontWeight.w700)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _pendingKeys.isNotEmpty
+                        ? AppColors.settingsColor5
+                        : AppColors.gray,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
-                const SizedBox(width: 6),
-                // 保存
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: (_saving || _pendingKeys.isEmpty)
-                        ? null
-                        : _save,
-                    icon: _saving
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Icon(Icons.save, size: 18),
-                    label: Text('保存',
-                        style: TextStyle(
-                            fontSize: 15.sp, fontFamily: 'MSPGothic')),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _pendingKeys.isNotEmpty
-                          ? AppColors.settingsColor6
-                          : Colors.grey.shade400,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

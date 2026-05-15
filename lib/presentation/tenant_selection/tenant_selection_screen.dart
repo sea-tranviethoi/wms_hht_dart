@@ -136,7 +136,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         title: Builder(
           builder: (context) {

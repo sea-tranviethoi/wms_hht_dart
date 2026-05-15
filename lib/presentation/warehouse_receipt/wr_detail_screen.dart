@@ -1,8 +1,9 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/di/injection.dart';
@@ -54,6 +55,18 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
   final List<File> _capturedImages = [];
   MobileScannerController? _scannerController;
 
+  String? _topMessage;
+  Color _topColor = Colors.green;
+  Timer? _topTimer;
+
+  void _showTopNotification(String message, Color color) {
+    _topTimer?.cancel();
+    setState(() { _topMessage = message; _topColor = color; });
+    _topTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) setState(() => _topMessage = null);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -79,12 +92,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('明細の読み込みに失敗しました: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showTopNotification('明細の読み込みに失敗しました: $e', AppColors.settingsColor7);
       }
     }
   }
@@ -212,12 +220,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
   Future<void> _handleSave() async {
     if (_currentLine == null) return;
     if (_actualQtyController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('実際数量を入力してください'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showTopNotification('実際数量を入力してください', AppColors.settingsColor7);
       return;
     }
 
@@ -237,9 +240,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
       _lines[_currentIndex] = _currentLine!;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('保存しました'), backgroundColor: Colors.green),
-    );
+    _showTopNotification('保存しました', AppColors.settingsColor5);
 
     if (_currentIndex < _lines.length - 1) {
       _handleNext();
@@ -301,8 +302,9 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                     ],
                   ),
                 )
-              : Column(
+              : Stack(
                   children: [
+                    Column(children: [
                     // Receipt Number Header
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -349,7 +351,9 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
 
                     // Form
                     Expanded(
-                      child: SingleChildScrollView(
+                      child: Stack(
+                        children: [
+                      SingleChildScrollView(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -497,7 +501,27 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                           ],
                         ),
                       ),
-                    ),
+                      // Floating notification below header
+                      if (_topMessage != null)
+                        Positioned(
+                          top: 0, left: 0, right: 0,
+                          child: Container(
+                            color: _topColor,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Text(
+                              _topMessage!,
+                              style: const TextStyle(
+                                fontFamily: 'MSPGothic',
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        ], // end Stack children
+                      ),   // end Stack
+                    ),     // end Expanded
 
                     // Bottom navigation
                     Container(
@@ -518,14 +542,14 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                 backgroundColor: AppColors.btnRed,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
+                                    vertical: 18),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                                    borderRadius: BorderRadius.circular(10)),
                               ),
-                              child: Text(
+                              child: const Text(
                                 '入荷一覧',
                                 style: TextStyle(
-                                    fontSize: 16.sp, fontFamily: 'MSPGothic'),
+                                    fontSize: 16, fontFamily: 'MSPGothic', fontWeight: FontWeight.w700),
                               ),
                             ),
                           ),
@@ -541,9 +565,9 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                     ? AppColors.gray
                                     : Colors.grey.shade300,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(18),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                                    borderRadius: BorderRadius.circular(10)),
                               ),
                               child: const Icon(Icons.arrow_back),
                             ),
@@ -563,9 +587,9 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                         ? AppColors.gray
                                         : Colors.grey.shade300,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(18),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                                    borderRadius: BorderRadius.circular(10)),
                               ),
                               child: const Icon(Icons.arrow_forward),
                             ),
@@ -579,14 +603,14 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                 backgroundColor: AppColors.btnGreen,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
+                                    vertical: 18),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                                    borderRadius: BorderRadius.circular(10)),
                               ),
-                              child: Text(
+                              child: const Text(
                                 '保存',
                                 style: TextStyle(
-                                    fontSize: 16.sp, fontFamily: 'MSPGothic'),
+                                    fontSize: 16, fontFamily: 'MSPGothic', fontWeight: FontWeight.w700),
                               ),
                             ),
                           ),
@@ -594,6 +618,8 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                       ),
                     ),
                   ],
+                    ), // end inner Column
+                  ], // end Stack
                 ),
     );
   }
@@ -615,7 +641,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
         Text(
           label,
           style: TextStyle(
-              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 16, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Row(
@@ -673,7 +699,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
         Text(
           '商品',
           style: TextStyle(
-              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 16, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(
@@ -734,7 +760,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
         Text(
           label,
           style: TextStyle(
-              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 16, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         TextField(
@@ -767,7 +793,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
         Text(
           '賞味期限',
           style: TextStyle(
-              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 16, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         TextField(
@@ -809,7 +835,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
         Text(
           '状態',
           style: TextStyle(
-              fontSize: 14.sp, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 16, fontFamily: 'MSPGothic', color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(
@@ -849,6 +875,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
 
   @override
   void dispose() {
+    _topTimer?.cancel();
     _barcodeController.dispose();
     _productNameController.dispose();
     _orderQtyController.dispose();

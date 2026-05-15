@@ -85,11 +85,11 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.themeBackground,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: () => context.go(RouteNames.mainMenu),
         ),
         title: const Text(

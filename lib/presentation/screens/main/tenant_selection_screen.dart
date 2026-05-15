@@ -23,10 +23,15 @@ class TenantSelectionScreen extends StatelessWidget {
 
   String get _title {
     switch (funcNumber) {
-      case '3':
-        return 'ピッキング — テナント選択';
-      default:
-        return '入荷 — テナント選択';
+      case '3': return 'ピッキング — テナント選択';
+      default:  return '入荷 — テナント選択';
+    }
+  }
+
+  Color get _moduleColor {
+    switch (funcNumber) {
+      case '3': return AppColors.settingsColor3; // Picking  — Amber
+      default:  return AppColors.settingsColor1; // WR       — Steel Blue
     }
   }
 
@@ -34,7 +39,11 @@ class TenantSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => MasterBloc(repository: sl())..add(FetchTenants()),
-      child: _TenantSelectionView(funcNumber: funcNumber, title: _title),
+      child: _TenantSelectionView(
+        funcNumber: funcNumber,
+        title: _title,
+        moduleColor: _moduleColor,
+      ),
     );
   }
 }
@@ -42,8 +51,13 @@ class TenantSelectionScreen extends StatelessWidget {
 class _TenantSelectionView extends StatefulWidget {
   final String? funcNumber;
   final String title;
+  final Color moduleColor;
 
-  const _TenantSelectionView({required this.funcNumber, required this.title});
+  const _TenantSelectionView({
+    required this.funcNumber,
+    required this.title,
+    required this.moduleColor,
+  });
 
   @override
   State<_TenantSelectionView> createState() => _TenantSelectionViewState();
@@ -93,11 +107,13 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.themeBackground,
+        backgroundColor: widget.moduleColor,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: () => context.go(RouteNames.mainMenu),
         ),
         title: Text(
@@ -105,7 +121,7 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
           style: TextStyle(
             fontFamily: 'MSPGothic',
             color: AppColors.white,
-            fontSize: 16.sp,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -164,8 +180,8 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
       },
       builder: (context, state) {
         if (state is MasterLoading) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.themeBackground),
+          return Center(
+            child: CircularProgressIndicator(color: widget.moduleColor),
           );
         }
         if (state is MasterError) {
@@ -185,7 +201,7 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
                   onPressed: () =>
                       context.read<MasterBloc>().add(FetchTenants()),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.themeBackground,
+                    backgroundColor: widget.moduleColor,
                     foregroundColor: Colors.white,
                   ),
                   child: const Text('再試行', style: TextStyle(fontFamily: 'MSPGothic')),
@@ -208,11 +224,10 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
           itemCount: _filtered.length,
           itemBuilder: (context, index) {
             final tenant = _filtered[index];
-            final color = AppColors.menuTileColors[index % AppColors.menuTileColors.length];
             return _TenantTile(
               tenant: tenant,
               index: index,
-              color: color,
+              color: widget.moduleColor,
               onTap: () => _onTenantTap(tenant),
             );
           },
@@ -253,12 +268,9 @@ class _TenantTile extends StatelessWidget {
               '${index + 1}. ${tenant.tenantFullName}',
               style: TextStyle(
                 fontFamily: 'MSPGothic',
-                color: AppColors.white,
-                fontSize: 22.sp,
+                color: AppColors.onColor(color),
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(color: Colors.black26, offset: Offset(1, 1), blurRadius: 2),
-                ],
               ),
               textAlign: TextAlign.center,
             ),

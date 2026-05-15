@@ -118,15 +118,15 @@ class _WRListViewState extends State<_WRListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: _backToMenu,
         ),
         title: Text(
           '入荷一覧${widget.company.isNotEmpty ? " (${widget.company})" : ""}',
-          style: const TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          style: const TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white), onPressed: _loadData),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: 32), onPressed: _loadData),
         ],
       ),
       body: BlocListener<WRBloc, WRState>(

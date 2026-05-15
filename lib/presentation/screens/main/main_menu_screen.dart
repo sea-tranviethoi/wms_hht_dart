@@ -185,10 +185,10 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.settingsColor7,
+        backgroundColor: const Color(0xFF2D4A38), // settingsColor5 (BinMove) tối hơn
         title: const Text(
           'メニュー',
           style: TextStyle(
@@ -214,19 +214,19 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        child: Column(
-          children: [
-            // 6 modules — 2-col grid
-            Expanded(
+      body: Column(
+        children: [
+          // 6 modules — 2-col grid
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
               child: GridView.builder(
                 itemCount: _items.length - 1, // exclude logout
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 2.0,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 1.5,
                 ),
                 itemBuilder: (context, index) {
                   final item = _items[index];
@@ -234,14 +234,20 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                 },
               ),
             ),
-            // Logout — full width
-            _MenuTile(
-              item: _items.last,
-              onTap: () => _handleTap(_items.last),
+          ),
+          // Footer — same pattern as BackToMenuButton
+          SafeArea(
+            top: false,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+                border: Border(top: BorderSide(color: AppColors.light)),
+              ),
+              child: _LogoutButton(onTap: () => _handleTap(_items.last)),
             ),
-            const SizedBox(height: 4),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -263,6 +269,46 @@ class _MenuItem {
   });
 }
 
+// ─── Logout Button ────────────────────────────────────────────────────────────
+
+class _LogoutButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _LogoutButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0xFF2D4A38), // settingsColor5 (BinMove) tối hơn
+      borderRadius: BorderRadius.circular(12),
+      elevation: 1,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 52,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.logout, color: AppColors.white, size: 20),
+              SizedBox(width: 10),
+              Text(
+                'ログアウト',
+                style: TextStyle(
+                  fontFamily: 'MSPGothic',
+                  color: AppColors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ─── Tile Widget ──────────────────────────────────────────────────────────────
 
 class _MenuTile extends StatelessWidget {
@@ -273,61 +319,45 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Material(
-        color: item.color,
-        borderRadius: BorderRadius.circular(12),
-        elevation: 3,
-        shadowColor: item.color.withValues(alpha: 0.4),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            height: 72,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.label,
-                        style: TextStyle(
-                          fontFamily: 'MSPGothic',
-                          color: AppColors.white,
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black26,
-                              offset: Offset(1, 1),
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
+    return Material(
+      color: item.color,
+      borderRadius: BorderRadius.circular(6),
+      elevation: 2,
+      shadowColor: item.color.withValues(alpha: 0.4),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(6),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.label,
+                      style: TextStyle(
+                        fontFamily: 'MSPGothic',
+                        color: AppColors.onColor(item.color),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Text(
-                        item.subtitle,
-                        style: TextStyle(
-                          fontFamily: 'MSPGothic',
-                          color: AppColors.white,
-                          fontSize: 12.sp,
-                        ),
+                    ),
+                    Text(
+                      item.subtitle,
+                      style: TextStyle(
+                        fontFamily: 'MSPGothic',
+                        color: AppColors.onColor(item.color),
+                        fontSize: 15,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const Icon(
-                  Icons.chevron_right,
-                  color: AppColors.white,
-                  size: 28,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -70,7 +70,7 @@ class _PickingListViewState extends State<_PickingListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: _backToTenantSelection,
         ),
         title: Text(
@@ -79,13 +79,13 @@ class _PickingListViewState extends State<_PickingListView> {
             fontFamily: 'MSPGothic',
             color: AppColors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 16,
+            fontSize: 20,
           ),
         ),
         actions: [
           BlocBuilder<PickingBloc, PickingState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: 32),
               onPressed: state is PickingLoading
                   ? null
                   : () {

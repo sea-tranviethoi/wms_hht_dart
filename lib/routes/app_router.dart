@@ -188,7 +188,12 @@ final appRouter = GoRouter(
       path: RouteNames.bundleItems,
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>? ?? {};
-        return BundleItemsScreen(transNo: extra['transNo'] as String? ?? '');
+        final preloaded =
+            (extra['preloadedLines'] as List?)?.cast<BundleLine>();
+        return BundleItemsScreen(
+          transNo: extra['transNo'] as String? ?? '',
+          preloadedLines: preloaded,
+        );
       },
     ),
     GoRoute(

@@ -64,7 +64,7 @@ class _PickingItemsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: () => _backToList(context),
         ),
         title: Text(
@@ -73,7 +73,7 @@ class _PickingItemsView extends StatelessWidget {
             fontFamily: 'MSPGothic',
             color: AppColors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 15,
+            fontSize: 20,
           ),
         ),
       ),
@@ -161,7 +161,7 @@ class _PickingItemsView extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Material(
-                    color: AppColors.settingsColor3,
+                    color: AppColors.settingsColor7,
                     borderRadius: BorderRadius.circular(12),
                     elevation: 1,
                     child: InkWell(

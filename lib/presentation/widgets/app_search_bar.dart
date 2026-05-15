@@ -71,7 +71,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
         onSubmitted: (_) => widget.onSubmitted?.call(),
         style: const TextStyle(
           fontFamily: 'MSPGothic',
-          fontSize: 14,
+          fontSize: 17,
           color: AppColors.blackTextColor,
         ),
         decoration: InputDecoration(
@@ -79,12 +79,12 @@ class _AppSearchBarState extends State<AppSearchBar> {
           hintStyle: const TextStyle(
             fontFamily: 'MSPGothic',
             color: AppColors.grayTextColor,
-            fontSize: 13,
+            fontSize: 16,
           ),
-          prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: 20),
+          prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: 24),
           suffixIcon: _ctrl.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.close, color: AppColors.gray, size: 18),
+                  icon: const Icon(Icons.close, color: AppColors.gray, size: 22),
                   onPressed: () => _ctrl.clear(),
                 )
               : null,
@@ -93,7 +93,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
           focusedBorder: InputBorder.none,
           filled: true,
           fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           isDense: true,
         ),
       ),

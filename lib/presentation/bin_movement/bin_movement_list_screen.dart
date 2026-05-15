@@ -93,17 +93,17 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: _backToMenu,
         ),
         title: const Text(
           '棚移動一覧',
-          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
           BlocBuilder<BinMovementBloc, BinMovementState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: 32),
               onPressed: (state is BinMovementLoading || state is BinMovementResetting) ? null : _loadData,
             ),
           ),
@@ -113,7 +113,7 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
         listener: (context, state) {
           if (state is BinMovementError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: AppColors.btnRed),
+              SnackBar(content: Text(state.message), backgroundColor: AppColors.settingsColor7),
             );
           }
         },

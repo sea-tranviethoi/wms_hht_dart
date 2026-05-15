@@ -22,7 +22,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         title: Text('Warehouse Receipt List'),
         backgroundColor: AppColors.headerColor,
