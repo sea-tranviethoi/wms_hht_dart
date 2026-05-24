@@ -4,11 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/repositories/bin_movement_repository.dart';
 import '../../data/models/bin_movement/invent_transfer_line.dart';
 import '../../routes/route_names.dart';
+import '../widgets/form_widgets.dart';
 
 /// 棚移動詳細 — Phase 7
 /// 移動番号に紐づく明細を一件ずつ確認・入力し、最後に棚移動完了を登録する。
@@ -113,7 +115,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
     _saveCurrentToMemory();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('保存しました', style: TextStyle(fontFamily: 'MSPGothic')),
+        content: Text('保存しました', style: TextStyle(fontFamily: AppTextStyles.font)),
         backgroundColor: AppColors.settingsColor5,
         duration: Duration(seconds: 1),
       ),
@@ -145,12 +147,12 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             style: TextButton.styleFrom(foregroundColor: AppColors.grayTextColor),
-            child: const Text('キャンセル', style: TextStyle(fontFamily: 'MSPGothic')),
+            child: const Text('キャンセル', style: TextStyle(fontFamily: AppTextStyles.font)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor5),
-            child: const Text('完了', style: TextStyle(fontFamily: 'MSPGothic')),
+            child: const Text('完了', style: TextStyle(fontFamily: AppTextStyles.font)),
           ),
         ],
       ),
@@ -207,7 +209,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
         setState(() => _isSyncing = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('棚移動が完了しました', style: TextStyle(fontFamily: 'MSPGothic')),
+            content: Text('棚移動が完了しました', style: TextStyle(fontFamily: AppTextStyles.font)),
             backgroundColor: AppColors.settingsColor5,
           ),
         );
@@ -300,7 +302,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg, style: const TextStyle(fontFamily: 'MSPGothic')),
+        content: Text(msg, style: const TextStyle(fontFamily: AppTextStyles.font)),
         backgroundColor: AppColors.settingsColor7,
       ),
     );
@@ -319,18 +321,10 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: () => context.go(RouteNames.binMovementList),
         ),
-        title: const Text(
-          '棚移動詳細',
-          style: TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
+        title: const Text('棚移動詳細', style: AppTextStyles.appBarTitle),
       ),
       body: _isSyncing
           ? const Center(
@@ -340,7 +334,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                   CircularProgressIndicator(),
                   SizedBox(height: 16),
                   Text('棚移動登録中...',
-                      style: TextStyle(fontFamily: 'MSPGothic')),
+                      style: TextStyle(fontFamily: AppTextStyles.font)),
                 ],
               ),
             )
@@ -363,7 +357,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'MSPGothic',
+                                fontFamily: AppTextStyles.font,
                                 color: AppColors.blackTextColor,
                               ),
                             ),
@@ -373,7 +367,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                                 widget.description!,
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  fontFamily: 'MSPGothic',
+                                  fontFamily: AppTextStyles.font,
                                   color: AppColors.grayTextColor,
                                 ),
                                 maxLines: 1,
@@ -394,7 +388,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                           '${_currentIndex + 1} / ${_editedLines.length}',
                           style: TextStyle(
                             fontSize: 13,
-                            fontFamily: 'MSPGothic',
+                            fontFamily: AppTextStyles.font,
                             fontWeight: FontWeight.bold,
                             color: AppColors.blackTextColor,
                           ),
@@ -413,49 +407,47 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         // 商品番号 + 商品名 (read-only)
-                        _buildReadOnlyField(
-                          label: '商品番号',
-                          value: line.productCode,
-                          icon: Icons.inventory,
-                        ),
+                        const FormLabel(label: '商品番号'),
+                        const SizedBox(height: 4),
+                        FormReadOnlyField(value: line.productCode, icon: Icons.inventory),
                         const SizedBox(height: 8),
                         if (line.productName != null &&
-                            line.productName!.isNotEmpty)
-                          _buildReadOnlyField(
-                            label: '商品名',
-                            value: line.productName!,
-                          ),
-                        const SizedBox(height: 8),
+                            line.productName!.isNotEmpty) ...[
+                          const FormLabel(label: '商品名'),
+                          const SizedBox(height: 4),
+                          FormReadOnlyField(value: line.productName!),
+                          const SizedBox(height: 8),
+                        ],
 
                         // 移動元棚 (read-only)
-                        _buildReadOnlyField(
-                          label: '移動元棚番号',
-                          value: line.fromBin ?? '—',
-                          icon: Icons.output,
-                        ),
+                        const FormLabel(label: '移動元棚番号'),
+                        const SizedBox(height: 4),
+                        FormReadOnlyField(value: line.fromBin ?? '—', icon: Icons.output),
                         const SizedBox(height: 12),
 
                         // Arrow indicator
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.arrow_downward,
+                            const Icon(Icons.arrow_downward,
                                 color: AppColors.settingsColor5, size: 28),
-                            SizedBox(width: 6),
+                            const SizedBox(width: 6),
                             const Text('移動',
                                 style: TextStyle(
                                     color: AppColors.settingsColor5,
-                                    fontFamily: 'MSPGothic',
+                                    fontFamily: AppTextStyles.font,
                                     fontSize: 14)),
                           ],
                         ),
                         const SizedBox(height: 12),
 
                         // 移動先棚 (scan)
-                        _buildScanField(
-                          label: '移動先棚番号',
+                        const FormLabel(label: '移動先棚番号'),
+                        const SizedBox(height: 4),
+                        FormScanField(
                           controller: _toBinController,
                           focusNode: _toBinFocus,
+                          focusedColor: AppColors.settingsColor5,
                           hintText: 'バーコードでスキャンまたは入力',
                           onScanTap: () => _startScanner('toBin'),
                           onSubmitted: (_) => _transQtyFocus.requestFocus(),
@@ -463,18 +455,18 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                         const SizedBox(height: 12),
 
                         // 予定数量 (read-only)
-                        _buildReadOnlyField(
-                          label: '予定数量',
-                          value: line.journalQty.toStringAsFixed(0),
-                          icon: Icons.inventory_2,
-                        ),
+                        const FormLabel(label: '予定数量'),
+                        const SizedBox(height: 4),
+                        FormReadOnlyField(value: line.journalQty.toStringAsFixed(0), icon: Icons.inventory_2),
                         const SizedBox(height: 12),
 
                         // 実際数量 (scan)
-                        _buildScanField(
-                          label: '実際数量',
+                        const FormLabel(label: '実際数量'),
+                        const SizedBox(height: 4),
+                        FormScanField(
                           controller: _transQtyController,
                           focusNode: _transQtyFocus,
+                          focusedColor: AppColors.settingsColor5,
                           hintText: '0',
                           keyboardType: TextInputType.number,
                           onScanTap: () => _startScanner('transQty'),
@@ -483,17 +475,25 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                         const SizedBox(height: 12),
 
                         // ロット (scan)
-                        _buildScanField(
-                          label: 'ロット番号',
+                        const FormLabel(label: 'ロット番号'),
+                        const SizedBox(height: 4),
+                        FormScanField(
                           controller: _lotNoController,
                           focusNode: _lotNoFocus,
+                          focusedColor: AppColors.settingsColor5,
                           hintText: '',
                           onScanTap: () => _startScanner('lotNo'),
                         ),
                         const SizedBox(height: 12),
 
                         // 賞味期限 (date)
-                        _buildDateField(),
+                        const FormLabel(label: '賞味期限'),
+                        const SizedBox(height: 4),
+                        FormDateField(
+                          controller: _expirationDateController,
+                          focusedColor: AppColors.settingsColor5,
+                          onTap: _selectDate,
+                        ),
                         const SizedBox(height: 24),
                       ],
                     ),
@@ -515,111 +515,62 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                         // Row 1: 戻る | ← | → | 保存
                         Row(
                           children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () =>
-                                    context.go(RouteNames.binMovementList),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.settingsColor7,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 13),
-                                  elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(12)),
-                                ),
-                                child: Text('戻る',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'MSPGothic',
-                                        fontWeight: FontWeight.w700)),
-                              ),
-                            ),
+                            Expanded(child: ActionButton(
+                              label: '戻る',
+                              color: AppColors.settingsColor7,
+                              onPressed: () => context.go(RouteNames.binMovementList),
+                            )),
                             const SizedBox(width: 6),
                             SizedBox(
                               width: 52,
+                              height: AppTextStyles.heightBottomButton,
                               child: ElevatedButton(
                                 onPressed: isFirst ? null : _handlePrevious,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: isFirst
-                                      ? AppColors.gray
-                                      : AppColors.settingsColor5,
+                                  backgroundColor: isFirst ? AppColors.gray : AppColors.settingsColor5,
+                                  disabledBackgroundColor: AppColors.gray,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.all(13),
+                                  padding: EdgeInsets.zero,
                                   elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(12)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: const Icon(Icons.arrow_back, size: 20),
+                                child: const Icon(Icons.arrow_back, size: 22),
                               ),
                             ),
                             const SizedBox(width: 6),
                             SizedBox(
                               width: 52,
+                              height: AppTextStyles.heightBottomButton,
                               child: ElevatedButton(
                                 onPressed: isLast ? null : _handleNext,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: isLast
-                                      ? AppColors.gray
-                                      : AppColors.settingsColor5,
+                                  backgroundColor: isLast ? AppColors.gray : AppColors.settingsColor5,
+                                  disabledBackgroundColor: AppColors.gray,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.all(13),
+                                  padding: EdgeInsets.zero,
                                   elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(12)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: const Icon(Icons.arrow_forward, size: 20),
+                                child: const Icon(Icons.arrow_forward, size: 22),
                               ),
                             ),
                             const SizedBox(width: 6),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: _handleSave,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.settingsColor5,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 13),
-                                  elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(12)),
-                                ),
-                                child: Text('保存',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'MSPGothic',
-                                        fontWeight: FontWeight.w700)),
-                              ),
-                            ),
+                            Expanded(child: ActionButton(
+                              label: '保存',
+                              color: AppColors.settingsColor5,
+                              onPressed: _handleSave,
+                            )),
                           ],
                         ),
                         const SizedBox(height: 6),
                         // Row 2: 棚移動完了
                         SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton.icon(
+                          child: ActionButton.icon(
+                            label: '棚移動完了',
+                            icon: Icons.swap_horiz,
+                            color: AppColors.settingsColor5,
                             onPressed: _handleComplete,
-                            icon: const Icon(Icons.swap_horiz),
-                            label: Text(
-                              '棚移動完了',
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  fontFamily: 'MSPGothic',
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.settingsColor5,
-                              foregroundColor: Colors.white,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 13),
-                              elevation: 1,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
                           ),
                         ),
                       ],
@@ -628,179 +579,6 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen> {
                 ),
               ],
             ),
-    );
-  }
-
-  // ─── Widget builders ─────────────────────────────────────────
-
-  Widget _buildReadOnlyField({
-    required String label,
-    required String value,
-    IconData? icon,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(
-                fontSize: 16,
-                fontFamily: 'MSPGothic',
-                fontWeight: FontWeight.w600,
-                color: AppColors.grayTextColor)),
-        const SizedBox(height: 4),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: AppColors.lighter,
-            border: Border.all(color: AppColors.light, width: 1),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Row(
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: 18, color: AppColors.blackTextColor),
-                const SizedBox(width: 8),
-              ],
-              Expanded(
-                child: Text(
-                  value,
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'MSPGothic',
-                      fontWeight: FontWeight.w500),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildScanField({
-    required String label,
-    required TextEditingController controller,
-    FocusNode? focusNode,
-    String? hintText,
-    TextInputType? keyboardType,
-    VoidCallback? onScanTap,
-    ValueChanged<String>? onSubmitted,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(
-                fontSize: 16,
-                fontFamily: 'MSPGothic',
-                fontWeight: FontWeight.w600,
-                color: AppColors.grayTextColor)),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                focusNode: focusNode,
-                keyboardType: keyboardType,
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  isDense: true,
-                  filled: true,
-                  fillColor: AppColors.lighter,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: const BorderSide(color: AppColors.light, width: 1),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: const BorderSide(color: AppColors.light, width: 1),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: const BorderSide(
-                        color: AppColors.settingsColor5, width: 2),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 12),
-                ),
-                onSubmitted: onSubmitted,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.light),
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.qr_code_scanner),
-                onPressed: onScanTap,
-                color: AppColors.blackTextColor,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDateField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('賞味期限',
-            style: TextStyle(
-                fontSize: 16,
-                fontFamily: 'MSPGothic',
-                fontWeight: FontWeight.w600,
-                color: AppColors.grayTextColor)),
-        const SizedBox(height: 4),
-        TextField(
-          controller: _expirationDateController,
-          readOnly: true,
-          decoration: InputDecoration(
-            hintText: 'YYYY-MM-DD',
-            isDense: true,
-            filled: true,
-            fillColor: AppColors.lighter,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: const BorderSide(color: AppColors.light, width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: const BorderSide(color: AppColors.light, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: const BorderSide(color: AppColors.settingsColor5, width: 2),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            prefixIcon: const Icon(Icons.calendar_today),
-            suffixIcon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_expirationDateController.text.isNotEmpty)
-                  IconButton(
-                    icon: const Icon(Icons.clear, size: 18),
-                    onPressed: () => setState(
-                        () => _expirationDateController.clear()),
-                  ),
-                IconButton(
-                  icon: const Icon(Icons.calendar_month),
-                  onPressed: _selectDate,
-                ),
-              ],
-            ),
-          ),
-          onTap: _selectDate,
-        ),
-      ],
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
@@ -112,16 +113,16 @@ class _BundleListViewState extends State<_BundleListView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: 'MSPGothic')),
+          title: const Text('通知', style: TextStyle(fontFamily: AppTextStyles.font)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.transNo} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: 'MSPGothic'),
+            style: const TextStyle(fontFamily: AppTextStyles.font),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor4),
-              child: const Text('閉じる', style: TextStyle(fontFamily: 'MSPGothic')),
+              child: const Text('閉じる', style: TextStyle(fontFamily: AppTextStyles.font)),
             ),
           ],
         ),
@@ -139,15 +140,12 @@ class _BundleListViewState extends State<_BundleListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor4,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: _backToMenu,
         ),
-        title: const Text(
-          '事前セット一覧',
-          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
-        ),
+        title: const Text('事前セット一覧', style: AppTextStyles.appBarTitle),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: 32), onPressed: _loadData),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon), onPressed: _loadData),
         ],
       ),
       body: Column(
@@ -241,7 +239,7 @@ class _DemoTile extends StatelessWidget {
               child: const Text(
                 'DEMO',
                 style: TextStyle(
-                  fontFamily: 'MSPGothic',
+                  fontFamily: AppTextStyles.font,
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: AppColors.settingsColor4,
@@ -253,7 +251,7 @@ class _DemoTile extends StatelessWidget {
               child: Text(
                 _kMockTransNo,
                 style: TextStyle(
-                  fontFamily: 'MSPGothic',
+                  fontFamily: AppTextStyles.font,
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
                   color: AppColors.blackTextColor,
@@ -263,7 +261,7 @@ class _DemoTile extends StatelessWidget {
             Text(
               '${_kMockLines.length} 件',
               style: const TextStyle(
-                fontFamily: 'MSPGothic',
+                fontFamily: AppTextStyles.font,
                 fontSize: 13,
                 color: AppColors.grayTextColor,
               ),

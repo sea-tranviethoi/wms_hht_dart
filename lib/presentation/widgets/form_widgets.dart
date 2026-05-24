@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared form widgets for HHT detail screens (design width 360 px).
@@ -21,10 +22,10 @@ import '../../core/constants/app_colors.dart';
 
 // ─── Internal constants ───────────────────────────────────────────────────────
 
-const String _kFont = 'MSPGothic';
-const double _kFieldFontSize = 16;
-const double _kLabelFontSize = 16;
-const double _kButtonFontSize = 16;
+const String _kFont = AppTextStyles.font;
+const double _kFieldFontSize = AppTextStyles.sizeBody;
+const double _kLabelFontSize = AppTextStyles.sizeLabel;
+const double _kButtonFontSize = AppTextStyles.sizeButton;
 const double _kFieldRadius = 6;
 const double _kButtonRadius = 12;
 const double _kButtonHeight = 52;

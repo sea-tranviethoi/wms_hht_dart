@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../routes/route_names.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Màn hình splash — hiển thị khi app đang kiểm tra token
 /// Port từ loginState.isLoading block trong App.js
@@ -61,8 +61,8 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Text(
                   'FBTHHT',
                   style: TextStyle(
-                    fontFamily: 'MSPGothic',
-                    fontSize: 32.sp,
+                    fontFamily: AppTextStyles.font,
+                    fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: AppColors.white,
                     letterSpacing: 4,
@@ -73,8 +73,8 @@ class _SplashScreenState extends State<SplashScreen>
               Text(
                 '倉庫管理システム',
                 style: TextStyle(
-                  fontFamily: 'MSPGothic',
-                  fontSize: 14.sp,
+                  fontFamily: AppTextStyles.font,
+                  fontSize: AppTextStyles.sizeInfo,
                   color: AppColors.white,
                 ),
               ),

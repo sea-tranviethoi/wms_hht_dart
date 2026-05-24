@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../core/di/injection.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
 import '../../data/models/bundle/bundle_line.dart';
@@ -90,18 +91,10 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor4,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: () => _backToList(context),
         ),
-        title: Text(
-          '事前セット: ${widget.transNo}',
-          style: const TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
+        title: Text('事前セット: ${widget.transNo}', style: AppTextStyles.appBarTitle),
       ),
       body: widget.preloadedLines != null
           ? _buildContent(context, widget.preloadedLines!)
@@ -152,7 +145,7 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
               Text(
                 '合計: ${lines.length} 件',
                 style: const TextStyle(
-                  fontFamily: 'MSPGothic',
+                  fontFamily: AppTextStyles.font,
                   color: AppColors.grayTextColor,
                   fontSize: 13,
                 ),
@@ -160,7 +153,7 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
               Text(
                 '$completedCount / ${lines.length} 完了',
                 style: TextStyle(
-                  fontFamily: 'MSPGothic',
+                  fontFamily: AppTextStyles.font,
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: completedCount == lines.length
@@ -202,10 +195,10 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                   flex: 2,
                   child: ElevatedButton.icon(
                     onPressed: () => _backToList(context),
-                    icon: const Icon(Icons.arrow_back, size: 18),
+                    icon: const Icon(Icons.arrow_back, size: AppTextStyles.sizeBottomButtonIcon),
                     label: const Text('戻る',
                         style: TextStyle(
-                            fontFamily: 'MSPGothic',
+                            fontFamily: AppTextStyles.font,
                             fontSize: 16,
                             fontWeight: FontWeight.w700)),
                     style: ElevatedButton.styleFrom(
@@ -223,10 +216,10 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () => _startFirst(context, lines),
-                    icon: const Icon(Icons.play_arrow, size: 18),
+                    icon: const Icon(Icons.play_arrow, size: AppTextStyles.sizeBottomButtonIcon),
                     label: const Text('開始',
                         style: TextStyle(
-                            fontFamily: 'MSPGothic',
+                            fontFamily: AppTextStyles.font,
                             fontSize: 16,
                             fontWeight: FontWeight.w700)),
                     style: ElevatedButton.styleFrom(
@@ -324,7 +317,7 @@ class _BundleLineCard extends StatelessWidget {
                     Text(
                       line.productCode,
                       style: const TextStyle(
-                        fontFamily: 'MSPGothic',
+                        fontFamily: AppTextStyles.font,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                         color: AppColors.blackTextColor,
@@ -336,7 +329,7 @@ class _BundleLineCard extends StatelessWidget {
                       Text(
                         line.productName!,
                         style: const TextStyle(
-                          fontFamily: 'MSPGothic',
+                          fontFamily: AppTextStyles.font,
                           color: AppColors.grayTextColor,
                           fontSize: 12,
                         ),
@@ -355,7 +348,7 @@ class _BundleLineCard extends StatelessWidget {
                           Text(
                             line.bin!,
                             style: const TextStyle(
-                              fontFamily: 'MSPGothic',
+                              fontFamily: AppTextStyles.font,
                               fontSize: 12,
                               color: AppColors.grayTextColor,
                             ),
@@ -368,7 +361,7 @@ class _BundleLineCard extends StatelessWidget {
                         Text(
                           '${line.actualQty.toStringAsFixed(0)} / ${line.demandQty.toStringAsFixed(0)}',
                           style: TextStyle(
-                            fontFamily: 'MSPGothic',
+                            fontFamily: AppTextStyles.font,
                             fontSize: 12,
                             color: statusColor,
                             fontWeight: FontWeight.bold,
@@ -385,7 +378,7 @@ class _BundleLineCard extends StatelessWidget {
                           child: Text(
                             statusLabel,
                             style: TextStyle(
-                              fontFamily: 'MSPGothic',
+                              fontFamily: AppTextStyles.font,
                               fontSize: 11,
                               color: statusColor,
                               fontWeight: FontWeight.bold,

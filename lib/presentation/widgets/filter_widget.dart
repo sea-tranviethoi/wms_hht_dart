@@ -4,7 +4,7 @@ import 'custom_dropdown.dart';
 import 'custom_button.dart';
 import '../../config/theme_config.dart';
 import '../../l10n/app_strings.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../core/constants/app_text_styles.dart';
 
 // Re-export DropdownItem for convenience
 export 'custom_dropdown.dart' show DropdownItem;
@@ -109,7 +109,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                 return Text(
                   strings.filter,
                   style: TextStyle(
-                    fontSize: 18.sp,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: AppColors.blackText,
                   ),

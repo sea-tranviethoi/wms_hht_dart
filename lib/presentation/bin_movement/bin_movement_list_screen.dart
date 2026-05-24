@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/repositories/bin_movement_repository.dart';
@@ -62,16 +63,16 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: 'MSPGothic')),
+          title: const Text('通知', style: TextStyle(fontFamily: AppTextStyles.font)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.transferNo} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: 'MSPGothic'),
+            style: const TextStyle(fontFamily: AppTextStyles.font),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor5),
-              child: const Text('閉じる', style: TextStyle(fontFamily: 'MSPGothic')),
+              child: const Text('閉じる', style: TextStyle(fontFamily: AppTextStyles.font)),
             ),
           ],
         ),
@@ -93,17 +94,14 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: _backToMenu,
         ),
-        title: const Text(
-          '棚移動一覧',
-          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
-        ),
+        title: const Text('棚移動一覧', style: AppTextStyles.appBarTitle),
         actions: [
           BlocBuilder<BinMovementBloc, BinMovementState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white, size: 32),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
               onPressed: (state is BinMovementLoading || state is BinMovementResetting) ? null : _loadData,
             ),
           ),

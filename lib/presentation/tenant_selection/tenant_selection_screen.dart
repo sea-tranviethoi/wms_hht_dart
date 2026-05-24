@@ -9,7 +9,7 @@ import '../../core/network/api_client.dart';
 import '../../core/storage/local_storage.dart';
 import '../../l10n/app_strings.dart';
 import '../widgets/loading_indicator.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class TenantSelectionScreen extends StatefulWidget {
   final String? funcNumber; // "3" for Picking, null or other for Warehouse Receipt
@@ -141,7 +141,10 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
         title: Builder(
           builder: (context) {
             final strings = AppStrings.of(context);
-            return Text(widget.funcNumber == "3" ? 'ピッキング' : strings.tenantSelectionTitle);
+            return Text(
+              widget.funcNumber == "3" ? 'ピッキング' : strings.tenantSelectionTitle,
+              style: AppTextStyles.appBarTitle,
+            );
           },
         ),
         backgroundColor: AppColors.headerColor,
@@ -169,17 +172,30 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                 final strings = AppStrings.of(context);
                 return TextField(
                   controller: _searchController,
+                  style: const TextStyle(
+                    fontFamily: AppTextStyles.font,
+                    fontSize: AppTextStyles.sizeInput,
+                    color: AppColors.blackTextColor,
+                  ),
                   decoration: InputDecoration(
                     hintText: strings.tenantSearchHint,
-                    prefixIcon: const Icon(Icons.search),
+                    hintStyle: const TextStyle(
+                      fontFamily: AppTextStyles.font,
+                      color: AppColors.gray,
+                      fontSize: AppTextStyles.sizeHint,
+                    ),
+                    prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppTextStyles.sizeSearchIcon),
+                    prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                            },
+                            icon: const Icon(Icons.clear, color: AppColors.gray, size: AppTextStyles.sizeSearchClearIcon),
+                            onPressed: () { _searchController.clear(); },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 36, minHeight: 0),
                           )
                         : null,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                     border: const OutlineInputBorder(
                       borderSide: BorderSide(color: AppColors.lighter, width: 2),
                     ),
@@ -209,7 +225,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                               children: [
                                 Text(
                                   strings.tenantLoadFailed,
-                                  style: TextStyle(fontSize: 16.sp),
+                                  style: TextStyle(fontSize: AppTextStyles.sizeBody),
                                 ),
                                 const SizedBox(height: 16),
                                 ElevatedButton(
@@ -248,7 +264,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                                     '${index + 1}. ${tenant.tenantFullName}',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 30.sp,
+                                      fontSize: 30,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

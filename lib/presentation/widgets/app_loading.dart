@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class AppLoading extends StatelessWidget {
   final double size;
@@ -34,9 +35,9 @@ class AppLoading extends StatelessWidget {
             Text(
               message!,
               style: const TextStyle(
-                fontFamily: 'MSPGothic',
+                fontFamily: AppTextStyles.font,
                 color: AppColors.grayTextColor,
-                fontSize: 12,
+                fontSize: AppTextStyles.sizeCaption,
               ),
             ),
           ],

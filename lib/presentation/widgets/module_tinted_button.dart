@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class ModuleTintedButton extends StatelessWidget {
   final String label;
@@ -40,15 +41,15 @@ class ModuleTintedButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 18, color: fg),
+                Icon(icon, size: AppTextStyles.sizeBottomButtonIcon, color: fg),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
                     label,
                     style: TextStyle(
-                      fontFamily: 'MSPGothic',
+                      fontFamily: AppTextStyles.font,
                       color: fg,
-                      fontSize: 14,
+                      fontSize: AppTextStyles.sizeBottomButton,
                       fontWeight: FontWeight.w700,
                     ),
                     maxLines: 1,
@@ -99,8 +100,8 @@ class ModuleFilledButton extends StatelessWidget {
         label: Text(
           label,
           style: const TextStyle(
-            fontFamily: 'MSPGothic',
-            fontSize: 16,
+            fontFamily: AppTextStyles.font,
+            fontSize: AppTextStyles.sizeButton,
             fontWeight: FontWeight.w700,
           ),
         ),

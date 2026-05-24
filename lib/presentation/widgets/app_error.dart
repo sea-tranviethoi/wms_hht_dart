@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class AppError extends StatelessWidget {
   final String? title;
@@ -52,9 +53,9 @@ class AppError extends StatelessWidget {
               Text(
                 title!,
                 style: const TextStyle(
-                  fontFamily: 'MSPGothic',
+                  fontFamily: AppTextStyles.font,
                   color: AppColors.blackTextColor,
-                  fontSize: 16,
+                  fontSize: AppTextStyles.sizeBody,
                   fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
@@ -64,9 +65,9 @@ class AppError extends StatelessWidget {
             Text(
               message,
               style: const TextStyle(
-                fontFamily: 'MSPGothic',
+                fontFamily: AppTextStyles.font,
                 color: AppColors.grayTextColor,
-                fontSize: 13,
+                fontSize: AppTextStyles.sizeSub,
                 height: 1.4,
               ),
               textAlign: TextAlign.center,
@@ -78,7 +79,7 @@ class AppError extends StatelessWidget {
                 icon: const Icon(Icons.refresh, size: 18),
                 label: Text(
                   retryLabel,
-                  style: const TextStyle(fontFamily: 'MSPGothic'),
+                  style: const TextStyle(fontFamily: AppTextStyles.font),
                 ),
               ),
             ],

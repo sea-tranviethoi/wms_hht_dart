@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class BackToMenuButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -33,18 +34,18 @@ class BackToMenuButton extends StatelessWidget {
             onTap: onPressed,
             borderRadius: BorderRadius.circular(12),
             child: Container(
-              height: 52,
+              height: AppTextStyles.heightBottomButton,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  Icon(icon, color: AppColors.white, size: 20),
+                  Icon(icon, color: AppColors.white, size: AppTextStyles.sizeBottomButtonIcon),
                   const SizedBox(width: 12),
                   Text(
                     label,
                     style: const TextStyle(
-                      fontFamily: 'MSPGothic',
+                      fontFamily: AppTextStyles.font,
                       color: AppColors.white,
-                      fontSize: 16,
+                      fontSize: AppTextStyles.sizeBottomButton,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class ModuleListTile extends StatelessWidget {
   final String title;
   final String? subtitle;
-  final String trailingText;
+  final String? trailingText;
   final double? progress;
   final Color statusColor;
   final String statusLabel;
@@ -15,7 +16,7 @@ class ModuleListTile extends StatelessWidget {
     super.key,
     required this.title,
     this.subtitle,
-    required this.trailingText,
+    this.trailingText,
     required this.statusColor,
     required this.statusLabel,
     required this.onTap,
@@ -49,8 +50,8 @@ class ModuleListTile extends StatelessWidget {
                         child: Text(
                           title,
                           style: const TextStyle(
-                            fontFamily: 'MSPGothic',
-                            fontSize: 18,
+                            fontFamily: AppTextStyles.font,
+                            fontSize: AppTextStyles.sizeListTitle,
                             fontWeight: FontWeight.w700,
                             color: AppColors.blackTextColor,
                           ),
@@ -62,8 +63,8 @@ class ModuleListTile extends StatelessWidget {
                       Text(
                         statusLabel,
                         style: TextStyle(
-                          fontFamily: 'MSPGothic',
-                          fontSize: 13,
+                          fontFamily: AppTextStyles.font,
+                          fontSize: AppTextStyles.sizeSub,
                           color: statusColor,
                           fontWeight: FontWeight.w500,
                         ),
@@ -75,8 +76,8 @@ class ModuleListTile extends StatelessWidget {
                     Text(
                       subtitle!,
                       style: const TextStyle(
-                        fontFamily: 'MSPGothic',
-                        fontSize: 14,
+                        fontFamily: AppTextStyles.font,
+                        fontSize: AppTextStyles.sizeInfo,
                         color: AppColors.grayTextColor,
                       ),
                       maxLines: 1,
@@ -91,15 +92,16 @@ class ModuleListTile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  trailingText,
-                  style: TextStyle(
-                    fontFamily: 'MSPGothic',
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: statusColor,
+                if (trailingText != null && trailingText!.isNotEmpty)
+                  Text(
+                    trailingText!,
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.font,
+                      fontSize: AppTextStyles.sizeInput,
+                      fontWeight: FontWeight.w700,
+                      color: statusColor,
+                    ),
                   ),
-                ),
                 if (progress != null) ...[
                   const SizedBox(height: 4),
                   ClipRRect(

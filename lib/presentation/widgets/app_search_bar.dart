@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class AppSearchBar extends StatefulWidget {
   final String? initialValue;
@@ -70,22 +71,25 @@ class _AppSearchBarState extends State<AppSearchBar> {
         autofocus: widget.autofocus,
         onSubmitted: (_) => widget.onSubmitted?.call(),
         style: const TextStyle(
-          fontFamily: 'MSPGothic',
-          fontSize: 17,
+          fontFamily: AppTextStyles.font,
+          fontSize: AppTextStyles.sizeInput,
           color: AppColors.blackTextColor,
         ),
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: const TextStyle(
-            fontFamily: 'MSPGothic',
+            fontFamily: AppTextStyles.font,
             color: AppColors.grayTextColor,
-            fontSize: 16,
+            fontSize: AppTextStyles.sizeHint,
           ),
-          prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: 24),
+          prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppTextStyles.sizeSearchIcon),
+          prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
           suffixIcon: _ctrl.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.close, color: AppColors.gray, size: 22),
+                  icon: const Icon(Icons.close, color: AppColors.gray, size: AppTextStyles.sizeSearchClearIcon),
                   onPressed: () => _ctrl.clear(),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 36, minHeight: 0),
                 )
               : null,
           border: InputBorder.none,

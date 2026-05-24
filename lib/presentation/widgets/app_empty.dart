@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class AppEmpty extends StatelessWidget {
   final String? title;
@@ -50,9 +51,9 @@ class AppEmpty extends StatelessWidget {
               Text(
                 title!,
                 style: const TextStyle(
-                  fontFamily: 'MSPGothic',
+                  fontFamily: AppTextStyles.font,
                   color: AppColors.darker,
-                  fontSize: 15,
+                  fontSize: AppTextStyles.sizeCard,
                   fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
@@ -63,9 +64,9 @@ class AppEmpty extends StatelessWidget {
               Text(
                 message!,
                 style: const TextStyle(
-                  fontFamily: 'MSPGothic',
+                  fontFamily: AppTextStyles.font,
                   color: AppColors.grayTextColor,
-                  fontSize: 12,
+                  fontSize: AppTextStyles.sizeCaption,
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,

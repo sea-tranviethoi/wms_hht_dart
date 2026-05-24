@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../core/di/injection.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../data/models/picking/picking_line.dart';
@@ -64,18 +65,10 @@ class _PickingItemsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: () => _backToList(context),
         ),
-        title: Text(
-          'ピッキング: $pickNo',
-          style: const TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
+        title: Text('ピッキング: $pickNo', style: AppTextStyles.appBarTitle),
       ),
       body: BlocBuilder<PickingBloc, PickingState>(
         builder: (context, state) {
@@ -116,9 +109,9 @@ class _PickingItemsView extends StatelessWidget {
           child: Text(
             '合計: ${lines.length} 件',
             style: const TextStyle(
-              fontFamily: 'MSPGothic',
+              fontFamily: AppTextStyles.font,
               color: AppColors.grayTextColor,
-              fontSize: 13,
+              fontSize: AppTextStyles.sizeSub,
             ),
           ),
         ),
@@ -168,20 +161,20 @@ class _PickingItemsView extends StatelessWidget {
                       onTap: () => _backToList(context),
                       borderRadius: BorderRadius.circular(12),
                       child: Container(
-                        height: 52,
+                        height: AppTextStyles.heightBottomButton,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.arrow_back,
-                                color: AppColors.white, size: 20),
+                                color: AppColors.white, size: AppTextStyles.sizeBottomButtonIcon),
                             SizedBox(width: 8),
                             Text(
                               '戻る',
                               style: TextStyle(
-                                fontFamily: 'MSPGothic',
+                                fontFamily: AppTextStyles.font,
                                 color: AppColors.white,
-                                fontSize: 16,
+                                fontSize: AppTextStyles.sizeBottomButton,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -197,7 +190,7 @@ class _PickingItemsView extends StatelessWidget {
                     label: '開始',
                     icon: Icons.play_arrow,
                     color: AppColors.settingsColor3,
-                    height: 52,
+                    height: AppTextStyles.heightBottomButton,
                     onPressed: () {
                       final firstIdx = lines.indexWhere(
                         (l) => (l.actualQty ?? 0) < l.pickQty,
@@ -280,7 +273,7 @@ class _LineCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: AppTextStyles.sizeInfo,
                         ),
                       ),
               ),
@@ -294,9 +287,9 @@ class _LineCard extends StatelessWidget {
                     Text(
                       line.productCode,
                       style: const TextStyle(
-                        fontFamily: 'MSPGothic',
+                        fontFamily: AppTextStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: AppTextStyles.sizeCard,
                         color: AppColors.blackTextColor,
                       ),
                     ),
@@ -306,9 +299,9 @@ class _LineCard extends StatelessWidget {
                       Text(
                         line.productName!,
                         style: const TextStyle(
-                          fontFamily: 'MSPGothic',
+                          fontFamily: AppTextStyles.font,
                           color: AppColors.grayTextColor,
-                          fontSize: 12,
+                          fontSize: AppTextStyles.sizeCaption,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -324,8 +317,8 @@ class _LineCard extends StatelessWidget {
                           Text(
                             line.bin!,
                             style: const TextStyle(
-                              fontFamily: 'MSPGothic',
-                              fontSize: 12,
+                              fontFamily: AppTextStyles.font,
+                              fontSize: AppTextStyles.sizeCaption,
                               color: AppColors.grayTextColor,
                             ),
                           ),
@@ -337,8 +330,8 @@ class _LineCard extends StatelessWidget {
                         Text(
                           '${actual.toStringAsFixed(0)} / ${line.pickQty.toStringAsFixed(0)}',
                           style: TextStyle(
-                            fontFamily: 'MSPGothic',
-                            fontSize: 12,
+                            fontFamily: AppTextStyles.font,
+                            fontSize: AppTextStyles.sizeCaption,
                             color: isDone
                                 ? AppColors.wageningenGreen
                                 : AppColors.settingsColor3,

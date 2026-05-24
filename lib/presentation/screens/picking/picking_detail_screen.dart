@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/audio/sound_manager.dart';
 import '../../../core/hardware/keyboard_event_bus.dart';
@@ -306,20 +307,20 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
     return showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('確認', style: TextStyle(fontFamily: 'MSPGothic')),
+        title: const Text('確認', style: TextStyle(fontFamily: AppTextStyles.font)),
         content: Text(message,
-            style: const TextStyle(fontFamily: 'MSPGothic')),
+            style: const TextStyle(fontFamily: AppTextStyles.font)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('いいえ',
-                style: TextStyle(fontFamily: 'MSPGothic')),
+                style: TextStyle(fontFamily: AppTextStyles.font)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('はい',
                 style: TextStyle(
-                    fontFamily: 'MSPGothic',
+                    fontFamily: AppTextStyles.font,
                     color: AppColors.settingsColor3,
                     fontWeight: FontWeight.bold)),
           ),
@@ -331,7 +332,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
   void _showSnack(String msg, {bool isError = false}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg, style: const TextStyle(fontFamily: 'MSPGothic')),
+      content: Text(msg, style: const TextStyle(fontFamily: AppTextStyles.font)),
       backgroundColor: isError ? AppColors.settingsColor7 : AppColors.settingsColor5,
       duration: const Duration(seconds: 2),
     ));
@@ -367,18 +368,10 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: () => context.pop(),
         ),
-        title: Text(
-          'ピッキング: ${widget.pickNo}  ${_currentIndex + 1}/$total',
-          style: TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text('ピッキング: ${widget.pickNo}  ${_currentIndex + 1}/$total', style: AppTextStyles.appBarTitle),
       ),
       body: BlocBuilder<PickingBloc, PickingState>(
         builder: (context, state) {
@@ -390,7 +383,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                   CircularProgressIndicator(color: AppColors.settingsColor3),
                   SizedBox(height: 16),
                   Text('データ同期中...',
-                      style: TextStyle(fontFamily: 'MSPGothic')),
+                      style: TextStyle(fontFamily: AppTextStyles.font)),
                 ],
               ),
             );
@@ -437,13 +430,13 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
           children: [
             Text('進捗: $done / $total 件完了',
                 style: TextStyle(
-                    fontFamily: 'MSPGothic',
-                    fontSize: 13,
+                    fontFamily: AppTextStyles.font,
+                    fontSize: AppTextStyles.sizeSub,
                     color: AppColors.grayTextColor)),
             Text('${(done / total * 100).toStringAsFixed(0)}%',
                 style: TextStyle(
-                    fontFamily: 'MSPGothic',
-                    fontSize: 13,
+                    fontFamily: AppTextStyles.font,
+                    fontSize: AppTextStyles.sizeSub,
                     fontWeight: FontWeight.bold,
                     color: AppColors.settingsColor3)),
           ],
@@ -496,8 +489,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
             child: Text(
               label,
               style: TextStyle(
-                  fontFamily: 'MSPGothic',
-                  fontSize: 13,
+                  fontFamily: AppTextStyles.font,
+                  fontSize: AppTextStyles.sizeSub,
                   color: AppColors.grayTextColor),
             ),
           ),
@@ -505,8 +498,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
             child: Text(
               value,
               style: TextStyle(
-                fontFamily: 'MSPGothic',
-                fontSize: 14,
+                fontFamily: AppTextStyles.font,
+                fontSize: AppTextStyles.sizeInfo,
                 fontWeight: bold ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -553,8 +546,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                 const SizedBox(width: 8),
                 Text('実数量',
                     style: TextStyle(
-                        fontFamily: 'MSPGothic',
-                        fontSize: 14,
+                        fontFamily: AppTextStyles.font,
+                        fontSize: AppTextStyles.sizeInfo,
                         color: AppColors.blackTextColor)),
                 const SizedBox(width: 12),
                 Expanded(
@@ -564,8 +557,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'MSPGothic',
-                      fontSize: 20,
+                      fontFamily: AppTextStyles.font,
+                      fontSize: AppTextStyles.sizeTitle,
                       fontWeight: FontWeight.bold,
                       color: AppColors.settingsColor3,
                     ),
@@ -601,11 +594,11 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                   onPressed: _goPrev,
                   icon: const Icon(Icons.arrow_back),
                   label: const Text('前へ',
-                      style: TextStyle(fontFamily: 'MSPGothic')),
+                      style: TextStyle(fontFamily: AppTextStyles.font)),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.settingsColor3,
                     side: const BorderSide(color: AppColors.settingsColor3),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    minimumSize: const Size.fromHeight(AppTextStyles.heightPrimaryButton),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -620,24 +613,27 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                 onPressed: isLast
                     ? (allDone ? _showSyncDialog : () => _handleLineComplete())
                     : _goNext,
-                icon: Icon(isLast
-                    ? (allDone ? Icons.cloud_upload : Icons.check)
-                    : Icons.arrow_forward),
+                icon: Icon(
+                  isLast
+                      ? (allDone ? Icons.cloud_upload : Icons.check)
+                      : Icons.arrow_forward,
+                  size: AppTextStyles.sizePrimaryButtonIcon,
+                ),
                 label: Text(
                   isLast
                       ? (allDone ? '完了・送信' : '完了確認')
                       : '次へ',
                   style: const TextStyle(
-                      fontFamily: 'MSPGothic',
+                      fontFamily: AppTextStyles.font,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                      fontSize: AppTextStyles.sizePrimaryButton),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isLast && allDone
                       ? AppColors.settingsColor5
                       : AppColors.settingsColor3,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  minimumSize: const Size.fromHeight(AppTextStyles.heightPrimaryButton),
                   elevation: 1,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -686,18 +682,18 @@ class _ScanField extends StatelessWidget {
                 focusNode: focusNode,
                 textInputAction: TextInputAction.done,
                 onSubmitted: onSubmitted,
-                style: const TextStyle(fontFamily: 'MSPGothic', fontSize: 14),
+                style: const TextStyle(fontFamily: AppTextStyles.font, fontSize: AppTextStyles.sizeInfo),
                 decoration: InputDecoration(
                   labelText: label,
                   labelStyle: TextStyle(
-                      fontFamily: 'MSPGothic',
-                      fontSize: 12,
+                      fontFamily: AppTextStyles.font,
+                      fontSize: AppTextStyles.sizeCaption,
                       color: AppColors.grayTextColor),
                   hintText: hintText,
                   hintStyle: TextStyle(
-                      fontFamily: 'MSPGothic',
+                      fontFamily: AppTextStyles.font,
                       color: AppColors.gray,
-                      fontSize: 12),
+                      fontSize: AppTextStyles.sizeCaption),
                   border: InputBorder.none,
                   suffixIcon: controller.text.isNotEmpty
                       ? IconButton(

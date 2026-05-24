@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../core/di/injection.dart';
 import '../../data/repositories/bin_audit_repository.dart';
 import '../../routes/route_names.dart';
@@ -63,17 +64,14 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor6,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: _backToMenu,
         ),
-        title: const Text(
-          '棚卸一覧',
-          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
-        ),
+        title: const Text('棚卸一覧', style: AppTextStyles.appBarTitle),
         actions: [
           BlocBuilder<BinAuditBloc, BinAuditState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white, size: 32),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
               onPressed: state is BinAuditLoading ? null : _loadData,
             ),
           ),
@@ -110,14 +108,14 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
           itemBuilder: (context, index) {
             final row = rows[index];
             final (Color statusColor, String statusLabel) = row.isDone
-                ? (AppColors.settingsColor6, '完了')
+                ? (AppColors.wageningenGreen, '完了')
                 : row.isPending
                     ? (AppColors.textWarning, '進行中')
                     : (AppColors.settingsColor6, '未開始');
             final dateStr = row.transactionDate != null
                 ? _dateFormat.format(row.transactionDate!)
                 : '';
-            final trailing = row.recordNo != null ? '#${row.recordNo}' : '';
+            final trailing = row.recordNo != null ? '#${row.recordNo}' : null;
             return ModuleListTile(
               title: row.stockTakeNo,
               subtitle: dateStr.isNotEmpty ? dateStr : null,

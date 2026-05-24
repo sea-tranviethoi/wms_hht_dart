@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../core/di/injection.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../routes/route_names.dart';
@@ -70,22 +71,14 @@ class _PickingListViewState extends State<_PickingListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: _backToTenantSelection,
         ),
-        title: Text(
-          'ピッキング一覧${widget.company.isNotEmpty ? ' (${widget.company})' : ''}',
-          style: const TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
+        title: Text('ピッキング一覧${widget.company.isNotEmpty ? ' (${widget.company})' : ''}', style: AppTextStyles.appBarTitle),
         actions: [
           BlocBuilder<PickingBloc, PickingState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white, size: 32),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
               onPressed: state is PickingLoading
                   ? null
                   : () {
@@ -185,10 +178,10 @@ class _PickingListViewState extends State<_PickingListView> {
         context: context,
         builder: (_) => AlertDialog(
           title: const Text('通知',
-              style: TextStyle(fontFamily: 'MSPGothic')),
+              style: TextStyle(fontFamily: AppTextStyles.font)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.pickNo} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: 'MSPGothic'),
+            style: const TextStyle(fontFamily: AppTextStyles.font),
           ),
           actions: [
             TextButton(
@@ -196,7 +189,7 @@ class _PickingListViewState extends State<_PickingListView> {
               style: TextButton.styleFrom(
                   foregroundColor: AppColors.settingsColor3),
               child: const Text('閉じる',
-                  style: TextStyle(fontFamily: 'MSPGothic')),
+                  style: TextStyle(fontFamily: AppTextStyles.font)),
             ),
           ],
         ),

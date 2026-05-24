@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/wr_remote_datasource.dart';
@@ -76,16 +77,16 @@ class _WRListViewState extends State<_WRListView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: 'MSPGothic')),
+          title: const Text('通知', style: TextStyle(fontFamily: AppTextStyles.font)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.receiptNo} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: 'MSPGothic'),
+            style: const TextStyle(fontFamily: AppTextStyles.font),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor1),
-              child: const Text('閉じる', style: TextStyle(fontFamily: 'MSPGothic')),
+              child: const Text('閉じる', style: TextStyle(fontFamily: AppTextStyles.font)),
             ),
           ],
         ),
@@ -118,15 +119,12 @@ class _WRListViewState extends State<_WRListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: _backToMenu,
         ),
-        title: Text(
-          '入荷一覧${widget.company.isNotEmpty ? " (${widget.company})" : ""}',
-          style: const TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 20),
-        ),
+        title: Text('入荷一覧${widget.company.isNotEmpty ? " (${widget.company})" : ""}', style: AppTextStyles.appBarTitle),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: 32), onPressed: _loadData),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon), onPressed: _loadData),
         ],
       ),
       body: BlocListener<WRBloc, WRState>(
@@ -231,14 +229,14 @@ class _WRListViewState extends State<_WRListView> {
                   onTap: _backToMenu,
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    height: 52,
+                    height: AppTextStyles.heightBottomButton,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.arrow_back, color: AppColors.white, size: 20),
+                        Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeBottomButtonIcon),
                         SizedBox(width: 8),
-                        Text('戻る', style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.white, fontSize: 16, fontWeight: FontWeight.w700)),
+                        Text('戻る', style: TextStyle(fontFamily: AppTextStyles.font, color: AppColors.white, fontSize: AppTextStyles.sizeBottomButton, fontWeight: FontWeight.w700)),
                       ],
                     ),
                   ),
@@ -252,7 +250,7 @@ class _WRListViewState extends State<_WRListView> {
                 icon: Icons.filter_list,
                 color: AppColors.settingsColor1,
                 onPressed: _openFilter,
-                height: 52,
+                height: AppTextStyles.heightBottomButton,
               ),
             ),
           ],

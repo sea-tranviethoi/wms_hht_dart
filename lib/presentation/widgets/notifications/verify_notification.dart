@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../core/audio/sound_manager.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ components/Notification.js — VerifyNotification
 /// Dialog đa năng: thông báo, xác nhận, download progress
@@ -74,8 +74,8 @@ class VerifyNotification extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      fontFamily: 'MSPGothic',
-                      fontSize: 16.sp,
+                      fontFamily: AppTextStyles.font,
+                      fontSize: AppTextStyles.sizeBody,
                       fontWeight: FontWeight.bold,
                       color: AppColors.blackTextColor,
                     ),
@@ -86,8 +86,8 @@ class VerifyNotification extends StatelessWidget {
                   Text(
                     message,
                     style: TextStyle(
-                      fontFamily: 'MSPGothic',
-                      fontSize: 14.sp,
+                      fontFamily: AppTextStyles.font,
+                      fontSize: AppTextStyles.sizeInfo,
                       color: AppColors.grayTextColor,
                     ),
                     textAlign: TextAlign.center,
@@ -105,8 +105,8 @@ class VerifyNotification extends StatelessWidget {
                     Text(
                       '${(progressValue * 100).toStringAsFixed(0)}%',
                       style: TextStyle(
-                        fontFamily: 'MSPGothic',
-                        fontSize: 12.sp,
+                        fontFamily: AppTextStyles.font,
+                        fontSize: AppTextStyles.sizeCaption,
                         color: AppColors.grayTextColor,
                       ),
                     ),
@@ -143,7 +143,7 @@ class VerifyNotification extends StatelessWidget {
       ),
       child: Text(
         btn.text,
-        style: TextStyle(fontFamily: 'MSPGothic', fontSize: 14.sp),
+        style: TextStyle(fontFamily: AppTextStyles.font, fontSize: 14.sp),
       ),
     );
   }

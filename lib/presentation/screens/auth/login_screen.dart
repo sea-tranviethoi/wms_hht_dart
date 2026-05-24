@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../core/di/injection.dart';
 import '../../../routes/route_names.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Port từ screens/Login.js
 /// Login bằng username/password + nút chuyển sang QR login
@@ -85,20 +85,24 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.themeBackground,
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
               // ── Header ──────────────────────────────────────
-              const SizedBox(height: 40),
+              const SizedBox(height: 24),
               Text(
                 'FBTHHT',
                 style: TextStyle(
-                  fontFamily: 'MSPGothic',
-                  fontSize: 36.sp,
+                  fontFamily: AppTextStyles.font,
+                  fontSize: 36,
                   fontWeight: FontWeight.bold,
                   color: AppColors.white,
                   letterSpacing: 4,
@@ -109,8 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 '倉庫管理システム',
                 style: TextStyle(
-                  fontFamily: 'MSPGothic',
-                  fontSize: 14.sp,
+                  fontFamily: AppTextStyles.font,
+                  fontSize: 14,
                   color: AppColors.lighter,
                 ),
                 textAlign: TextAlign.center,
@@ -138,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       focusNode: _usernameFocus,
                       textInputAction: TextInputAction.next,
                       onSubmitted: (_) => _passwordFocus.requestFocus(),
-                      style: const TextStyle(fontFamily: 'MSPGothic'),
+                      style: const TextStyle(fontFamily: AppTextStyles.font),
                       decoration: _inputDecoration('ユーザー名を入力', Icons.person_outline),
                     ),
                     const SizedBox(height: 16),
@@ -152,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
                       onSubmitted: (_) => _handleLogin(),
-                      style: const TextStyle(fontFamily: 'MSPGothic'),
+                      style: const TextStyle(fontFamily: AppTextStyles.font),
                       decoration: _inputDecoration(
                         'パスワードを入力',
                         Icons.lock_outline,
@@ -174,9 +178,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         _errorMessage!,
                         style: TextStyle(
-                          fontFamily: 'MSPGothic',
+                          fontFamily: AppTextStyles.font,
                           color: AppColors.textError,
-                          fontSize: 12.sp,
+                          fontSize: 12,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -207,8 +211,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             : Text(
                                 'ログイン',
                                 style: TextStyle(
-                                  fontFamily: 'MSPGothic',
-                                  fontSize: 16.sp,
+                                  fontFamily: AppTextStyles.font,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -222,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       icon: const Icon(Icons.qr_code_scanner),
                       label: const Text(
                         'QRコードでログイン',
-                        style: TextStyle(fontFamily: 'MSPGothic'),
+                        style: TextStyle(fontFamily: AppTextStyles.font),
                       ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.themeBackground,
@@ -242,13 +246,16 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 'V1.10.2 — Development',
                 style: TextStyle(
-                  fontFamily: 'MSPGothic',
+                  fontFamily: AppTextStyles.font,
                   color: AppColors.lighter,
-                  fontSize: 11.sp,
+                  fontSize: 11,
                 ),
                 textAlign: TextAlign.center,
               ),
-            ],
+              const SizedBox(height: 24),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -257,9 +264,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildLabel(String text) => Text(
         text,
-        style: TextStyle(
-          fontFamily: 'MSPGothic',
-          fontSize: 13.sp,
+        style: const TextStyle(
+          fontFamily: AppTextStyles.font,
+          fontSize: 13,
           color: AppColors.blackTextColor,
           fontWeight: FontWeight.w600,
         ),
@@ -268,10 +275,10 @@ class _LoginScreenState extends State<LoginScreen> {
   InputDecoration _inputDecoration(String hint, IconData icon, {Widget? suffix}) =>
       InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(
-          fontFamily: 'MSPGothic',
+        hintStyle: const TextStyle(
+          fontFamily: AppTextStyles.font,
           color: AppColors.textPlaceholder,
-          fontSize: 13.sp,
+          fontSize: 13,
         ),
         prefixIcon: Icon(icon, color: AppColors.gray, size: 20),
         suffixIcon: suffix,
