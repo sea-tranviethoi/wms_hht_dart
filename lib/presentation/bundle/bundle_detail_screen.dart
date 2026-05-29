@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../../config/theme_config.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../core/di/injection.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
 import '../../data/models/bundle/bundle_line.dart';
 import '../../routes/route_names.dart';
 import '../../core/utils/qr_code_parser.dart';
+import '../widgets/form_widgets.dart';
 
-/// 事前セット詳細 — standalone, no Provider/BLoC needed (Phase 6)
+/// 事前セット詳細 — standalone, no Provider/BLoC needed
 class BundleDetailScreen extends StatefulWidget {
   final String transNo;
   final BundleLine? bundleLine;
@@ -30,28 +32,26 @@ class BundleDetailScreen extends StatefulWidget {
 }
 
 class _BundleDetailScreenState extends State<BundleDetailScreen> {
-  final TextEditingController _binController = TextEditingController();
-  final TextEditingController _productCodeController = TextEditingController();
-  final TextEditingController _productNameController = TextEditingController();
-  final TextEditingController _demandQtyController = TextEditingController();
-  final TextEditingController _actualQtyController = TextEditingController();
-  final TextEditingController _lotNoController = TextEditingController();
-  final TextEditingController _expirationDateController =
-      TextEditingController();
-  final TextEditingController _janCodeController = TextEditingController();
-  final TextEditingController _qrCodeController = TextEditingController();
+  final _binCtrl = TextEditingController();
+  final _productCodeCtrl = TextEditingController();
+  final _productNameCtrl = TextEditingController();
+  final _demandQtyCtrl = TextEditingController();
+  final _actualQtyCtrl = TextEditingController();
+  final _lotNoCtrl = TextEditingController();
+  final _expirationDateCtrl = TextEditingController();
+  final _janCodeCtrl = TextEditingController();
+  final _qrCodeCtrl = TextEditingController();
 
-  final FocusNode _binFocus = FocusNode();
-  final FocusNode _qrCodeFocus = FocusNode();
-  final FocusNode _actualQtyFocus = FocusNode();
+  final _binFocus = FocusNode();
+  final _qrFocus = FocusNode();
+  final _actualQtyFocus = FocusNode();
 
-  int _currentIndex = 0;
-  List<BundleLine> _lines = [];
+  late int _currentIndex;
+  late List<BundleLine> _lines;
   MobileScannerController? _scannerController;
   String? _scanningField;
   bool _isSyncing = false;
 
-  // In-memory scan data per line index
   final Map<int, Map<String, dynamic>> _scanData = {};
 
   @override
@@ -61,38 +61,77 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
     _lines = widget.allLines.isNotEmpty
         ? widget.allLines
         : (widget.bundleLine != null ? [widget.bundleLine!] : []);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _updateFormFields());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _updateFormFields());
   }
+
+  @override
+  void dispose() {
+    _binCtrl.dispose();
+    _productCodeCtrl.dispose();
+    _productNameCtrl.dispose();
+    _demandQtyCtrl.dispose();
+    _actualQtyCtrl.dispose();
+    _lotNoCtrl.dispose();
+    _expirationDateCtrl.dispose();
+    _janCodeCtrl.dispose();
+    _qrCodeCtrl.dispose();
+    _binFocus.dispose();
+    _qrFocus.dispose();
+    _actualQtyFocus.dispose();
+    _scannerController?.dispose();
+    super.dispose();
+  }
+
+  // ─── Form helpers ─────────────────────────────────────────────
 
   void _updateFormFields() {
     if (_lines.isEmpty || _currentIndex >= _lines.length) return;
     final line = _lines[_currentIndex];
     final saved = _scanData[_currentIndex];
 
-    _binController.text = saved?['bin'] ?? line.bin ?? '';
-    _productCodeController.text = line.productCode;
-    _productNameController.text = line.productName ?? '';
-    _demandQtyController.text = line.demandQty.toStringAsFixed(0);
-    _actualQtyController.text =
+    _binCtrl.text = saved?['bin'] ?? line.bin ?? '';
+    _productCodeCtrl.text = line.productCode;
+    _productNameCtrl.text = line.productName ?? '';
+    _demandQtyCtrl.text = line.demandQty.toStringAsFixed(0);
+    _actualQtyCtrl.text =
         (saved?['actualQty'] as double? ?? line.actualQty)
             .toStringAsFixed(0);
-    _lotNoController.text = saved?['lotNo'] ?? line.lotNo ?? '';
-    _expirationDateController.text =
+    _lotNoCtrl.text = saved?['lotNo'] ?? line.lotNo ?? '';
+    _expirationDateCtrl.text =
         saved?['expirationDate'] ?? line.expirationDate ?? '';
-    _janCodeController.text = saved?['janCode'] ?? '';
-    _qrCodeController.text = saved?['qrCode'] ?? '';
+    _janCodeCtrl.text = saved?['janCode'] ?? '';
+    _qrCodeCtrl.text = saved?['qrCode'] ?? '';
 
     _binFocus.requestFocus();
   }
 
+  void _saveScanField(String key, dynamic value) {
+    _scanData[_currentIndex] ??= {};
+    _scanData[_currentIndex]![key] = value;
+  }
+
+  void _saveScanData(double actualQty, String janCode, String lotNo,
+      String expirationDate, String qrCode) {
+    _scanData[_currentIndex] = {
+      'bin': _binCtrl.text,
+      'actualQty': actualQty,
+      'janCode': janCode,
+      'lotNo': lotNo,
+      'expirationDate': expirationDate,
+      'qrCode': qrCode,
+    };
+  }
+
+  // ─── Scan handlers ────────────────────────────────────────────
+
   void _handleBinSubmit(String value) {
     if (value.isEmpty) return;
-
     final binData = splitQRCodeBin(value);
     final binCode = binData['binCode'] ?? value;
-    _binController.text = binCode;
+    _binCtrl.text = binCode;
     _saveScanField('bin', binCode);
-    _qrCodeFocus.requestFocus();
+    _qrFocus.requestFocus();
   }
 
   void _handleQRCodeSubmit(String value) {
@@ -100,7 +139,6 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
       _actualQtyFocus.requestFocus();
       return;
     }
-
     final qrData = splitQRCodePick(value);
     final productCode = qrData['productCode'];
     final janCode = qrData['janCode'];
@@ -112,43 +150,39 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
         lotNo == null ||
         expired == null) {
       _showSnack('QRコードのフォーマットが正しくありません', isError: true);
-      _qrCodeController.clear();
-      _qrCodeFocus.requestFocus();
+      _qrCodeCtrl.clear();
+      _qrFocus.requestFocus();
       return;
     }
 
     final currentLine = _lines[_currentIndex];
     if (productCode.toLowerCase() !=
         currentLine.productCode.toLowerCase()) {
-      _showSnack(
-          'スキャンした商品が事前セットすべきの商品と違います。ご確認ください。',
+      _showSnack('スキャンした商品が事前セットすべきの商品と違います。ご確認ください。',
           isError: true);
-      _qrCodeController.clear();
-      _qrCodeFocus.requestFocus();
+      _qrCodeCtrl.clear();
+      _qrFocus.requestFocus();
       return;
     }
 
-    final currentQty =
-        double.tryParse(_actualQtyController.text) ?? 0.0;
+    final currentQty = double.tryParse(_actualQtyCtrl.text) ?? 0.0;
     final newQty = currentQty + 1;
 
     if (newQty > currentLine.demandQty) {
       _showSnack('実数量が必要な数量を超えました', isError: true);
-      _actualQtyController.text =
-          currentLine.demandQty.toStringAsFixed(0);
+      _actualQtyCtrl.text = currentLine.demandQty.toStringAsFixed(0);
       return;
     }
 
     setState(() {
-      _actualQtyController.text = newQty.toStringAsFixed(0);
-      _janCodeController.text = janCode;
-      _lotNoController.text = lotNo;
-      _expirationDateController.text = expired.replaceAll('/', '-');
-      _qrCodeController.text = value;
+      _actualQtyCtrl.text = newQty.toStringAsFixed(0);
+      _janCodeCtrl.text = janCode;
+      _lotNoCtrl.text = lotNo;
+      _expirationDateCtrl.text = expired.replaceAll('/', '-');
+      _qrCodeCtrl.text = value;
     });
 
-    _saveScanData(newQty, janCode, lotNo, expired.replaceAll('/', '-'),
-        value);
+    _saveScanData(newQty, janCode, lotNo, expired.replaceAll('/', '-'), value);
 
     if (newQty >= currentLine.demandQty) {
       if (_currentIndex < _lines.length - 1) {
@@ -157,94 +191,12 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
         _verifyComplete();
       }
     } else {
-      _qrCodeController.clear();
-      _qrCodeFocus.requestFocus();
+      _qrCodeCtrl.clear();
+      _qrFocus.requestFocus();
     }
   }
 
-  void _saveScanField(String key, dynamic value) {
-    _scanData[_currentIndex] ??= {};
-    _scanData[_currentIndex]![key] = value;
-  }
-
-  void _saveScanData(double actualQty, String janCode, String lotNo,
-      String expirationDate, String qrCode) {
-    _scanData[_currentIndex] = {
-      'bin': _binController.text,
-      'actualQty': actualQty,
-      'janCode': janCode,
-      'lotNo': lotNo,
-      'expirationDate': expirationDate,
-      'qrCode': qrCode,
-    };
-  }
-
-  Future<void> _verifyComplete() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Notification'),
-        content:
-            Text('事前セット ${widget.transNo} が完了しました。送信しますか？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('いいえ'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('はい'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      await _syncData();
-    } else {
-      if (mounted) context.go(RouteNames.bundleList);
-    }
-  }
-
-  Future<void> _syncData() async {
-    setState(() => _isSyncing = true);
-
-    try {
-      // Build payload from scan data
-      final payload = _lines.asMap().entries.map((entry) {
-        final i = entry.key;
-        final line = entry.value;
-        final data = _scanData[i] ?? {};
-
-        return {
-          'id': line.id,
-          'transNo': widget.transNo,
-          'productCode': line.productCode,
-          'bin': data['bin'] ?? line.bin ?? '',
-          'demandQty': line.demandQty,
-          'actualQty': data['actualQty'] ?? line.actualQty,
-          'lotNo': data['lotNo'] ?? line.lotNo ?? '',
-          'expirationDate': data['expirationDate'] ?? line.expirationDate ?? '',
-          'janCode': data['janCode'] ?? '',
-          'productQRCode': data['qrCode'] ?? '',
-          'pickbox': '',
-        };
-      }).toList();
-
-      await sl<BundleRemoteDataSource>().uploadFromHandheld(payload);
-
-      if (mounted) {
-        _showSnack('データは正常に同期されました', isError: false);
-        context.go(RouteNames.bundleList);
-      }
-    } catch (e) {
-      if (mounted) {
-        _showSnack('同期に失敗しました: $e', isError: true);
-      }
-    } finally {
-      if (mounted) setState(() => _isSyncing = false);
-    }
-  }
+  // ─── Navigation ───────────────────────────────────────────────
 
   void _handleNext() {
     if (_currentIndex < _lines.length - 1) {
@@ -264,11 +216,84 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
     }
   }
 
+  Future<void> _verifyComplete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('確認',
+            style: TextStyle(fontFamily: AppTextStyles.font)),
+        content: Text(
+          '事前セット ${widget.transNo} が完了しました。送信しますか？',
+          style: const TextStyle(fontFamily: AppTextStyles.font),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            style: TextButton.styleFrom(
+                foregroundColor: AppColors.grayTextColor),
+            child: const Text('いいえ',
+                style: TextStyle(fontFamily: AppTextStyles.font)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(
+                foregroundColor: AppColors.settingsColor4),
+            child: const Text('はい',
+                style: TextStyle(fontFamily: AppTextStyles.font)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await _syncData();
+    } else if (mounted) {
+      context.go(RouteNames.bundleList);
+    }
+  }
+
+  Future<void> _syncData() async {
+    setState(() => _isSyncing = true);
+    try {
+      final payload = _lines.asMap().entries.map((e) {
+        final i = e.key;
+        final line = e.value;
+        final data = _scanData[i] ?? {};
+        return {
+          'id': line.id,
+          'transNo': widget.transNo,
+          'productCode': line.productCode,
+          'bin': data['bin'] ?? line.bin ?? '',
+          'demandQty': line.demandQty,
+          'actualQty': data['actualQty'] ?? line.actualQty,
+          'lotNo': data['lotNo'] ?? line.lotNo ?? '',
+          'expirationDate':
+              data['expirationDate'] ?? line.expirationDate ?? '',
+          'janCode': data['janCode'] ?? '',
+          'productQRCode': data['qrCode'] ?? '',
+          'pickbox': '',
+        };
+      }).toList();
+
+      await sl<BundleRemoteDataSource>().uploadFromHandheld(payload);
+      if (mounted) {
+        _showSnack('データは正常に同期されました', isError: false);
+        context.go(RouteNames.bundleList);
+      }
+    } catch (e) {
+      if (mounted) _showSnack('同期に失敗しました: $e', isError: true);
+    } finally {
+      if (mounted) setState(() => _isSyncing = false);
+    }
+  }
+
   void _showSnack(String message, {required bool isError}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: isError ? Colors.red : Colors.green,
+        content: Text(message,
+            style: const TextStyle(fontFamily: AppTextStyles.font)),
+        backgroundColor:
+            isError ? AppColors.settingsColor7 : AppColors.settingsColor5,
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -278,7 +303,6 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
       _scanningField = field;
       _scannerController = MobileScannerController();
     });
-
     showDialog(
       context: context,
       builder: (_) => Dialog(
@@ -321,276 +345,194 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
     );
   }
 
+  // ─── Build ────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
     if (_lines.isEmpty) {
       return Scaffold(
+        backgroundColor: AppColors.white,
         appBar: AppBar(
-          title: const Text('事前セット詳細'),
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: AppColors.settingsColor4,
+          title: const Text('事前セット詳細', style: AppTextStyles.appBarTitle),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+            onPressed: () => context.pop(),
+          ),
         ),
         body: const Center(
           child: Text('明細データがありません',
-              style: TextStyle(fontFamily: 'MSPGothic')),
+              style: TextStyle(fontFamily: AppTextStyles.font)),
         ),
       );
     }
 
     if (_isSyncing) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        backgroundColor: AppColors.white,
+        body: Center(
+          child: CircularProgressIndicator(
+              color: AppColors.settingsColor4),
+        ),
       );
     }
 
+    final line = _lines[_currentIndex];
+
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: Text(
-            '事前セット詳細 (${_currentIndex + 1}/${_lines.length})'),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: AppColors.settingsColor4,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: () => context.pop(),
         ),
+        title: Text('事前セット詳細 (${_currentIndex + 1}/${_lines.length})', style: AppTextStyles.appBarTitle),
       ),
       body: Column(
         children: [
-          // Header
+          // ── Header ────────────────────────────────────────────
           Container(
+            width: double.infinity,
             padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.borderTable,
-              border: Border(
-                  bottom: BorderSide(color: AppColors.borderTable)),
-            ),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            color: AppColors.lighter,
             child: Row(
               children: [
                 const Text('事前セット:',
                     style: TextStyle(
-                        fontSize: 16, fontFamily: 'MSPGothic')),
+                        fontFamily: AppTextStyles.font,
+                        fontSize: 13,
+                        color: AppColors.grayTextColor)),
                 const SizedBox(width: 8),
                 Text(
                   widget.transNo,
                   style: const TextStyle(
-                      fontSize: 16,
+                      fontFamily: AppTextStyles.font,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'MSPGothic'),
+                      color: AppColors.blackTextColor),
+                ),
+                const Spacer(),
+                // Status badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: line.actualQty >= line.demandQty
+                        ? AppColors.wageningenGreen.withOpacity(0.15)
+                        : AppColors.settingsColor4.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: line.actualQty >= line.demandQty
+                          ? AppColors.wageningenGreen
+                          : AppColors.settingsColor4,
+                    ),
+                  ),
+                  child: Text(
+                    line.actualQty >= line.demandQty ? '完了' : '未対応',
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.font,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: line.actualQty >= line.demandQty
+                          ? AppColors.wageningenGreen
+                          : AppColors.settingsColor4,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
+          const Divider(height: 1, color: AppColors.light),
 
+          // ── Form fields ───────────────────────────────────────
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildFieldWithBarcode(
-                    label: '棚',
-                    controller: _binController,
+                  const FormLabel(label: '棚番'),
+                  const SizedBox(height: 4),
+                  FormScanField(
+                    controller: _binCtrl,
                     focusNode: _binFocus,
+                    focusedColor: AppColors.settingsColor4,
+                    onScanTap: () => _startBarcodeScanner('bin'),
                     onSubmitted: _handleBinSubmit,
-                    onBarcodeTap: () => _startBarcodeScanner('bin'),
                   ),
-                  const SizedBox(height: 16),
-                  _buildReadOnlyField(
-                      '商品コード', _productCodeController,
-                      Icons.inventory),
-                  const SizedBox(height: 16),
-                  _buildReadOnlyField(
-                      '商品名', _productNameController, Icons.label),
-                  const SizedBox(height: 16),
-                  _buildReadOnlyField(
-                      '需要数量', _demandQtyController,
-                      Icons.shopping_cart),
-                  const SizedBox(height: 16),
-                  _buildFieldWithBarcode(
-                    label: 'QRコード',
-                    controller: _qrCodeController,
-                    focusNode: _qrCodeFocus,
+                  const SizedBox(height: 14),
+                  const FormLabel(label: '商品コード'),
+                  const SizedBox(height: 4),
+                  FormReadOnlyField(value: _productCodeCtrl.text, icon: Icons.inventory_2_outlined),
+                  const SizedBox(height: 14),
+                  const FormLabel(label: '商品名'),
+                  const SizedBox(height: 4),
+                  FormReadOnlyField(value: _productNameCtrl.text, icon: Icons.label_outline),
+                  const SizedBox(height: 14),
+                  const FormLabel(label: '需要数量'),
+                  const SizedBox(height: 4),
+                  FormReadOnlyField(value: _demandQtyCtrl.text, icon: Icons.shopping_cart_outlined),
+                  const SizedBox(height: 14),
+                  const FormLabel(label: 'QRコード'),
+                  const SizedBox(height: 4),
+                  FormScanField(
+                    controller: _qrCodeCtrl,
+                    focusNode: _qrFocus,
+                    focusedColor: AppColors.settingsColor4,
+                    onScanTap: () => _startBarcodeScanner('qrCode'),
                     onSubmitted: _handleQRCodeSubmit,
-                    onBarcodeTap: () => _startBarcodeScanner('qrCode'),
                   ),
-                  const SizedBox(height: 16),
-                  _buildTextField(
-                    label: '実数量',
-                    controller: _actualQtyController,
+                  const SizedBox(height: 14),
+                  const FormLabel(label: '実数量'),
+                  const SizedBox(height: 4),
+                  FormScanField(
+                    controller: _actualQtyCtrl,
                     focusNode: _actualQtyFocus,
+                    focusedColor: AppColors.settingsColor4,
                     keyboardType: TextInputType.number,
+                    showScanButton: false,
                   ),
-                  const SizedBox(height: 16),
-                  _buildReadOnlyField(
-                      'JANコード', _janCodeController, Icons.qr_code),
-                  const SizedBox(height: 16),
-                  _buildReadOnlyField(
-                      'ロット', _lotNoController, Icons.numbers),
-                  const SizedBox(height: 16),
-                  _buildReadOnlyField(
-                      '賞味期限', _expirationDateController,
-                      Icons.calendar_today),
-                  const SizedBox(height: 24),
-                  // Navigation
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed:
-                              _currentIndex > 0 ? _handlePrev : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _currentIndex > 0
-                                ? AppColors.btn_brown
-                                : Colors.grey,
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          child: const Text('前へ',
-                              style: TextStyle(fontSize: 16)),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _currentIndex < _lines.length - 1
-                              ? _handleNext
-                              : _verifyComplete,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                _currentIndex < _lines.length - 1
-                                    ? AppColors.btn_brown
-                                    : AppColors.greenDark,
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                          child: Text(
-                            _currentIndex < _lines.length - 1
-                                ? '次へ'
-                                : '完了',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  const SizedBox(height: 14),
+                  const FormLabel(label: 'JANコード'),
+                  const SizedBox(height: 4),
+                  FormReadOnlyField(value: _janCodeCtrl.text, icon: Icons.qr_code),
+                  const SizedBox(height: 14),
+                  const FormLabel(label: 'ロット'),
+                  const SizedBox(height: 4),
+                  FormReadOnlyField(value: _lotNoCtrl.text, icon: Icons.numbers),
+                  const SizedBox(height: 14),
+                  const FormLabel(label: '賞味期限'),
+                  const SizedBox(height: 4),
+                  FormReadOnlyField(value: _expirationDateCtrl.text, icon: Icons.calendar_today),
                 ],
               ),
             ),
+          ),
+
+          // ── Bottom bar ────────────────────────────────────────
+          BottomActionBar(
+            children: [
+              Expanded(child: ActionButton(
+                label: '前へ',
+                color: _currentIndex > 0 ? AppColors.settingsColor4 : AppColors.gray,
+                onPressed: _currentIndex > 0 ? _handlePrev : null,
+              )),
+              Expanded(child: ActionButton(
+                label: _currentIndex < _lines.length - 1 ? '次へ' : '完了・送信',
+                color: _currentIndex < _lines.length - 1
+                    ? AppColors.settingsColor4
+                    : AppColors.settingsColor5,
+                onPressed: _currentIndex < _lines.length - 1
+                    ? _handleNext
+                    : _verifyComplete,
+              )),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFieldWithBarcode({
-    required String label,
-    required TextEditingController controller,
-    required FocusNode focusNode,
-    required void Function(String) onSubmitted,
-    required VoidCallback onBarcodeTap,
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'MSPGothic')),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.qr_code_scanner),
-              onPressed: onBarcodeTap,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.primaryLight, width: 2),
-            ),
-          ),
-          onSubmitted: onSubmitted,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    required FocusNode focusNode,
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'MSPGothic')),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.primaryLight, width: 2),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildReadOnlyField(
-      String label, TextEditingController controller, IconData icon) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'MSPGothic')),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          enabled: false,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            prefixIcon: Icon(icon),
-            filled: true,
-            fillColor: Colors.grey.shade200,
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  void dispose() {
-    _binController.dispose();
-    _productCodeController.dispose();
-    _productNameController.dispose();
-    _demandQtyController.dispose();
-    _actualQtyController.dispose();
-    _lotNoController.dispose();
-    _expirationDateController.dispose();
-    _janCodeController.dispose();
-    _qrCodeController.dispose();
-    _binFocus.dispose();
-    _qrCodeFocus.dispose();
-    _actualQtyFocus.dispose();
-    _scannerController?.dispose();
-    super.dispose();
-  }
 }

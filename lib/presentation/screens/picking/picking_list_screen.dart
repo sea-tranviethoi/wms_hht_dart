@@ -3,17 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../core/di/injection.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../routes/route_names.dart';
+import '../../widgets/app_empty.dart';
+import '../../widgets/app_error.dart';
+import '../../widgets/app_loading.dart';
+import '../../widgets/app_search_bar.dart';
+import '../../widgets/back_to_menu_button.dart';
+import '../../widgets/module_list_tile.dart';
 
-/// Port từ screens/Picking/PickingList.js
+/// Port từ screens/Picking/PickingList.js — minimal modern layout.
 ///
 /// Hiển thị danh sách picking orders của tenant.
-/// scanStatus màu sắc:
-///   0 = bình thường (đen)
-///   1 = đang scan bởi thiết bị này (cam)
-///   2 = đang xử lý bởi thiết bị khác (xám)
+/// scanStatus:
+///   0 = 未開始
+///   1 = 進行中 (đang scan bởi thiết bị này)
+///   2 = ロック (đang xử lý bởi thiết bị khác)
 class PickingListScreen extends StatelessWidget {
   final int tenantId;
   final String company;
@@ -46,6 +53,7 @@ class _PickingListView extends StatefulWidget {
 
 class _PickingListViewState extends State<_PickingListView> {
   final _searchCtrl = TextEditingController();
+  int? _selectedIndex;
 
   @override
   void dispose() {
@@ -53,30 +61,24 @@ class _PickingListViewState extends State<_PickingListView> {
     super.dispose();
   }
 
+  void _backToTenantSelection() =>
+      context.go('${RouteNames.tenantSelection}?funcNumber=3');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.themeBackground,
+        backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
-          onPressed: () =>
-              context.go('${RouteNames.tenantSelection}?funcNumber=3'),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          onPressed: _backToTenantSelection,
         ),
-        title: Text(
-          'ピッキング一覧${widget.company.isNotEmpty ? ' (${widget.company})' : ''}',
-          style: const TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
+        title: Text('ピッキング一覧${widget.company.isNotEmpty ? ' (${widget.company})' : ''}', style: AppTextStyles.appBarTitle),
         actions: [
           BlocBuilder<PickingBloc, PickingState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
               onPressed: state is PickingLoading
                   ? null
                   : () {
@@ -91,129 +93,75 @@ class _PickingListViewState extends State<_PickingListView> {
       ),
       body: Column(
         children: [
-          _buildSearchBar(context),
-          _buildTableHeader(),
+          // ── Search bar ───────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
+            child: AppSearchBar(
+              controller: _searchCtrl,
+              hintText: 'フィルターする内容を入力してください。',
+              onChanged: (v) =>
+                  context.read<PickingBloc>().add(SearchPickingLists(v)),
+            ),
+          ),
+
+          // ── List ─────────────────────────────────────────────
           Expanded(child: _buildBody()),
-        ],
-      ),
-      bottomNavigationBar: _buildBottomBar(context),
-    );
-  }
 
-  // ─── Search bar ───────────────────────────────────────────────
-
-  Widget _buildSearchBar(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(8),
-      child: TextField(
-        controller: _searchCtrl,
-        style: const TextStyle(fontFamily: 'MSPGothic'),
-        decoration: InputDecoration(
-          hintText: 'フィルターする内容を入力してください。',
-          hintStyle: const TextStyle(fontFamily: 'MSPGothic', color: AppColors.gray),
-          prefixIcon: const Icon(Icons.search, color: AppColors.gray),
-          suffixIcon: _searchCtrl.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchCtrl.clear();
-                    context.read<PickingBloc>().add(SearchPickingLists(''));
-                  },
-                )
-              : null,
-          filled: true,
-          fillColor: AppColors.ghostWhiteColor,
-          contentPadding: const EdgeInsets.symmetric(vertical: 10),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        onChanged: (v) {
-          setState(() {});
-          context.read<PickingBloc>().add(SearchPickingLists(v));
-        },
-      ),
-    );
-  }
-
-  // ─── Table header ─────────────────────────────────────────────
-
-  Widget _buildTableHeader() {
-    return Container(
-      color: Colors.white,
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: AppColors.borderTable),
-                  right: BorderSide(color: AppColors.borderTable),
-                ),
-              ),
-              child: const Text(
-                'ピッキング番号',
-                style: TextStyle(
-                  fontFamily: 'MSPGothic',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-              decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: AppColors.borderTable)),
-              ),
-              child: const Text(
-                '棚数',
-                style: TextStyle(
-                  fontFamily: 'MSPGothic',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
+          // ── Back button — module color (Picking = Orange) ────
+          BackToMenuButton(
+            color: AppColors.settingsColor3,
+            onPressed: _backToTenantSelection,
           ),
         ],
       ),
     );
   }
-
-  // ─── Body ─────────────────────────────────────────────────────
 
   Widget _buildBody() {
     return BlocBuilder<PickingBloc, PickingState>(
       builder: (context, state) {
         if (state is PickingLoading) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.themeBackground),
-          );
+          return AppLoading.centered(message: '読み込み中...');
         }
         if (state is PickingError) {
-          return _buildError(context, state.message);
+          return AppError.generic(
+            message: state.message,
+            onRetry: () => context
+                .read<PickingBloc>()
+                .add(FetchPickingLists(tenantId: widget.tenantId)),
+          );
         }
         if (state is PickingListsLoaded) {
           if (state.rows.isEmpty) {
-            return const Center(
-              child: Text(
-                'ピッキングリストがありません',
-                style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.gray),
-              ),
-            );
+            return AppEmpty.list(message: 'ピッキングリストがありません');
           }
-          return ListView.builder(
-            itemCount: state.rows.length,
-            itemBuilder: (context, index) => _PickingRowTile(
-              row: state.rows[index],
-              onTap: () => _handleRowTap(context, state.rows[index]),
+          return Container(
+            color: AppColors.white,
+            child: ListView.separated(
+              padding: EdgeInsets.zero,
+              itemCount: state.rows.length,
+              separatorBuilder: (_, __) => const ModuleListDivider(),
+              itemBuilder: (context, index) {
+                final row = state.rows[index];
+                final isSelected = _selectedIndex == index;
+
+                final (Color statusColor, String statusLabel) =
+                    switch (row.scanStatus) {
+                  1 => (AppColors.textWarning,    '進行中'),
+                  2 => (AppColors.gray,           'ロック'),
+                  _ => (AppColors.settingsColor3, '未開始'),
+                };
+
+                return ModuleListTile(
+                  title: row.pickNo,
+                  subtitle: null,
+                  trailingText: '${row.binCount} 棚',
+                  statusColor: statusColor,
+                  statusLabel: statusLabel,
+                  isSelected: isSelected,
+                  onTap: () => _handleRowTap(context, index, row),
+                );
+              },
             ),
           );
         }
@@ -222,56 +170,34 @@ class _PickingListViewState extends State<_PickingListView> {
     );
   }
 
-  Widget _buildError(BuildContext context, String msg) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, color: AppColors.textError, size: 48),
-          const SizedBox(height: 12),
-          Text(msg,
-              style: const TextStyle(
-                  fontFamily: 'MSPGothic', color: AppColors.textError),
-              textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => context
-                .read<PickingBloc>()
-                .add(FetchPickingLists(tenantId: widget.tenantId)),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.themeBackground,
-                foregroundColor: Colors.white),
-            child: const Text('再試行', style: TextStyle(fontFamily: 'MSPGothic')),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ─── Row tap ──────────────────────────────────────────────────
-
-  void _handleRowTap(BuildContext context, PickingRow row) {
+  void _handleRowTap(BuildContext context, int index, PickingRow row) {
     if (row.scanStatus == 2) {
-      // Handled by other device
+      // Handled by other device → show notification dialog
       final other = row.hhtInfoOther.split('-').first;
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: 'MSPGothic')),
+          title: const Text('通知',
+              style: TextStyle(fontFamily: AppTextStyles.font)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.pickNo} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: 'MSPGothic'),
+            style: const TextStyle(fontFamily: AppTextStyles.font),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('閉じる', style: TextStyle(fontFamily: 'MSPGothic')),
+              style: TextButton.styleFrom(
+                  foregroundColor: AppColors.settingsColor3),
+              child: const Text('閉じる',
+                  style: TextStyle(fontFamily: AppTextStyles.font)),
             ),
           ],
         ),
       );
       return;
     }
+
+    setState(() => _selectedIndex = index);
 
     context.push(
       RouteNames.pickingItems,
@@ -280,124 +206,6 @@ class _PickingListViewState extends State<_PickingListView> {
         'tenantId': widget.tenantId,
         'company': widget.company,
       },
-    );
-  }
-
-  // ─── Bottom bar ───────────────────────────────────────────────
-
-  Widget _buildBottomBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      color: Colors.grey.shade200,
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () =>
-                  context.go('${RouteNames.tenantSelection}?funcNumber=3'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.settingsColor4,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-              child: const Text(
-                '戻る',
-                style: TextStyle(
-                    fontFamily: 'MSPGothic',
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── Row tile ─────────────────────────────────────────────────────────────────
-
-class _PickingRowTile extends StatelessWidget {
-  final PickingRow row;
-  final VoidCallback onTap;
-
-  const _PickingRowTile({required this.row, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    Color textColor;
-    Widget? leadingWidget;
-
-    switch (row.scanStatus) {
-      case 1:
-        textColor = AppColors.textWarning;
-        leadingWidget = const Icon(Icons.refresh, size: 28, color: AppColors.blackTextColor);
-        break;
-      case 2:
-        textColor = AppColors.grayTextColor;
-        leadingWidget = const Icon(Icons.construction, size: 28, color: AppColors.blackTextColor);
-        break;
-      default:
-        textColor = AppColors.blackTextColor;
-    }
-
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(bottom: BorderSide(color: AppColors.borderTable)),
-        ),
-        child: Row(
-          children: [
-            // PickNo column
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                decoration: BoxDecoration(
-                  border: Border(right: BorderSide(color: AppColors.borderTable)),
-                ),
-                child: Row(
-                  children: [
-                    if (leadingWidget != null) ...[
-                      leadingWidget,
-                      const SizedBox(width: 4),
-                    ],
-                    Expanded(
-                      child: Text(
-                        row.pickNo,
-                        style: TextStyle(
-                          fontFamily: 'MSPGothic',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // BinCount column
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                child: Text(
-                  '${row.binCount}',
-                  style: TextStyle(
-                    fontFamily: 'MSPGothic',
-                    fontSize: 14,
-                    color: textColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

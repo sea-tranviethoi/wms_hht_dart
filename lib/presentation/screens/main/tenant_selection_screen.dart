@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/di/injection.dart';
 import '../../blocs/master/master_bloc.dart';
 import '../../../data/models/tenant.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../routes/route_names.dart';
 
 /// Port từ screens/TenantSelection.js
@@ -22,10 +23,15 @@ class TenantSelectionScreen extends StatelessWidget {
 
   String get _title {
     switch (funcNumber) {
-      case '3':
-        return 'ピッキング — テナント選択';
-      default:
-        return '入荷 — テナント選択';
+      case '3': return 'ピッキング — テナント選択';
+      default:  return '入荷 — テナント選択';
+    }
+  }
+
+  Color get _moduleColor {
+    switch (funcNumber) {
+      case '3': return AppColors.settingsColor3; // Picking  — Amber
+      default:  return AppColors.settingsColor1; // WR       — Steel Blue
     }
   }
 
@@ -33,7 +39,11 @@ class TenantSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => MasterBloc(repository: sl())..add(FetchTenants()),
-      child: _TenantSelectionView(funcNumber: funcNumber, title: _title),
+      child: _TenantSelectionView(
+        funcNumber: funcNumber,
+        title: _title,
+        moduleColor: _moduleColor,
+      ),
     );
   }
 }
@@ -41,8 +51,13 @@ class TenantSelectionScreen extends StatelessWidget {
 class _TenantSelectionView extends StatefulWidget {
   final String? funcNumber;
   final String title;
+  final Color moduleColor;
 
-  const _TenantSelectionView({required this.funcNumber, required this.title});
+  const _TenantSelectionView({
+    required this.funcNumber,
+    required this.title,
+    required this.moduleColor,
+  });
 
   @override
   State<_TenantSelectionView> createState() => _TenantSelectionViewState();
@@ -92,22 +107,16 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.themeBackground,
+        backgroundColor: widget.moduleColor,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: () => context.go(RouteNames.mainMenu),
         ),
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text(widget.title, style: AppTextStyles.appBarTitle),
       ),
       body: Column(
         children: [
@@ -126,23 +135,41 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
       color: Colors.white,
       child: TextField(
         controller: _searchCtrl,
-        style: const TextStyle(fontFamily: 'MSPGothic'),
+        style: const TextStyle(
+          fontFamily: AppTextStyles.font,
+          fontSize: AppTextStyles.sizeInput,
+          color: AppColors.blackTextColor,
+        ),
         decoration: InputDecoration(
           hintText: 'テナントを検索...',
-          hintStyle: const TextStyle(fontFamily: 'MSPGothic', color: AppColors.gray),
-          prefixIcon: const Icon(Icons.search, color: AppColors.gray),
+          hintStyle: const TextStyle(
+            fontFamily: AppTextStyles.font,
+            color: AppColors.gray,
+            fontSize: AppTextStyles.sizeHint,
+          ),
+          prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppTextStyles.sizeSearchIcon),
+          prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
           suffixIcon: _searchCtrl.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear, color: AppColors.gray),
-                  onPressed: () {
-                    _searchCtrl.clear();
-                  },
+                  icon: const Icon(Icons.clear, color: AppColors.gray, size: AppTextStyles.sizeSearchClearIcon),
+                  onPressed: () { _searchCtrl.clear(); },
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 36, minHeight: 0),
                 )
               : null,
           filled: true,
           fillColor: AppColors.ghostWhiteColor,
-          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          isDense: true,
           border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,
           ),
@@ -163,8 +190,8 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
       },
       builder: (context, state) {
         if (state is MasterLoading) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.themeBackground),
+          return Center(
+            child: CircularProgressIndicator(color: widget.moduleColor),
           );
         }
         if (state is MasterError) {
@@ -176,7 +203,7 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
                 const SizedBox(height: 12),
                 Text(
                   state.message,
-                  style: const TextStyle(fontFamily: 'MSPGothic', color: AppColors.textError),
+                  style: const TextStyle(fontFamily: AppTextStyles.font, color: AppColors.textError),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -184,10 +211,10 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
                   onPressed: () =>
                       context.read<MasterBloc>().add(FetchTenants()),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.themeBackground,
+                    backgroundColor: widget.moduleColor,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('再試行', style: TextStyle(fontFamily: 'MSPGothic')),
+                  child: const Text('再試行', style: TextStyle(fontFamily: AppTextStyles.font)),
                 ),
               ],
             ),
@@ -197,7 +224,7 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
           return const Center(
             child: Text(
               'テナントが見つかりません',
-              style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.gray),
+              style: TextStyle(fontFamily: AppTextStyles.font, color: AppColors.gray),
             ),
           );
         }
@@ -207,11 +234,10 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
           itemCount: _filtered.length,
           itemBuilder: (context, index) {
             final tenant = _filtered[index];
-            final color = AppColors.menuTileColors[index % AppColors.menuTileColors.length];
             return _TenantTile(
               tenant: tenant,
               index: index,
-              color: color,
+              color: widget.moduleColor,
               onTap: () => _onTenantTap(tenant),
             );
           },
@@ -250,14 +276,11 @@ class _TenantTile extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               '${index + 1}. ${tenant.tenantFullName}',
-              style: const TextStyle(
-                fontFamily: 'MSPGothic',
-                color: AppColors.white,
-                fontSize: 22,
+              style: TextStyle(
+                fontFamily: AppTextStyles.font,
+                color: AppColors.onColor(color),
+                fontSize: AppTextStyles.sizeAppBar,
                 fontWeight: FontWeight.bold,
-                shadows: [
-                  Shadow(color: Colors.black26, offset: Offset(1, 1), blurRadius: 2),
-                ],
               ),
               textAlign: TextAlign.center,
             ),

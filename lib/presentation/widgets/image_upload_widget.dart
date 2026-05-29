@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../config/theme_config.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class ImageUploadWidget extends StatefulWidget {
   final Function(File?)? onImageSelected;
@@ -102,8 +103,8 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
             children: [
               Text(
                 widget.label!,
-                style: const TextStyle(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: AppTextStyles.sizeInfo,
                   fontWeight: FontWeight.w500,
                   color: AppColors.blackText,
                 ),
@@ -138,7 +139,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
                       fit: BoxFit.cover,
                     ),
                   )
-                : const Column(
+                : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
@@ -151,7 +152,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
                         'Select image',
                         style: TextStyle(
                           color: AppColors.textPlaceholder,
-                          fontSize: 14,
+                          fontSize: AppTextStyles.sizeInfo,
                         ),
                       ),
                     ],

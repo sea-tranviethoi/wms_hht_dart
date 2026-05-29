@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/theme_config.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class DataTableColumn {
   final String label;
@@ -53,9 +54,9 @@ class DataTableWidget extends StatelessWidget {
               child: Text(
                 column.label,
                 textAlign: column.alignment,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontSize: AppTextStyles.sizeInfo,
                   color: AppColors.blackText,
                 ),
               ),

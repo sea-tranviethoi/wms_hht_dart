@@ -2,23 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../config/theme_config.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/wr_remote_datasource.dart';
 import '../../routes/route_names.dart';
 import '../blocs/wr/wr_bloc.dart';
+import '../widgets/app_empty.dart';
+import '../widgets/app_error.dart';
+import '../widgets/app_loading.dart';
+import '../widgets/app_search_bar.dart';
+import '../widgets/module_list_tile.dart';
+import '../widgets/module_tinted_button.dart';
 
-/// 入荷一覧 — BLoC version (Phase 4)
 class WRListScreen extends StatelessWidget {
   final int tenantId;
   final String company;
 
-  const WRListScreen({
-    super.key,
-    this.tenantId = 0,
-    this.company = '',
-  });
+  const WRListScreen({super.key, this.tenantId = 0, this.company = ''});
 
   @override
   Widget build(BuildContext context) {
@@ -32,505 +34,228 @@ class WRListScreen extends StatelessWidget {
 class _WRListView extends StatefulWidget {
   final int tenantId;
   final String company;
-
   const _WRListView({required this.tenantId, required this.company});
-
   @override
   State<_WRListView> createState() => _WRListViewState();
 }
 
 class _WRListViewState extends State<_WRListView> {
-  final TextEditingController _searchController = TextEditingController();
+  final _searchCtrl = TextEditingController();
   int? _selectedIndex;
   Map<String, dynamic>? _filters;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _loadData();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadData());
+  }
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
   }
 
   void _loadData() {
     final hhtInfo = sl<CacheStorage>().getString('hhtInfo') ?? '';
     context.read<WRBloc>().add(FetchWRLists(
-          hhtInfo: hhtInfo,
-          tenantId: widget.tenantId,
-          vendorId: _filters?['vendorId']?.toString(),
-          productCode: _filters?['productCode']?.toString(),
-          productName: _filters?['productName']?.toString(),
-          janCode: _filters?['janCode']?.toString(),
-          arrivalNumber: _filters?['arrivalNumber']?.toString(),
-        ));
+      hhtInfo: hhtInfo,
+      tenantId: widget.tenantId,
+      vendorId: _filters?['vendorId']?.toString(),
+      productCode: _filters?['productCode']?.toString(),
+      productName: _filters?['productName']?.toString(),
+      janCode: _filters?['janCode']?.toString(),
+      arrivalNumber: _filters?['arrivalNumber']?.toString(),
+    ));
   }
 
-  void _handleSearch(String keyword) {
-    context.read<WRBloc>().add(SearchWRLists(keyword));
-  }
+  void _backToMenu() => context.go(RouteNames.mainMenu);
 
   void _handleRowTap(BuildContext context, int index, WRRow row) {
     if (row.scanStatus == 3) {
-      final otherUser = row.hhtInfoOther?.split('-').first ?? '他のユーザー';
+      final other = row.hhtInfoOther?.split('-').first ?? '他のユーザー';
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Notification'),
+          title: const Text('通知', style: TextStyle(fontFamily: AppTextStyles.font)),
           content: Text(
-            'ユーザー「$otherUser」は別デバイスで ${row.receiptNo} を対応してます。ご確認ください。',
+            'ユーザー「$other」は別デバイスで ${row.receiptNo} を対応してます。ご確認ください。',
+            style: const TextStyle(fontFamily: AppTextStyles.font),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(foregroundColor: Colors.blue),
-              child: const Text('Close'),
+              style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor1),
+              child: const Text('閉じる', style: TextStyle(fontFamily: AppTextStyles.font)),
             ),
           ],
         ),
       );
       return;
     }
-
     setState(() => _selectedIndex = index);
-
-    context.push(
-      RouteNames.warehouseReceiptDetail,
-      extra: {
-        'receiptNo': row.receiptNo,
-        'supplierName': row.supplierName,
-        'tenantId': widget.tenantId,
-      },
-    );
+    context.push(RouteNames.warehouseReceiptDetail, extra: {
+      'receiptNo': row.receiptNo,
+      'supplierName': row.supplierName,
+      'tenantId': widget.tenantId,
+    });
   }
 
-  Future<void> _handleReset(WRRow row) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('確認'),
-        content: Text('入荷番号: ${row.receiptNo}\nスキャンデータをリセットしますか？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('いいえ'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.green),
-            child: const Text('はい'),
-          ),
-        ],
-      ),
+  Future<void> _openFilter() async {
+    final result = await context.push<Map<String, dynamic>>(
+      RouteNames.warehouseReceiptFilter,
+      extra: {'tenantId': widget.tenantId, 'company': widget.company},
     );
-
-    if (confirmed == true && mounted) {
-      context.read<WRBloc>().add(ResetWRStatus(row));
+    if (result != null && mounted) {
+      setState(() => _filters = result);
+      _loadData();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: const Text('入荷一覧'),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: AppColors.settingsColor1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go(RouteNames.mainMenu),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          onPressed: _backToMenu,
         ),
+        title: Text('入荷一覧${widget.company.isNotEmpty ? " (${widget.company})" : ""}', style: AppTextStyles.appBarTitle),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadData,
-          ),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon), onPressed: _loadData),
         ],
       ),
       body: BlocListener<WRBloc, WRState>(
         listener: (context, state) {
           if (state is WRError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
+              SnackBar(content: Text(state.message), backgroundColor: AppColors.btnRed),
             );
           }
           if (state is WRResetDone) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('リセットが完了しました'),
-                backgroundColor: Colors.green,
-              ),
+              const SnackBar(content: Text('リセットが完了しました'), backgroundColor: AppColors.btnGreen),
             );
           }
         },
         child: Column(
           children: [
-            // Search bar
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border:
-                    Border(bottom: BorderSide(color: Colors.grey.shade300)),
-              ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'フィルターする内容を入力してください。',
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _searchController.clear();
-                            _handleSearch('');
-                          },
-                        )
-                      : null,
-                  border: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.lighter, width: 2),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.lighter, width: 2),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.primaryLight, width: 2),
-                  ),
-                ),
-                onChanged: (v) {
-                  setState(() {});
-                  _handleSearch(v);
-                },
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
+              child: AppSearchBar(
+                controller: _searchCtrl,
+                hintText: 'フィルターする内容を入力してください。',
+                onChanged: (v) => context.read<WRBloc>().add(SearchWRLists(v)),
               ),
             ),
-
-            // Table header
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: AppColors.borderTable),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          right: BorderSide(color: AppColors.borderTable),
-                        ),
-                      ),
-                      child: const Text(
-                        '入荷番号',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          fontFamily: 'MSPGothic',
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: const Text(
-                        '仕入先名',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          fontFamily: 'MSPGothic',
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Receipt list
-            Expanded(
-              child: BlocBuilder<WRBloc, WRState>(
-                builder: (context, state) {
-                  if (state is WRLoading || state is WRResetting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (state is WRError) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(state.message,
-                              style: const TextStyle(color: Colors.red)),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: _loadData,
-                            child: const Text('再読み込み'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  final rows = state is WRListsLoaded
-                      ? state.rows
-                      : <WRRow>[];
-
-                  if (rows.isEmpty && state is WRListsLoaded) {
-                    return const Center(
-                      child: Text(
-                        '入荷データがありません',
-                        style: TextStyle(fontFamily: 'MSPGothic'),
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    itemCount: rows.length,
-                    itemBuilder: (context, index) {
-                      final row = rows[index];
-                      final isSelected = _selectedIndex == index;
-                      final scanStatus = row.scanStatus;
-
-                      Color textColor = AppColors.black;
-                      Widget? leadingIcon;
-
-                      if (scanStatus == 2) {
-                        // Scanned by this device — orange
-                        textColor = AppColors.text_warning;
-                        leadingIcon = IconButton(
-                          icon: const Icon(Icons.refresh),
-                          color: AppColors.blackText,
-                          iconSize: 35,
-                          onPressed: () => _handleReset(row),
-                        );
-                      } else if (scanStatus == 3) {
-                        // Handled by other device — grey
-                        textColor = AppColors.text_placeholder;
-                        leadingIcon = IconButton(
-                          icon: const Icon(Icons.construction),
-                          color: AppColors.blackText,
-                          iconSize: 35,
-                          onPressed: () => _handleRowTap(context, index, row),
-                        );
-                      }
-
-                      Color statusCircleColor() {
-                        if (scanStatus == 2) return AppColors.text_warning;
-                        if (scanStatus == 3) return AppColors.text_placeholder;
-                        return AppColors.black;
-                      }
-
-                      return InkWell(
-                        onTap: () => _handleRowTap(context, index, row),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.headerColor
-                                : Colors.white,
-                            border: Border(
-                              bottom:
-                                  BorderSide(color: AppColors.borderTable),
-                            ),
-                          ),
-                          child: Stack(
-                            children: [
-                              Row(
-                                children: [
-                                  // Receipt No + Product Names
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      padding: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                        left: (scanStatus == 2 ||
-                                                scanStatus == 3)
-                                            ? 0
-                                            : 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          right: BorderSide(
-                                              color: AppColors.borderTable),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          if (scanStatus == 2 ||
-                                              scanStatus == 3)
-                                            SizedBox(
-                                              width: 50,
-                                              child: leadingIcon ??
-                                                  const SizedBox(),
-                                            ),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  row.receiptNo,
-                                                  style: TextStyle(
-                                                    color: textColor,
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                    fontSize: 16,
-                                                    fontFamily: 'MSPGothic',
-                                                  ),
-                                                ),
-                                                if (row.productNames != null &&
-                                                    row.productNames!
-                                                        .isNotEmpty)
-                                                  ...row.productNames!
-                                                      .split(',')
-                                                      .where((n) =>
-                                                          n.trim().isNotEmpty)
-                                                      .map(
-                                                        (n) => Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(top: 2),
-                                                          child: Text(
-                                                            n.trim().length >
-                                                                    25
-                                                                ? '${n.trim().substring(0, 25)}...'
-                                                                : n.trim(),
-                                                            style: TextStyle(
-                                                              fontSize: 13,
-                                                              color: textColor,
-                                                              fontFamily:
-                                                                  'MSPGothic',
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  // Supplier Name
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 8),
-                                      child: Text(
-                                        row.supplierName ?? '',
-                                        style: TextStyle(
-                                          color: textColor,
-                                          fontSize: 14,
-                                          fontFamily: 'MSPGothic',
-                                        ),
-                                        maxLines: 3,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              // Status circle indicator (top-right)
-                              Positioned(
-                                top: 10,
-                                right: 10,
-                                child: Container(
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: statusCircleColor(),
-                                      width: 3,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-
-            // Bottom action buttons
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                border: Border(top: BorderSide(color: Colors.grey.shade400)),
-              ),
-              child: Row(
-                children: [
-                  // 戻る
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => context.go(RouteNames.mainMenu),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.btn_red,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: const Text('戻る',
-                          style: TextStyle(fontSize: 16)),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // 絞り込み (Filter)
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        final result =
-                            await context.push<Map<String, dynamic>>(
-                          RouteNames.warehouseReceiptFilter,
-                          extra: {
-                            'tenantId': widget.tenantId,
-                            'company': widget.company,
-                          },
-                        );
-                        if (result != null && mounted) {
-                          setState(() => _filters = result);
-                          _loadData();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: const Text('絞り込み',
-                          style: TextStyle(fontSize: 16)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            Expanded(child: _buildBody()),
+            _buildBottomBar(),
           ],
         ),
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  Widget _buildBody() {
+    return BlocBuilder<WRBloc, WRState>(
+      builder: (context, state) {
+        if (state is WRLoading || state is WRResetting) {
+          return AppLoading.centered(message: '読み込み中...');
+        }
+        if (state is WRError) {
+          return AppError.generic(message: state.message, onRetry: _loadData);
+        }
+        final rows = state is WRListsLoaded ? state.rows : <WRRow>[];
+        if (rows.isEmpty && state is WRListsLoaded) {
+          return AppEmpty.list(message: '入荷データがありません');
+        }
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          itemCount: rows.length,
+          separatorBuilder: (_, __) => const ModuleListDivider(),
+          itemBuilder: (context, index) {
+            final row = rows[index];
+            final (Color statusColor, String statusLabel) = switch (row.scanStatus) {
+              2 => (AppColors.textWarning,    '進行中'),
+              3 => (AppColors.gray,           'ロック'),
+              _ => (AppColors.settingsColor1, '未開始'),
+            };
+            final firstProduct = (row.productNames ?? '')
+                .split(',')
+                .map((n) => n.trim())
+                .firstWhere((n) => n.isNotEmpty, orElse: () => '');
+            final subtitle = firstProduct.length > 30
+                ? '${firstProduct.substring(0, 30)}…'
+                : firstProduct;
+            final supplier = (row.supplierName ?? '').trim();
+            final trailing = supplier.length > 14
+                ? '${supplier.substring(0, 14)}…'
+                : (supplier.isEmpty ? '' : supplier);
+            return ModuleListTile(
+              title: row.receiptNo,
+              subtitle: subtitle.isEmpty ? null : subtitle,
+              trailingText: trailing,
+              statusColor: statusColor,
+              statusLabel: statusLabel,
+              isSelected: _selectedIndex == index,
+              onTap: () => _handleRowTap(context, index, row),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+        decoration: const BoxDecoration(
+          color: AppColors.white,
+          border: Border(top: BorderSide(color: AppColors.light)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Material(
+                color: AppColors.settingsColor1,
+                borderRadius: BorderRadius.circular(12),
+                elevation: 1,
+                child: InkWell(
+                  onTap: _backToMenu,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    height: AppTextStyles.heightBottomButton,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeBottomButtonIcon),
+                        SizedBox(width: 8),
+                        Text('戻る', style: TextStyle(fontFamily: AppTextStyles.font, color: AppColors.white, fontSize: AppTextStyles.sizeBottomButton, fontWeight: FontWeight.w700)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ModuleTintedButton(
+                label: '絞り込み',
+                icon: Icons.filter_list,
+                color: AppColors.settingsColor1,
+                onPressed: _openFilter,
+                height: AppTextStyles.heightBottomButton,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

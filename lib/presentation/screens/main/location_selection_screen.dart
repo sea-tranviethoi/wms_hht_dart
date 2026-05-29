@@ -7,6 +7,7 @@ import '../../../core/di/injection.dart';
 import '../../../core/storage/cache_storage.dart';
 import '../../blocs/master/master_bloc.dart';
 import '../../../data/models/master/location.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../routes/route_names.dart';
 
 /// Port từ screens/LocationSelection.js (nếu có trong RN)
@@ -71,7 +72,7 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
         SnackBar(
           content: Text(
             'ロケーション: ${loc.locationCode} を選択しました',
-            style: const TextStyle(fontFamily: 'MSPGothic'),
+            style: const TextStyle(fontFamily: AppTextStyles.font),
           ),
           backgroundColor: AppColors.wageningenGreen,
           duration: const Duration(seconds: 2),
@@ -84,21 +85,14 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.themeBackground,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
           onPressed: () => context.go(RouteNames.mainMenu),
         ),
-        title: const Text(
-          'ロケーション選択',
-          style: TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: const Text('ロケーション選択', style: AppTextStyles.appBarTitle),
       ),
       body: Column(
         children: [
@@ -115,10 +109,10 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
       color: Colors.white,
       child: TextField(
         controller: _searchCtrl,
-        style: const TextStyle(fontFamily: 'MSPGothic'),
+        style: const TextStyle(fontFamily: AppTextStyles.font),
         decoration: InputDecoration(
           hintText: 'ロケーションを検索...',
-          hintStyle: const TextStyle(fontFamily: 'MSPGothic', color: AppColors.gray),
+          hintStyle: const TextStyle(fontFamily: AppTextStyles.font, color: AppColors.gray),
           prefixIcon: const Icon(Icons.search, color: AppColors.gray),
           suffixIcon: _searchCtrl.text.isNotEmpty
               ? IconButton(
@@ -164,7 +158,7 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
                 Text(
                   state.message,
                   style: const TextStyle(
-                    fontFamily: 'MSPGothic',
+                    fontFamily: AppTextStyles.font,
                     color: AppColors.textError,
                   ),
                   textAlign: TextAlign.center,
@@ -177,7 +171,7 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
                     backgroundColor: AppColors.themeBackground,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('再試行', style: TextStyle(fontFamily: 'MSPGothic')),
+                  child: const Text('再試行', style: TextStyle(fontFamily: AppTextStyles.font)),
                 ),
               ],
             ),
@@ -187,7 +181,7 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
           return const Center(
             child: Text(
               'ロケーションが見つかりません',
-              style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.gray),
+              style: TextStyle(fontFamily: AppTextStyles.font, color: AppColors.gray),
             ),
           );
         }
@@ -234,19 +228,19 @@ class _LocationTile extends StatelessWidget {
         ),
         title: Text(
           location.locationCode,
-          style: const TextStyle(
-            fontFamily: 'MSPGothic',
-            fontSize: 16,
+          style: TextStyle(
+            fontFamily: AppTextStyles.font,
+            fontSize: AppTextStyles.sizeBody,
             fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: location.locationName.isNotEmpty
             ? Text(
                 location.locationName,
-                style: const TextStyle(
-                  fontFamily: 'MSPGothic',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.font,
                   color: AppColors.grayTextColor,
-                  fontSize: 13,
+                  fontSize: AppTextStyles.sizeSub,
                 ),
               )
             : null,

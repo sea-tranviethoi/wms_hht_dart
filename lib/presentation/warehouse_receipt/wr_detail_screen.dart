@@ -1,15 +1,18 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
-import '../../config/theme_config.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../core/di/injection.dart';
 import '../../data/datasources/remote/wr_remote_datasource.dart';
 import '../../data/models/warehouse_receipt/receipt_line.dart';
 import '../../routes/route_names.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/form_widgets.dart';
 
 class WRDetailsScreen extends StatefulWidget {
   /// Receipt number — used for display and to load lines
@@ -53,6 +56,18 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
   final List<File> _capturedImages = [];
   MobileScannerController? _scannerController;
 
+  String? _topMessage;
+  Color _topColor = Colors.green;
+  Timer? _topTimer;
+
+  void _showTopNotification(String message, Color color) {
+    _topTimer?.cancel();
+    setState(() { _topMessage = message; _topColor = color; });
+    _topTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) setState(() => _topMessage = null);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -78,12 +93,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('明細の読み込みに失敗しました: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showTopNotification('明細の読み込みに失敗しました: $e', AppColors.settingsColor7);
       }
     }
   }
@@ -211,12 +221,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
   Future<void> _handleSave() async {
     if (_currentLine == null) return;
     if (_actualQtyController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('実際数量を入力してください'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showTopNotification('実際数量を入力してください', AppColors.settingsColor7);
       return;
     }
 
@@ -236,9 +241,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
       _lines[_currentIndex] = _currentLine!;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('保存しました'), backgroundColor: Colors.green),
-    );
+    _showTopNotification('保存しました', AppColors.settingsColor5);
 
     if (_currentIndex < _lines.length - 1) {
       _handleNext();
@@ -256,7 +259,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       body: _isLoading
           ? Center(
               child: Column(
@@ -283,16 +286,16 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         '明細データがありません',
                         style:
-                            TextStyle(fontFamily: 'MSPGothic', fontSize: 16),
+                            TextStyle(fontFamily: AppTextStyles.font, fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _handleBackToList,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.btn_red,
+                          backgroundColor: AppColors.btnRed,
                           foregroundColor: Colors.white,
                         ),
                         child: const Text('入荷一覧'),
@@ -300,8 +303,9 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                     ],
                   ),
                 )
-              : Column(
+              : Stack(
                   children: [
+                    Column(children: [
                     // Receipt Number Header
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -315,20 +319,20 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Text(
+                          Text(
                             '入荷番号:',
                             style: TextStyle(
                               fontSize: 16,
-                              fontFamily: 'MSPGothic',
+                              fontFamily: AppTextStyles.font,
                               color: AppColors.black,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
                             widget.receiptNo,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
-                              fontFamily: 'MSPGothic',
+                              fontFamily: AppTextStyles.font,
                               fontWeight: FontWeight.bold,
                               color: AppColors.black,
                             ),
@@ -336,9 +340,9 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                           const Spacer(),
                           Text(
                             '${_currentIndex + 1} / ${_lines.length}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
-                              fontFamily: 'MSPGothic',
+                              fontFamily: AppTextStyles.font,
                               color: AppColors.black,
                             ),
                           ),
@@ -348,20 +352,23 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
 
                     // Form
                     Expanded(
-                      child: SingleChildScrollView(
+                      child: Stack(
+                        children: [
+                      SingleChildScrollView(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             // JANコード
-                            _buildFieldWithBarcode(
-                              label: 'JANコード',
+                            const FormLabel(label: 'JANコード'),
+                            const SizedBox(height: 4),
+                            FormScanField(
                               controller: _barcodeController,
                               focusNode: _barcodeFocus,
+                              focusedColor: AppColors.settingsColor1,
                               hintText: '',
                               onSubmitted: _handleBarcodeSubmit,
-                              onBarcodeTap: () =>
-                                  _startBarcodeScanner('janCode'),
+                              onScanTap: () => _startBarcodeScanner('janCode'),
                             ),
                             const SizedBox(height: 16),
 
@@ -370,37 +377,44 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             const SizedBox(height: 16),
 
                             // 予定数量 (read-only)
-                            _buildReadOnlyField(
-                              label: '予定数量',
-                              controller: _orderQtyController,
-                              icon: Icons.shopping_cart,
-                            ),
+                            const FormLabel(label: '予定数量'),
+                            const SizedBox(height: 4),
+                            FormReadOnlyField(value: _orderQtyController.text, icon: Icons.shopping_cart),
                             const SizedBox(height: 16),
 
                             // 実際数量
-                            _buildFieldWithBarcode(
-                              label: '実際数量',
+                            const FormLabel(label: '実際数量'),
+                            const SizedBox(height: 4),
+                            FormScanField(
                               controller: _actualQtyController,
                               focusNode: _actualQtyFocus,
+                              focusedColor: AppColors.settingsColor1,
                               hintText: '0',
                               keyboardType: TextInputType.number,
-                              onBarcodeTap: () =>
-                                  _startBarcodeScanner('actualQty'),
+                              onScanTap: () => _startBarcodeScanner('actualQty'),
                             ),
                             const SizedBox(height: 16),
 
                             // 賞味期限
-                            _buildDateField(),
+                            const FormLabel(label: '賞味期限'),
+                            const SizedBox(height: 4),
+                            FormDateField(
+                              controller: _expirationDateController,
+                              focusNode: _expirationDateFocus,
+                              focusedColor: AppColors.settingsColor1,
+                              onTap: _selectExpirationDate,
+                            ),
                             const SizedBox(height: 16),
 
                             // ロット
-                            _buildFieldWithBarcode(
-                              label: 'ロット',
+                            const FormLabel(label: 'ロット'),
+                            const SizedBox(height: 4),
+                            FormScanField(
                               controller: _lotNoController,
                               focusNode: _lotNoFocus,
+                              focusedColor: AppColors.settingsColor1,
                               hintText: '',
-                              onBarcodeTap: () =>
-                                  _startBarcodeScanner('lotNo'),
+                              onScanTap: () => _startBarcodeScanner('lotNo'),
                             ),
                             const SizedBox(height: 16),
 
@@ -414,22 +428,22 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Colors.blue.shade50,
+                                  color: AppColors.settingsColor1.withValues(alpha: 0.05),
                                   border: Border.all(
-                                      color: Colors.blue.shade200),
+                                      color: AppColors.settingsColor1.withValues(alpha: 0.3)),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(
                                   children: [
                                     const Icon(Icons.camera_alt,
-                                        color: Colors.blue),
+                                        color: AppColors.settingsColor1),
                                     const SizedBox(width: 8),
                                     Text(
                                       '商品写真撮り:',
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: Colors.blue.shade700,
-                                        fontFamily: 'MSPGothic',
+                                        color: AppColors.settingsColor1,
+                                        fontFamily: AppTextStyles.font,
                                       ),
                                     ),
                                     if (_capturedImages.isNotEmpty)
@@ -440,7 +454,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                           '${_capturedImages.length} 枚',
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: Colors.blue.shade700,
+                                            color: AppColors.settingsColor1,
                                           ),
                                         ),
                                       ),
@@ -496,183 +510,107 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                           ],
                         ),
                       ),
-                    ),
+                      // Floating notification below header
+                      if (_topMessage != null)
+                        Positioned(
+                          top: 0, left: 0, right: 0,
+                          child: Container(
+                            color: _topColor,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Text(
+                              _topMessage!,
+                              style: const TextStyle(
+                                fontFamily: AppTextStyles.font,
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        ], // end Stack children
+                      ),   // end Stack
+                    ),     // end Expanded
 
                     // Bottom navigation
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border(
-                          top: BorderSide(color: AppColors.borderTable),
+                    SafeArea(
+                      top: false,
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                        decoration: const BoxDecoration(
+                          color: AppColors.white,
+                          border: Border(top: BorderSide(color: AppColors.light)),
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          // 入荷一覧
-                          Expanded(
-                            child: ElevatedButton(
+                        child: Row(
+                          children: [
+                            Expanded(child: ActionButton(
+                              label: '入荷一覧',
+                              color: AppColors.settingsColor7,
                               onPressed: _handleBackToList,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.btn_red,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
-                              ),
-                              child: const Text(
-                                '入荷一覧',
-                                style: TextStyle(
-                                    fontSize: 16, fontFamily: 'MSPGothic'),
+                            )),
+                            const SizedBox(width: 8),
+                            SizedBox(
+                              width: 52,
+                              height: AppTextStyles.heightBottomButton,
+                              child: ElevatedButton(
+                                onPressed: _currentIndex > 0 ? _handlePrevious : null,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: _currentIndex > 0 ? AppColors.gray : AppColors.lighter,
+                                  disabledBackgroundColor: AppColors.lighter,
+                                  foregroundColor: Colors.white,
+                                  disabledForegroundColor: AppColors.grayTextColor,
+                                  padding: EdgeInsets.zero,
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Icon(Icons.arrow_back, size: 22),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          // ← prev
-                          SizedBox(
-                            width: 60,
-                            child: ElevatedButton(
-                              onPressed:
-                                  _currentIndex > 0 ? _handlePrevious : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: _currentIndex > 0
-                                    ? AppColors.gray
-                                    : Colors.grey.shade300,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                            const SizedBox(width: 8),
+                            SizedBox(
+                              width: 52,
+                              height: AppTextStyles.heightBottomButton,
+                              child: ElevatedButton(
+                                onPressed: _currentIndex < _lines.length - 1 ? _handleNext : null,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: _currentIndex < _lines.length - 1 ? AppColors.gray : AppColors.lighter,
+                                  disabledBackgroundColor: AppColors.lighter,
+                                  foregroundColor: Colors.white,
+                                  disabledForegroundColor: AppColors.grayTextColor,
+                                  padding: EdgeInsets.zero,
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Icon(Icons.arrow_forward, size: 22),
                               ),
-                              child: const Icon(Icons.arrow_back),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          // → next
-                          SizedBox(
-                            width: 60,
-                            child: ElevatedButton(
-                              onPressed:
-                                  _currentIndex < _lines.length - 1
-                                      ? _handleNext
-                                      : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    _currentIndex < _lines.length - 1
-                                        ? AppColors.gray
-                                        : Colors.grey.shade300,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
-                              ),
-                              child: const Icon(Icons.arrow_forward),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          // 保存
-                          Expanded(
-                            child: ElevatedButton(
+                            const SizedBox(width: 8),
+                            Expanded(child: ActionButton(
+                              label: '保存',
+                              color: AppColors.settingsColor1,
                               onPressed: _handleSave,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.btnGreen,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
-                              ),
-                              child: const Text(
-                                '保存',
-                                style: TextStyle(
-                                    fontSize: 16, fontFamily: 'MSPGothic'),
-                              ),
-                            ),
-                          ),
-                        ],
+                            )),
+                          ],
+                        ),
                       ),
                     ),
                   ],
+                    ), // end inner Column
+                  ], // end Stack
                 ),
     );
   }
 
   // ─── Widget builders ──────────────────────────────────────────
 
-  Widget _buildFieldWithBarcode({
-    required String label,
-    required TextEditingController controller,
-    FocusNode? focusNode,
-    String? hintText,
-    TextInputType? keyboardType,
-    VoidCallback? onBarcodeTap,
-    ValueChanged<String>? onSubmitted,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
-        ),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                focusNode: focusNode,
-                keyboardType: keyboardType,
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  border: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.headerColor, width: 2),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.headerColor, width: 2),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: AppColors.primaryLight, width: 2),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 8),
-                ),
-                onSubmitted: onSubmitted,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: AppColors.headerColor, width: 2),
-                color: Colors.white,
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.qr_code_scanner),
-                onPressed: onBarcodeTap,
-                color: AppColors.blackText,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildProductDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '商品',
           style: TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 16, fontFamily: AppTextStyles.font, color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(
@@ -691,14 +629,14 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
             hint: const Text(
               '商品を選択',
               style: TextStyle(
-                  color: AppColors.textPlaceholder, fontFamily: 'MSPGothic'),
+                  color: AppColors.textPlaceholder, fontFamily: AppTextStyles.font),
             ),
             items: _lines
                 .map((line) => DropdownMenuItem<String>(
                       value: line.productName ?? line.productCode,
                       child: Text(
                         line.productName ?? line.productCode,
-                        style: const TextStyle(fontFamily: 'MSPGothic'),
+                        style: const TextStyle(fontFamily: AppTextStyles.font),
                       ),
                     ))
                 .toList(),
@@ -722,93 +660,14 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
     );
   }
 
-  Widget _buildReadOnlyField({
-    required String label,
-    required TextEditingController controller,
-    IconData? icon,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
-        ),
-        const SizedBox(height: 4),
-        TextField(
-          controller: controller,
-          readOnly: true,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.headerColor, width: 2),
-            ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.headerColor, width: 2),
-            ),
-            filled: true,
-            fillColor: AppColors.headerColor,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            prefixIcon: icon != null ? Icon(icon) : null,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDateField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '賞味期限',
-          style: TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
-        ),
-        const SizedBox(height: 4),
-        TextField(
-          controller: _expirationDateController,
-          focusNode: _expirationDateFocus,
-          readOnly: true,
-          decoration: InputDecoration(
-            hintText: 'YYYY-MM-DD',
-            border: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.headerColor, width: 2),
-            ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.headerColor, width: 2),
-            ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.primaryLight, width: 2),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            prefixIcon: const Icon(Icons.calendar_today),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.calendar_month),
-              onPressed: _selectExpirationDate,
-            ),
-          ),
-          onTap: _selectExpirationDate,
-        ),
-      ],
-    );
-  }
-
   Widget _buildStatusDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '状態',
           style: TextStyle(
-              fontSize: 14, fontFamily: 'MSPGothic', color: AppColors.black),
+              fontSize: 16, fontFamily: AppTextStyles.font, color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(
@@ -825,15 +684,15 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
             items: const [
               DropdownMenuItem(
                 value: '通常',
-                child: Text('通常', style: TextStyle(fontFamily: 'MSPGothic')),
+                child: Text('通常', style: TextStyle(fontFamily: AppTextStyles.font)),
               ),
               DropdownMenuItem(
                 value: 'NG',
-                child: Text('NG', style: TextStyle(fontFamily: 'MSPGothic')),
+                child: Text('NG', style: TextStyle(fontFamily: AppTextStyles.font)),
               ),
               DropdownMenuItem(
                 value: '不足',
-                child: Text('不足', style: TextStyle(fontFamily: 'MSPGothic')),
+                child: Text('不足', style: TextStyle(fontFamily: AppTextStyles.font)),
               ),
             ],
             onChanged: (value) {
@@ -848,6 +707,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
 
   @override
   void dispose() {
+    _topTimer?.cancel();
     _barcodeController.dispose();
     _productNameController.dispose();
     _orderQtyController.dispose();

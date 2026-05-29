@@ -3,15 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../core/di/injection.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../data/models/picking/picking_line.dart';
 import '../../../routes/route_names.dart';
+import '../../widgets/app_empty.dart';
+import '../../widgets/app_error.dart';
+import '../../widgets/app_loading.dart';
+import '../../widgets/module_tinted_button.dart';
 
 /// Port từ screens/Picking/PickingItems.js
 ///
 /// Hiển thị danh sách lines của 1 picking order.
-/// Mỗi line có trạng thái hoàn thành (actualQty / pickQty).
 class PickingItemsScreen extends StatelessWidget {
   final String pickNo;
   final int tenantId;
@@ -49,41 +53,34 @@ class _PickingItemsView extends StatelessWidget {
     required this.company,
   });
 
+  void _backToList(BuildContext context) {
+    final c = Uri.encodeComponent(company);
+    context.go('${RouteNames.pickingList}?tenantId=$tenantId&company=$c');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.themeBackground,
+        backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
-          onPressed: () {
-            final c = Uri.encodeComponent(company);
-            context.go(
-              '${RouteNames.pickingList}?tenantId=$tenantId&company=$c',
-            );
-          },
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          onPressed: () => _backToList(context),
         ),
-        title: Text(
-          'ピッキング: $pickNo',
-          style: const TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
-        ),
+        title: Text('ピッキング: $pickNo', style: AppTextStyles.appBarTitle),
       ),
       body: BlocBuilder<PickingBloc, PickingState>(
         builder: (context, state) {
           if (state is PickingLoading) {
-            return const Center(
-              child:
-                  CircularProgressIndicator(color: AppColors.themeBackground),
-            );
+            return AppLoading.centered(message: '読み込み中...');
           }
           if (state is PickingError) {
-            return _buildError(context, state.message);
+            return AppError.generic(
+              message: state.message,
+              onRetry: () =>
+                  context.read<PickingBloc>().add(SelectPickingList(pickNo)),
+            );
           }
           if (state is PickingLinesLoaded) {
             return _buildList(context, state.lines);
@@ -94,61 +91,37 @@ class _PickingItemsView extends StatelessWidget {
     );
   }
 
-  Widget _buildError(BuildContext context, String msg) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, color: AppColors.textError, size: 48),
-          const SizedBox(height: 12),
-          Text(msg,
-              style: const TextStyle(
-                  fontFamily: 'MSPGothic', color: AppColors.textError),
-              textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () =>
-                context.read<PickingBloc>().add(SelectPickingList(pickNo)),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.themeBackground,
-                foregroundColor: Colors.white),
-            child: const Text('再試行', style: TextStyle(fontFamily: 'MSPGothic')),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildList(BuildContext context, List<PickingLine> lines) {
     if (lines.isEmpty) {
-      return const Center(
-        child: Text(
-          'ピッキング明細がありません',
-          style: TextStyle(fontFamily: 'MSPGothic', color: AppColors.gray),
-        ),
-      );
+      return AppEmpty.list(message: 'ピッキング明細がありません');
     }
 
     return Column(
       children: [
-        // Summary header
+        // ── 件数 header strip — Orange 8% tint ──────────────────
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          color: Colors.white,
+          decoration: BoxDecoration(
+            color: AppColors.settingsColor3.withOpacity(0.08),
+            border: const Border(bottom: BorderSide(color: AppColors.light)),
+          ),
           child: Text(
             '合計: ${lines.length} 件',
             style: const TextStyle(
-              fontFamily: 'MSPGothic',
+              fontFamily: AppTextStyles.font,
               color: AppColors.grayTextColor,
-              fontSize: 13,
+              fontSize: AppTextStyles.sizeSub,
             ),
           ),
         ),
+
+        // ── Item list ────────────────────────────────────────────
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(8),
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             itemCount: lines.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) => _LineCard(
               line: lines[index],
               index: index,
@@ -166,42 +139,78 @@ class _PickingItemsView extends StatelessWidget {
             ),
           ),
         ),
-        // Start picking button (goes to first incomplete line)
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: ElevatedButton.icon(
-            onPressed: () {
-              // Go to first incomplete line
-              final firstIdx = lines.indexWhere(
-                (l) => (l.actualQty ?? 0) < l.pickQty,
-              );
-              final idx = firstIdx >= 0 ? firstIdx : 0;
-              context.push(
-                RouteNames.pickingDetail,
-                extra: {
-                  'pickNo': pickNo,
-                  'pickingLine': lines[idx],
-                  'currentIndex': idx,
-                  'tenantId': tenantId,
-                  'company': company,
-                  'allLines': lines,
-                },
-              );
-            },
-            icon: const Icon(Icons.play_arrow),
-            label: const Text(
-              'ピッキング開始',
-              style: TextStyle(
-                  fontFamily: 'MSPGothic',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
+
+        // ── Bottom bar: 戻る + 開始 ───────────────────────────────
+        SafeArea(
+          top: false,
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+            decoration: const BoxDecoration(
+              color: AppColors.white,
+              border: Border(top: BorderSide(color: AppColors.light)),
             ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.themeBackground,
-              foregroundColor: Colors.white,
-              minimumSize: const Size.fromHeight(48),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Material(
+                    color: AppColors.settingsColor7,
+                    borderRadius: BorderRadius.circular(12),
+                    elevation: 1,
+                    child: InkWell(
+                      onTap: () => _backToList(context),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        height: AppTextStyles.heightBottomButton,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.arrow_back,
+                                color: AppColors.white, size: AppTextStyles.sizeBottomButtonIcon),
+                            SizedBox(width: 8),
+                            Text(
+                              '戻る',
+                              style: TextStyle(
+                                fontFamily: AppTextStyles.font,
+                                color: AppColors.white,
+                                fontSize: AppTextStyles.sizeBottomButton,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ModuleTintedButton(
+                    label: '開始',
+                    icon: Icons.play_arrow,
+                    color: AppColors.settingsColor3,
+                    height: AppTextStyles.heightBottomButton,
+                    onPressed: () {
+                      final firstIdx = lines.indexWhere(
+                        (l) => (l.actualQty ?? 0) < l.pickQty,
+                      );
+                      final idx = firstIdx >= 0 ? firstIdx : 0;
+                      context.push(
+                        RouteNames.pickingDetail,
+                        extra: {
+                          'pickNo': pickNo,
+                          'pickingLine': lines[idx],
+                          'currentIndex': idx,
+                          'tenantId': tenantId,
+                          'company': company,
+                          'allLines': lines,
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -228,25 +237,32 @@ class _LineCard extends StatelessWidget {
     final actual = line.actualQty ?? 0.0;
     final isDone = actual >= line.pickQty;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 2,
+    return Material(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
-        child: Padding(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isDone
+                  ? AppColors.wageningenGreen.withOpacity(0.4)
+                  : AppColors.light,
+            ),
+          ),
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              // Index badge
+              // ── Index badge ───────────────────────────────────
               Container(
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
                   color: isDone
                       ? AppColors.wageningenGreen
-                      : AppColors.themeBackground,
+                      : AppColors.settingsColor3,
                   borderRadius: BorderRadius.circular(18),
                 ),
                 alignment: Alignment.center,
@@ -257,12 +273,13 @@ class _LineCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: AppTextStyles.sizeInfo,
                         ),
                       ),
               ),
               const SizedBox(width: 12),
-              // Info
+
+              // ── Product info ──────────────────────────────────
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,9 +287,10 @@ class _LineCard extends StatelessWidget {
                     Text(
                       line.productCode,
                       style: const TextStyle(
-                        fontFamily: 'MSPGothic',
+                        fontFamily: AppTextStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: AppTextStyles.sizeCard,
+                        color: AppColors.blackTextColor,
                       ),
                     ),
                     if (line.productName != null &&
@@ -281,42 +299,42 @@ class _LineCard extends StatelessWidget {
                       Text(
                         line.productName!,
                         style: const TextStyle(
-                          fontFamily: 'MSPGothic',
+                          fontFamily: AppTextStyles.font,
                           color: AppColors.grayTextColor,
-                          fontSize: 12,
+                          fontSize: AppTextStyles.sizeCaption,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
                         if (line.bin != null && line.bin!.isNotEmpty) ...[
                           const Icon(Icons.inventory_2_outlined,
-                              size: 14, color: AppColors.gray),
+                              size: 13, color: AppColors.gray),
                           const SizedBox(width: 4),
                           Text(
                             line.bin!,
                             style: const TextStyle(
-                              fontFamily: 'MSPGothic',
-                              fontSize: 12,
+                              fontFamily: AppTextStyles.font,
+                              fontSize: AppTextStyles.sizeCaption,
                               color: AppColors.grayTextColor,
                             ),
                           ),
                           const SizedBox(width: 12),
                         ],
                         const Icon(Icons.format_list_numbered,
-                            size: 14, color: AppColors.gray),
+                            size: 13, color: AppColors.gray),
                         const SizedBox(width: 4),
                         Text(
                           '${actual.toStringAsFixed(0)} / ${line.pickQty.toStringAsFixed(0)}',
                           style: TextStyle(
-                            fontFamily: 'MSPGothic',
-                            fontSize: 12,
+                            fontFamily: AppTextStyles.font,
+                            fontSize: AppTextStyles.sizeCaption,
                             color: isDone
                                 ? AppColors.wageningenGreen
-                                : AppColors.textWarning,
+                                : AppColors.settingsColor3,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

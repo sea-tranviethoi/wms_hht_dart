@@ -7,6 +7,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/security/crypto_service.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../routes/route_names.dart';
 
 /// Port từ screens/Login.js — phần handleScan
@@ -99,10 +100,7 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.themeBackground,
         foregroundColor: Colors.white,
-        title: const Text(
-          'QRコードでログイン',
-          style: TextStyle(fontFamily: 'MSPGothic', fontSize: 16),
-        ),
+        title: const Text('QRコードでログイン', style: AppTextStyles.appBarTitle),
       ),
       body: Stack(
         children: [
@@ -147,10 +145,10 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
                 ),
                 child: Text(
                   _errorMessage!,
-                  style: const TextStyle(
-                    fontFamily: 'MSPGothic',
+                  style: TextStyle(
+                    fontFamily: AppTextStyles.font,
                     color: Colors.white,
-                    fontSize: 13,
+                    fontSize: AppTextStyles.sizeSub,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -165,9 +163,9 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
             child: Text(
               'QRコードをカメラに向けてください',
               style: TextStyle(
-                fontFamily: 'MSPGothic',
+                fontFamily: AppTextStyles.font,
                 color: Colors.white.withAlpha(180),
-                fontSize: 13,
+                fontSize: AppTextStyles.sizeSub,
               ),
               textAlign: TextAlign.center,
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/theme_config.dart';
+import '../../core/constants/app_text_styles.dart';
 
 class DropdownItem<T> {
   final T value;
@@ -49,8 +50,8 @@ class CustomDropdown<T> extends StatelessWidget {
             if (label != null) ...[
               Text(
                 label!,
-                style: const TextStyle(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: AppTextStyles.sizeInfo,
                   color: AppColors.blackText,
                   fontWeight: FontWeight.w500,
                 ),
@@ -113,12 +114,12 @@ class CustomDropdown<T> extends StatelessWidget {
                               children: [
                                 Text(
                                   item.label,
-                                  style: const TextStyle(fontSize: 14),
+                                  style: TextStyle(fontSize: 14.sp),
                                 ),
                                 Text(
                                   item.subtitle!,
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: AppTextStyles.sizeCaption,
                                     color: AppColors.textPlaceholder,
                                   ),
                                 ),
@@ -126,7 +127,7 @@ class CustomDropdown<T> extends StatelessWidget {
                             )
                           : Text(
                               item.label,
-                              style: const TextStyle(fontSize: 14),
+                              style: TextStyle(fontSize: 14.sp),
                             ),
                     );
                   }).toList(),

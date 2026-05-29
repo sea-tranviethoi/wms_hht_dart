@@ -45,9 +45,14 @@ class FbtHhtApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ── ScreenUtil: design baseline = 360×800 (Keyence BT-A series)
+    // minTextAdapt: false → text scale theo chiều RỘNG màn hình (không bị
+    // thu nhỏ do chiều cao trên HHT 3.5" 320×480).
+    // splitScreenMode: false → HHT không có split-screen.
     return ScreenUtilInit(
       designSize: const Size(360, 800),
-      minTextAdapt: true,
+      minTextAdapt: false,
+      splitScreenMode: false,
       builder: (_, __) => MultiBlocProvider(
         providers: [
           BlocProvider<AuthBloc>(
@@ -69,12 +74,50 @@ class FbtHhtApp extends StatelessWidget {
           title: 'FBTHHT',
           debugShowCheckedModeBanner: false,
 
+          // ── Clamp system text-scale (accessibility) ────────
+          // Ngăn người dùng/OS phóng to chữ quá mức làm vỡ layout.
+          // Dải [0.85 – 1.2] phù hợp HHT 3.5"–6".
+          builder: (context, child) {
+            final mq = MediaQuery.of(context);
+            return MediaQuery(
+              data: mq.copyWith(
+                textScaler: mq.textScaler.clamp(
+                  minScaleFactor: 0.85,
+                  maxScaleFactor: 1.20,
+                ),
+              ),
+              child: child!,
+            );
+          },
+
           // ── Theme ──────────────────────────────────────────
           theme: ThemeData(
             useMaterial3: true,
             fontFamily: 'MSPGothic',
             colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFFc02941),
+              seedColor: const Color(0xFF3D6E96),
+            ),
+            appBarTheme: const AppBarTheme(
+              surfaceTintColor: Colors.transparent,
+              scrolledUnderElevation: 0,
+              elevation: 0,
+              titleTextStyle: TextStyle(
+                fontFamily: 'MSPGothic',
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+              iconTheme: IconThemeData(color: Colors.white, size: 32),
+            ),
+            cardTheme: const CardThemeData(
+              color: Color(0xFFF3F3F3),
+              surfaceTintColor: Colors.transparent,
+              elevation: 1,
+              shadowColor: Color(0x1A000000),
+            ),
+            dialogTheme: const DialogThemeData(
+              backgroundColor: Color(0xFFFFFFFF),
+              surfaceTintColor: Colors.transparent,
             ),
           ),
 

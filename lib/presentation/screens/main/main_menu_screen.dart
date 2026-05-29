@@ -7,6 +7,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/key_codes.dart';
 import '../../../core/hardware/keyboard_event_bus.dart';
 import '../../blocs/auth/auth_bloc.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../routes/route_names.dart';
 
 /// Port từ screens/MainMenu.js
@@ -146,16 +147,16 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       builder: (dialogCtx) => AlertDialog(
         title: const Text(
           'ログアウト',
-          style: TextStyle(fontFamily: 'MSPGothic'),
+          style: TextStyle(fontFamily: AppTextStyles.font),
         ),
         content: const Text(
           'ログアウトしますか？',
-          style: TextStyle(fontFamily: 'MSPGothic'),
+          style: TextStyle(fontFamily: AppTextStyles.font),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('いいえ', style: TextStyle(fontFamily: 'MSPGothic')),
+            child: const Text('いいえ', style: TextStyle(fontFamily: AppTextStyles.font)),
           ),
           TextButton(
             onPressed: () {
@@ -168,7 +169,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             child: const Text(
               'はい',
               style: TextStyle(
-                fontFamily: 'MSPGothic',
+                fontFamily: AppTextStyles.font,
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
@@ -184,18 +185,11 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lighter,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.themeBackground,
-        title: const Text(
-          'メニュー',
-          style: TextStyle(
-            fontFamily: 'MSPGothic',
-            color: AppColors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        backgroundColor: const Color(0xFF2D4A38), // settingsColor5 (BinMove) tối hơn
+        title: const Text('メニュー', style: AppTextStyles.appBarTitle),
         actions: [
           // Version badge
           Padding(
@@ -203,26 +197,50 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             child: Center(
               child: Text(
                 'v${AppConstants.appVersion}',
-                style: const TextStyle(
-                  fontFamily: 'MSPGothic',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.font,
                   color: AppColors.lighter,
-                  fontSize: 12,
+                  fontSize: AppTextStyles.sizeCaption,
                 ),
               ),
             ),
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        itemCount: _items.length,
-        itemBuilder: (context, index) {
-          final item = _items[index];
-          return _MenuTile(
-            item: item,
-            onTap: () => _handleTap(item),
-          );
-        },
+      body: Column(
+        children: [
+          // 6 modules — 2-col grid
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: GridView.builder(
+                itemCount: _items.length - 1, // exclude logout
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 1.5,
+                ),
+                itemBuilder: (context, index) {
+                  final item = _items[index];
+                  return _MenuTile(item: item, onTap: () => _handleTap(item));
+                },
+              ),
+            ),
+          ),
+          // Footer — same pattern as BackToMenuButton
+          SafeArea(
+            top: false,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+                border: Border(top: BorderSide(color: AppColors.light)),
+              ),
+              child: _LogoutButton(onTap: () => _handleTap(_items.last)),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -244,6 +262,46 @@ class _MenuItem {
   });
 }
 
+// ─── Logout Button ────────────────────────────────────────────────────────────
+
+class _LogoutButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _LogoutButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0xFF2D4A38), // settingsColor5 (BinMove) tối hơn
+      borderRadius: BorderRadius.circular(12),
+      elevation: 1,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: AppTextStyles.heightBottomButton,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.logout, color: AppColors.white, size: AppTextStyles.sizeBottomButtonIcon),
+              SizedBox(width: 10),
+              Text(
+                'ログアウト',
+                style: TextStyle(
+                  fontFamily: AppTextStyles.font,
+                  color: AppColors.white,
+                  fontSize: AppTextStyles.sizeButton,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ─── Tile Widget ──────────────────────────────────────────────────────────────
 
 class _MenuTile extends StatelessWidget {
@@ -254,61 +312,45 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Material(
-        color: item.color,
-        borderRadius: BorderRadius.circular(12),
-        elevation: 3,
-        shadowColor: item.color.withValues(alpha: 0.4),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            height: 72,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.label,
-                        style: const TextStyle(
-                          fontFamily: 'MSPGothic',
-                          color: AppColors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black26,
-                              offset: Offset(1, 1),
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
+    return Material(
+      color: item.color,
+      borderRadius: BorderRadius.circular(6),
+      elevation: 2,
+      shadowColor: item.color.withValues(alpha: 0.4),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(6),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.label,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.font,
+                        color: AppColors.onColor(item.color),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Text(
-                        item.subtitle,
-                        style: const TextStyle(
-                          fontFamily: 'MSPGothic',
-                          color: AppColors.white,
-                          fontSize: 12,
-                        ),
+                    ),
+                    Text(
+                      item.subtitle,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.font,
+                        color: AppColors.onColor(item.color),
+                        fontSize: 15,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const Icon(
-                  Icons.chevron_right,
-                  color: AppColors.white,
-                  size: 28,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

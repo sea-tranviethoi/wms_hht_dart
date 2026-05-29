@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/theme_config.dart';
+import '../../core/constants/app_text_styles.dart';
 
 enum ButtonType { primary, secondary, danger, success, outline }
 
@@ -91,8 +92,8 @@ class CustomButton extends StatelessWidget {
                 ],
                 Text(
                   text,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: AppTextStyles.sizeBody,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

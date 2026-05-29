@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
 import '../../../core/audio/sound_manager.dart';
 
 /// Port từ components/Notification.js — VerifyNotification
@@ -72,9 +73,9 @@ class VerifyNotification extends StatelessWidget {
                   // Title
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontFamily: 'MSPGothic',
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.font,
+                      fontSize: AppTextStyles.sizeBody,
                       fontWeight: FontWeight.bold,
                       color: AppColors.blackTextColor,
                     ),
@@ -84,9 +85,9 @@ class VerifyNotification extends StatelessWidget {
                   // Message
                   Text(
                     message,
-                    style: const TextStyle(
-                      fontFamily: 'MSPGothic',
-                      fontSize: 14,
+                    style: TextStyle(
+                      fontFamily: AppTextStyles.font,
+                      fontSize: AppTextStyles.sizeInfo,
                       color: AppColors.grayTextColor,
                     ),
                     textAlign: TextAlign.center,
@@ -103,9 +104,9 @@ class VerifyNotification extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       '${(progressValue * 100).toStringAsFixed(0)}%',
-                      style: const TextStyle(
-                        fontFamily: 'MSPGothic',
-                        fontSize: 12,
+                      style: TextStyle(
+                        fontFamily: AppTextStyles.font,
+                        fontSize: AppTextStyles.sizeCaption,
                         color: AppColors.grayTextColor,
                       ),
                     ),
@@ -142,7 +143,7 @@ class VerifyNotification extends StatelessWidget {
       ),
       child: Text(
         btn.text,
-        style: const TextStyle(fontFamily: 'MSPGothic', fontSize: 14),
+        style: TextStyle(fontFamily: AppTextStyles.font, fontSize: 14.sp),
       ),
     );
   }
