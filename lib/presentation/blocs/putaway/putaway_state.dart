@@ -28,7 +28,7 @@ class PutawayRow {
   /// -1 = not scanned, 1 = this device, 3 = other device
   final int scanStatus;
   final String hhtInfoOther;
-  final int receiptLineId;
+  final String? receiptLineId;
   final List<PutawayLine> lines;
 
   const PutawayRow({
@@ -38,7 +38,7 @@ class PutawayRow {
     this.scannedQty = 0,
     this.scanStatus = -1,
     this.hhtInfoOther = '',
-    this.receiptLineId = 0,
+    this.receiptLineId,
     this.lines = const [],
   });
 }

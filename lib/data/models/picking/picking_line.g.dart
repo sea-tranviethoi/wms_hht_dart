@@ -18,7 +18,7 @@ PickingLine _$PickingLineFromJson(Map<String, dynamic> json) => PickingLine(
       unitId: (json['unitId'] as num?)?.toInt(),
       status: (json['status'] as num).toInt(),
       isDeleted: json['isDeleted'] as bool? ?? false,
-      shipmentLineId: (json['shipmentLineId'] as num?)?.toInt(),
+      shipmentLineId: json['shipmentLineId'] as String?,
       createAt: json['createAt'] == null
           ? null
           : DateTime.parse(json['createAt'] as String),

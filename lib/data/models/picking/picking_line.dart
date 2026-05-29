@@ -27,7 +27,7 @@ class PickingLine {
   @JsonKey(name: 'isDeleted')
   final bool isDeleted;
   @JsonKey(name: 'shipmentLineId')
-  final int? shipmentLineId;
+  final String? shipmentLineId;
   @JsonKey(name: 'createAt')
   final DateTime? createAt;
   @JsonKey(name: 'updateAt')
@@ -68,7 +68,7 @@ class PickingLine {
       unitId: toInt(json['unitId']),
       status: toInt(json['status']) ?? 0,
       isDeleted: toBool(json['isDeleted']) ?? false,
-      shipmentLineId: toInt(json['shipmentLineId']),
+      shipmentLineId: json['shipmentLineId']?.toString(),
       createAt: toDate(json['createAt']),
       updateAt: toDate(json['updateAt']),
       productName: json['productName']?.toString(),
@@ -90,7 +90,7 @@ class PickingLine {
     int? unitId,
     int? status,
     bool? isDeleted,
-    int? shipmentLineId,
+    String? shipmentLineId,
     DateTime? createAt,
     DateTime? updateAt,
     String? productName,

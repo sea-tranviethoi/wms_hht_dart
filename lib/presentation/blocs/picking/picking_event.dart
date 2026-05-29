@@ -49,7 +49,7 @@ class StagingPayload {
   final double pickQty;
   final double actualQty;
   final String? qrCode;
-  final int? shipmentLineId;
+  final String? shipmentLineId;
   final int? unitId;
   final String? unit;
 

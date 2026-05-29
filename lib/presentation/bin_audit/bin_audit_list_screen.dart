@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 import '../../core/di/injection.dart';
 import '../../data/repositories/bin_audit_repository.dart';
 import '../../routes/route_names.dart';
@@ -64,14 +64,14 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor6,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
           onPressed: _backToMenu,
         ),
-        title: const Text('棚卸一覧', style: AppTextStyles.appBarTitle),
+        title: const Text('棚卸一覧', style: AppStyles.appBarTitle),
         actions: [
           BlocBuilder<BinAuditBloc, BinAuditState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
               onPressed: state is BinAuditLoading ? null : _loadData,
             ),
           ),

@@ -155,12 +155,10 @@ class PickingBloc extends Bloc<PickingEvent, PickingState> {
 
       // 2. Delete old staging + add new
       final existingStaging = await _remote.getStagingByNo(event.pickNo);
-      final existingIds = existingStaging
-          .where((s) => s.id != null)
-          .map((s) => s.id!)
-          .toList();
-      if (existingIds.isNotEmpty) {
-        await _remote.deleteStagingRange(existingIds);
+      final toDelete =
+          existingStaging.where((s) => s.id != null).toList();
+      if (toDelete.isNotEmpty) {
+        await _remote.deleteStagingRange(toDelete);
       }
       await _remote.addStagingRange(stagingList);
 

@@ -80,16 +80,16 @@ class PutawayRemoteDataSource {
   /// POST /api/Common/UpdateHHTStatusAsync
   Future<bool> updateHHTStatus({
     required int status,
-    required int masterId,
-    required int detailId,
+    required String? masterId,
+    required String? detailId,
     String? hhtInfo,
   }) async {
     final res = await _dioClient.dio.post(
       '/api/Common/UpdateHHTStatusAsync',
       data: {
         'status': status,
-        'masterId': masterId,
-        'detailId': detailId,
+        if (masterId != null) 'masterId': masterId,
+        if (detailId != null) 'detailId': detailId,
         if (hhtInfo != null) 'hhtInfo': hhtInfo,
       },
     );

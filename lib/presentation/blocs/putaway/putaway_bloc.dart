@@ -91,7 +91,7 @@ class PutawayBloc extends Bloc<PutawayEvent, PutawayState> {
         final receiptLineId = lines
             .firstWhere((l) => l.receiptLineId != null,
                 orElse: () => lines.first)
-            .receiptLineId ?? 0;
+            .receiptLineId;
 
         // Product name from the first line that has it
         final productName = lines

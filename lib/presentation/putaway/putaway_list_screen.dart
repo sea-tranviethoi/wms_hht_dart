@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/putaway_remote_datasource.dart';
@@ -63,16 +63,16 @@ class _PutawayListViewState extends State<_PutawayListView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: AppTextStyles.font)),
+          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.productCode} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: AppTextStyles.font),
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor2),
-              child: const Text('閉じる', style: TextStyle(fontFamily: AppTextStyles.font)),
+              child: const Text('閉じる', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
             ),
           ],
         ),
@@ -94,12 +94,12 @@ class _PutawayListViewState extends State<_PutawayListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor2,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
           onPressed: _backToMenu,
         ),
-        title: const Text('棚上げ一覧', style: AppTextStyles.appBarTitle),
+        title: const Text('棚上げ一覧', style: AppStyles.appBarTitle),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon), onPressed: _loadData),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeAppBarIcon), onPressed: _loadData),
         ],
       ),
       body: Column(

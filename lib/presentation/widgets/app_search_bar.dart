@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 
 class AppSearchBar extends StatefulWidget {
   final String? initialValue;
@@ -71,22 +71,22 @@ class _AppSearchBarState extends State<AppSearchBar> {
         autofocus: widget.autofocus,
         onSubmitted: (_) => widget.onSubmitted?.call(),
         style: const TextStyle(
-          fontFamily: AppTextStyles.font,
-          fontSize: AppTextStyles.sizeInput,
+          fontFamily: AppStyles.font,
+          fontSize: AppStyles.sizeInput,
           color: AppColors.blackTextColor,
         ),
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: const TextStyle(
-            fontFamily: AppTextStyles.font,
+            fontFamily: AppStyles.font,
             color: AppColors.grayTextColor,
-            fontSize: AppTextStyles.sizeHint,
+            fontSize: AppStyles.sizeHint,
           ),
-          prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppTextStyles.sizeSearchIcon),
+          prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
           prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
           suffixIcon: _ctrl.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.close, color: AppColors.gray, size: AppTextStyles.sizeSearchClearIcon),
+                  icon: const Icon(Icons.close, color: AppColors.gray, size: AppStyles.sizeSearchClearIcon),
                   onPressed: () => _ctrl.clear(),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(minWidth: 36, minHeight: 0),

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 import '../../core/di/injection.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
 import '../../data/models/bundle/bundle_line.dart';
@@ -91,10 +91,10 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor4,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
           onPressed: () => _backToList(context),
         ),
-        title: Text('事前セット: ${widget.transNo}', style: AppTextStyles.appBarTitle),
+        title: Text('事前セット: ${widget.transNo}', style: AppStyles.appBarTitle),
       ),
       body: widget.preloadedLines != null
           ? _buildContent(context, widget.preloadedLines!)
@@ -145,16 +145,16 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
               Text(
                 '合計: ${lines.length} 件',
                 style: const TextStyle(
-                  fontFamily: AppTextStyles.font,
+                  fontFamily: AppStyles.font,
                   color: AppColors.grayTextColor,
-                  fontSize: 13,
+                  fontSize: AppStyles.sizeSub,
                 ),
               ),
               Text(
                 '$completedCount / ${lines.length} 完了',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.font,
-                  fontSize: 13,
+                  fontFamily: AppStyles.font,
+                  fontSize: AppStyles.sizeSub,
                   fontWeight: FontWeight.bold,
                   color: completedCount == lines.length
                       ? AppColors.wageningenGreen
@@ -193,43 +193,47 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
               children: [
                 Expanded(
                   flex: 2,
-                  child: ElevatedButton.icon(
-                    onPressed: () => _backToList(context),
-                    icon: const Icon(Icons.arrow_back, size: AppTextStyles.sizeBottomButtonIcon),
-                    label: const Text('戻る',
-                        style: TextStyle(
-                            fontFamily: AppTextStyles.font,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.settingsColor7,
-                      foregroundColor: AppColors.white,
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 14),
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                  child: SizedBox(
+                    height: AppStyles.heightBottomButton,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _backToList(context),
+                      icon: const Icon(Icons.arrow_back, size: AppStyles.sizeBottomButtonIcon),
+                      label: const Text('戻る',
+                          style: TextStyle(
+                              fontFamily: AppStyles.font,
+                              fontSize: AppStyles.sizeBottomButton,
+                              fontWeight: FontWeight.w700)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.settingsColor7,
+                        foregroundColor: AppColors.white,
+                        padding: EdgeInsets.zero,
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _startFirst(context, lines),
-                    icon: const Icon(Icons.play_arrow, size: AppTextStyles.sizeBottomButtonIcon),
-                    label: const Text('開始',
-                        style: TextStyle(
-                            fontFamily: AppTextStyles.font,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.settingsColor4,
-                      foregroundColor: AppColors.white,
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 14),
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                  child: SizedBox(
+                    height: AppStyles.heightBottomButton,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _startFirst(context, lines),
+                      icon: const Icon(Icons.play_arrow, size: AppStyles.sizeBottomButtonIcon),
+                      label: const Text('開始',
+                          style: TextStyle(
+                              fontFamily: AppStyles.font,
+                              fontSize: AppStyles.sizeBottomButton,
+                              fontWeight: FontWeight.w700)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.settingsColor4,
+                        foregroundColor: AppColors.white,
+                        padding: EdgeInsets.zero,
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
                     ),
                   ),
                 ),
@@ -297,13 +301,13 @@ class _BundleLineCard extends StatelessWidget {
                 alignment: Alignment.center,
                 child: isDone
                     ? const Icon(Icons.check,
-                        color: Colors.white, size: 20)
+                        color: Colors.white, size: AppStyles.sizeBadgeCheckIcon)
                     : Text(
                         '${index + 1}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: AppStyles.sizeInfo,
                         ),
                       ),
               ),
@@ -317,9 +321,9 @@ class _BundleLineCard extends StatelessWidget {
                     Text(
                       line.productCode,
                       style: const TextStyle(
-                        fontFamily: AppTextStyles.font,
+                        fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: AppStyles.sizeCard,
                         color: AppColors.blackTextColor,
                       ),
                     ),
@@ -329,9 +333,9 @@ class _BundleLineCard extends StatelessWidget {
                       Text(
                         line.productName!,
                         style: const TextStyle(
-                          fontFamily: AppTextStyles.font,
+                          fontFamily: AppStyles.font,
                           color: AppColors.grayTextColor,
-                          fontSize: 12,
+                          fontSize: AppStyles.sizeCaption,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -343,26 +347,26 @@ class _BundleLineCard extends StatelessWidget {
                         if (line.bin != null &&
                             line.bin!.isNotEmpty) ...[
                           const Icon(Icons.inventory_2_outlined,
-                              size: 13, color: AppColors.gray),
+                              size: AppStyles.sizeCardIcon, color: AppColors.gray),
                           const SizedBox(width: 4),
                           Text(
                             line.bin!,
                             style: const TextStyle(
-                              fontFamily: AppTextStyles.font,
-                              fontSize: 12,
+                              fontFamily: AppStyles.font,
+                              fontSize: AppStyles.sizeCaption,
                               color: AppColors.grayTextColor,
                             ),
                           ),
                           const SizedBox(width: 12),
                         ],
                         const Icon(Icons.format_list_numbered,
-                            size: 13, color: AppColors.gray),
+                            size: AppStyles.sizeCardIcon, color: AppColors.gray),
                         const SizedBox(width: 4),
                         Text(
                           '${line.actualQty.toStringAsFixed(0)} / ${line.demandQty.toStringAsFixed(0)}',
                           style: TextStyle(
-                            fontFamily: AppTextStyles.font,
-                            fontSize: 12,
+                            fontFamily: AppStyles.font,
+                            fontSize: AppStyles.sizeCaption,
                             color: statusColor,
                             fontWeight: FontWeight.bold,
                           ),
@@ -378,8 +382,8 @@ class _BundleLineCard extends StatelessWidget {
                           child: Text(
                             statusLabel,
                             style: TextStyle(
-                              fontFamily: AppTextStyles.font,
-                              fontSize: 11,
+                              fontFamily: AppStyles.font,
+                              fontSize: AppStyles.sizeMini,
                               color: statusColor,
                               fontWeight: FontWeight.bold,
                             ),

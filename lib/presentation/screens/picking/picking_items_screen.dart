@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_styles.dart';
 import '../../../core/di/injection.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../data/models/picking/picking_line.dart';
@@ -65,10 +65,10 @@ class _PickingItemsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
           onPressed: () => _backToList(context),
         ),
-        title: Text('ピッキング: $pickNo', style: AppTextStyles.appBarTitle),
+        title: Text('ピッキング: $pickNo', style: AppStyles.appBarTitle),
       ),
       body: BlocBuilder<PickingBloc, PickingState>(
         builder: (context, state) {
@@ -109,9 +109,9 @@ class _PickingItemsView extends StatelessWidget {
           child: Text(
             '合計: ${lines.length} 件',
             style: const TextStyle(
-              fontFamily: AppTextStyles.font,
+              fontFamily: AppStyles.font,
               color: AppColors.grayTextColor,
-              fontSize: AppTextStyles.sizeSub,
+              fontSize: AppStyles.sizeSub,
             ),
           ),
         ),
@@ -161,20 +161,20 @@ class _PickingItemsView extends StatelessWidget {
                       onTap: () => _backToList(context),
                       borderRadius: BorderRadius.circular(12),
                       child: Container(
-                        height: AppTextStyles.heightBottomButton,
+                        height: AppStyles.heightBottomButton,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.arrow_back,
-                                color: AppColors.white, size: AppTextStyles.sizeBottomButtonIcon),
+                                color: AppColors.white, size: AppStyles.sizeBottomButtonIcon),
                             SizedBox(width: 8),
                             Text(
                               '戻る',
                               style: TextStyle(
-                                fontFamily: AppTextStyles.font,
+                                fontFamily: AppStyles.font,
                                 color: AppColors.white,
-                                fontSize: AppTextStyles.sizeBottomButton,
+                                fontSize: AppStyles.sizeBottomButton,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -190,7 +190,7 @@ class _PickingItemsView extends StatelessWidget {
                     label: '開始',
                     icon: Icons.play_arrow,
                     color: AppColors.settingsColor3,
-                    height: AppTextStyles.heightBottomButton,
+                    height: AppStyles.heightBottomButton,
                     onPressed: () {
                       final firstIdx = lines.indexWhere(
                         (l) => (l.actualQty ?? 0) < l.pickQty,
@@ -273,7 +273,7 @@ class _LineCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: AppTextStyles.sizeInfo,
+                          fontSize: AppStyles.sizeInfo,
                         ),
                       ),
               ),
@@ -287,9 +287,9 @@ class _LineCard extends StatelessWidget {
                     Text(
                       line.productCode,
                       style: const TextStyle(
-                        fontFamily: AppTextStyles.font,
+                        fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppTextStyles.sizeCard,
+                        fontSize: AppStyles.sizeCard,
                         color: AppColors.blackTextColor,
                       ),
                     ),
@@ -299,9 +299,9 @@ class _LineCard extends StatelessWidget {
                       Text(
                         line.productName!,
                         style: const TextStyle(
-                          fontFamily: AppTextStyles.font,
+                          fontFamily: AppStyles.font,
                           color: AppColors.grayTextColor,
-                          fontSize: AppTextStyles.sizeCaption,
+                          fontSize: AppStyles.sizeCaption,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -317,8 +317,8 @@ class _LineCard extends StatelessWidget {
                           Text(
                             line.bin!,
                             style: const TextStyle(
-                              fontFamily: AppTextStyles.font,
-                              fontSize: AppTextStyles.sizeCaption,
+                              fontFamily: AppStyles.font,
+                              fontSize: AppStyles.sizeCaption,
                               color: AppColors.grayTextColor,
                             ),
                           ),
@@ -330,8 +330,8 @@ class _LineCard extends StatelessWidget {
                         Text(
                           '${actual.toStringAsFixed(0)} / ${line.pickQty.toStringAsFixed(0)}',
                           style: TextStyle(
-                            fontFamily: AppTextStyles.font,
-                            fontSize: AppTextStyles.sizeCaption,
+                            fontFamily: AppStyles.font,
+                            fontSize: AppStyles.sizeCaption,
                             color: isDone
                                 ? AppColors.wageningenGreen
                                 : AppColors.settingsColor3,

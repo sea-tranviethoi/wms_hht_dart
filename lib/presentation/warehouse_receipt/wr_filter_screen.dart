@@ -3,7 +3,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/local_storage.dart';
 
@@ -93,7 +93,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
         }
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('プロダクトコードが存在しません', style: TextStyle(fontFamily: AppTextStyles.font)),
+            content: Text('プロダクトコードが存在しません', style: TextStyle(fontFamily: AppStyles.font)),
             backgroundColor: AppColors.settingsColor7,
           ));
         }
@@ -185,10 +185,10 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('絞り込み (${widget.company})', style: AppTextStyles.appBarTitle),
+        title: Text('絞り込み (${widget.company})', style: AppStyles.appBarTitle),
       ),
       body: Column(
         children: [
@@ -298,8 +298,8 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
   Widget _buildLabel(String text) => Text(
         text,
         style: const TextStyle(
-          fontFamily: AppTextStyles.font,
-          fontSize: 13,
+          fontFamily: AppStyles.font,
+          fontSize: AppStyles.sizeLabel,
           fontWeight: FontWeight.w600,
           color: AppColors.grayTextColor,
         ),
@@ -327,7 +327,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
   Widget _buildTextField({required TextEditingController controller}) =>
       TextField(
         controller: controller,
-        style: const TextStyle(fontFamily: AppTextStyles.font, fontSize: 15),
+        style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInput),
         decoration: _fieldDecoration(),
       );
 
@@ -341,9 +341,9 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
         isExpanded: true,
         decoration: _fieldDecoration(),
         hint: Text(hint,
-            style: const TextStyle(fontFamily: AppTextStyles.font, fontSize: 14,
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeHint,
                 color: AppColors.grayTextColor)),
-        style: const TextStyle(fontFamily: AppTextStyles.font, fontSize: 15,
+        style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInput,
             color: AppColors.blackTextColor),
         items: _vendors.map((v) => DropdownMenuItem<String>(
           value: v['id'],
@@ -362,7 +362,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
           Expanded(
             child: TextField(
               controller: controller,
-              style: const TextStyle(fontFamily: AppTextStyles.font, fontSize: 15),
+              style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInput),
               decoration: _fieldDecoration(),
               onChanged: onChanged,
               onSubmitted: onChanged,
@@ -384,7 +384,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: const Icon(Icons.qr_code_scanner,
-                    color: AppColors.grayTextColor, size: 22),
+                    color: AppColors.grayTextColor, size: AppStyles.sizeFieldButtonIcon),
               ),
             ),
           ),
@@ -398,7 +398,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
     required VoidCallback onPressed,
   }) =>
       SizedBox(
-        height: 48,
+        height: AppStyles.heightBottomButton,
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
@@ -410,8 +410,8 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
           ),
           child: Text(label,
               style: const TextStyle(
-                  fontFamily: AppTextStyles.font,
-                  fontSize: 15,
+                  fontFamily: AppStyles.font,
+                  fontSize: AppStyles.sizeBottomButton,
                   fontWeight: FontWeight.w700)),
         ),
       );

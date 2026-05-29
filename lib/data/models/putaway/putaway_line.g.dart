@@ -7,7 +7,7 @@ part of 'putaway_line.dart';
 // **************************************************************************
 
 PutawayLine _$PutawayLineFromJson(Map<String, dynamic> json) => PutawayLine(
-      id: (json['id'] as num?)?.toInt(),
+      id: json['id'] as String?,
       putAwayNo: json['putAwayNo'] as String,
       productCode: json['productCode'] as String,
       unitId: (json['unitId'] as num).toInt(),
@@ -21,7 +21,7 @@ PutawayLine _$PutawayLineFromJson(Map<String, dynamic> json) => PutawayLine(
       lotNo: json['lotNo'] as String?,
       tenantId: (json['tenantId'] as num?)?.toInt(),
       expirationDate: json['expirationDate'] as String?,
-      receiptLineId: (json['receiptLineId'] as num?)?.toInt(),
+      receiptLineId: json['receiptLineId'] as String?,
       createAt: json['createAt'] == null
           ? null
           : DateTime.parse(json['createAt'] as String),

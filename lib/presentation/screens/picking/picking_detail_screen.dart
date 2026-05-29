@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_styles.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/audio/sound_manager.dart';
 import '../../../core/hardware/keyboard_event_bus.dart';
@@ -15,6 +15,7 @@ import '../../../core/utils/qr_code_parser.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../data/models/picking/picking_line.dart';
 import '../../../routes/route_names.dart';
+import '../../widgets/top_notification_mixin.dart';
 
 /// Port từ screens/Picking/PickingDetail.js
 ///
@@ -46,7 +47,8 @@ class PickingDetailScreen extends StatefulWidget {
   State<PickingDetailScreen> createState() => _PickingDetailScreenState();
 }
 
-class _PickingDetailScreenState extends State<PickingDetailScreen> {
+class _PickingDetailScreenState extends State<PickingDetailScreen>
+    with TopNotificationMixin {
   // ─── Controllers ─────────────────────────────────────────────
   final _binCtrl = TextEditingController();
   final _qrCtrl = TextEditingController();
@@ -307,20 +309,21 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
     return showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('確認', style: TextStyle(fontFamily: AppTextStyles.font)),
+        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
         content: Text(message,
-            style: const TextStyle(fontFamily: AppTextStyles.font)),
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('いいえ',
-                style: TextStyle(fontFamily: AppTextStyles.font)),
+                style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('はい',
                 style: TextStyle(
-                    fontFamily: AppTextStyles.font,
+                    fontFamily: AppStyles.font,
+                    fontSize: AppStyles.sizeDialogAction,
                     color: AppColors.settingsColor3,
                     fontWeight: FontWeight.bold)),
           ),
@@ -330,12 +333,11 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
   }
 
   void _showSnack(String msg, {bool isError = false}) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg, style: const TextStyle(fontFamily: AppTextStyles.font)),
-      backgroundColor: isError ? AppColors.settingsColor7 : AppColors.settingsColor5,
+    showTopNotification(
+      msg,
+      isError ? AppColors.settingsColor7 : AppColors.settingsColor5,
       duration: const Duration(seconds: 2),
-    ));
+    );
   }
 
   // ─── Build ────────────────────────────────────────────────────
@@ -368,28 +370,43 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
           onPressed: () => context.pop(),
         ),
-        title: Text('ピッキング: ${widget.pickNo}  ${_currentIndex + 1}/$total', style: AppTextStyles.appBarTitle),
+        title: Text('ピッキング: ${widget.pickNo}  ${_currentIndex + 1}/$total', style: AppStyles.appBarTitle),
       ),
-      body: BlocBuilder<PickingBloc, PickingState>(
+      body: Stack(
+        children: [
+          BlocBuilder<PickingBloc, PickingState>(
         builder: (context, state) {
           if (state is PickingSyncing) {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: AppColors.settingsColor3),
+                  SizedBox(
+                    width: AppStyles.sizeSpinner,
+                    height: AppStyles.sizeSpinner,
+                    child: CircularProgressIndicator(
+                      color: AppColors.settingsColor3,
+                      strokeWidth: AppStyles.widthSpinnerStroke,
+                    ),
+                  ),
                   SizedBox(height: 16),
                   Text('データ同期中...',
-                      style: TextStyle(fontFamily: AppTextStyles.font)),
+                      style: TextStyle(
+                        fontFamily: AppStyles.font,
+                        fontSize: AppStyles.sizeBody,
+                      )),
                 ],
               ),
             );
           }
           return _buildForm(line);
         },
+      ),
+          buildTopBanner(),
+        ],
       ),
     );
   }
@@ -430,13 +447,13 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
           children: [
             Text('進捗: $done / $total 件完了',
                 style: TextStyle(
-                    fontFamily: AppTextStyles.font,
-                    fontSize: AppTextStyles.sizeSub,
+                    fontFamily: AppStyles.font,
+                    fontSize: AppStyles.sizeSub,
                     color: AppColors.grayTextColor)),
             Text('${(done / total * 100).toStringAsFixed(0)}%',
                 style: TextStyle(
-                    fontFamily: AppTextStyles.font,
-                    fontSize: AppTextStyles.sizeSub,
+                    fontFamily: AppStyles.font,
+                    fontSize: AppStyles.sizeSub,
                     fontWeight: FontWeight.bold,
                     color: AppColors.settingsColor3)),
           ],
@@ -489,8 +506,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
             child: Text(
               label,
               style: TextStyle(
-                  fontFamily: AppTextStyles.font,
-                  fontSize: AppTextStyles.sizeSub,
+                  fontFamily: AppStyles.font,
+                  fontSize: AppStyles.sizeSub,
                   color: AppColors.grayTextColor),
             ),
           ),
@@ -498,8 +515,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
             child: Text(
               value,
               style: TextStyle(
-                fontFamily: AppTextStyles.font,
-                fontSize: AppTextStyles.sizeInfo,
+                fontFamily: AppStyles.font,
+                fontSize: AppStyles.sizeInfo,
                 fontWeight: bold ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -546,8 +563,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                 const SizedBox(width: 8),
                 Text('実数量',
                     style: TextStyle(
-                        fontFamily: AppTextStyles.font,
-                        fontSize: AppTextStyles.sizeInfo,
+                        fontFamily: AppStyles.font,
+                        fontSize: AppStyles.sizeInfo,
                         color: AppColors.blackTextColor)),
                 const SizedBox(width: 12),
                 Expanded(
@@ -557,8 +574,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: AppTextStyles.font,
-                      fontSize: AppTextStyles.sizeTitle,
+                      fontFamily: AppStyles.font,
+                      fontSize: AppStyles.sizeTitle,
                       fontWeight: FontWeight.bold,
                       color: AppColors.settingsColor3,
                     ),
@@ -592,13 +609,20 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: _goPrev,
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('前へ',
-                      style: TextStyle(fontFamily: AppTextStyles.font)),
+                  icon: const Icon(Icons.arrow_back,
+                      size: AppStyles.sizePrimaryButtonIcon),
+                  label: const Text(
+                    '前へ',
+                    style: TextStyle(
+                        fontFamily: AppStyles.font,
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppStyles.sizePrimaryButton),
+                  ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.settingsColor3,
-                    side: const BorderSide(color: AppColors.settingsColor3),
-                    minimumSize: const Size.fromHeight(AppTextStyles.heightPrimaryButton),
+                    side: const BorderSide(
+                        color: AppColors.settingsColor3, width: 1.5),
+                    minimumSize: const Size.fromHeight(AppStyles.heightPrimaryButton),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -617,23 +641,23 @@ class _PickingDetailScreenState extends State<PickingDetailScreen> {
                   isLast
                       ? (allDone ? Icons.cloud_upload : Icons.check)
                       : Icons.arrow_forward,
-                  size: AppTextStyles.sizePrimaryButtonIcon,
+                  size: AppStyles.sizePrimaryButtonIcon,
                 ),
                 label: Text(
                   isLast
                       ? (allDone ? '完了・送信' : '完了確認')
                       : '次へ',
                   style: const TextStyle(
-                      fontFamily: AppTextStyles.font,
+                      fontFamily: AppStyles.font,
                       fontWeight: FontWeight.bold,
-                      fontSize: AppTextStyles.sizePrimaryButton),
+                      fontSize: AppStyles.sizePrimaryButton),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isLast && allDone
                       ? AppColors.settingsColor5
                       : AppColors.settingsColor3,
                   foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(AppTextStyles.heightPrimaryButton),
+                  minimumSize: const Size.fromHeight(AppStyles.heightPrimaryButton),
                   elevation: 1,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -682,18 +706,18 @@ class _ScanField extends StatelessWidget {
                 focusNode: focusNode,
                 textInputAction: TextInputAction.done,
                 onSubmitted: onSubmitted,
-                style: const TextStyle(fontFamily: AppTextStyles.font, fontSize: AppTextStyles.sizeInfo),
+                style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInfo),
                 decoration: InputDecoration(
                   labelText: label,
                   labelStyle: TextStyle(
-                      fontFamily: AppTextStyles.font,
-                      fontSize: AppTextStyles.sizeCaption,
+                      fontFamily: AppStyles.font,
+                      fontSize: AppStyles.sizeCaption,
                       color: AppColors.grayTextColor),
                   hintText: hintText,
                   hintStyle: TextStyle(
-                      fontFamily: AppTextStyles.font,
+                      fontFamily: AppStyles.font,
                       color: AppColors.gray,
-                      fontSize: AppTextStyles.sizeCaption),
+                      fontSize: AppStyles.sizeCaption),
                   border: InputBorder.none,
                   suffixIcon: controller.text.isNotEmpty
                       ? IconButton(
@@ -723,7 +747,7 @@ class _LineData {
   final String bin;
   final double actualQty;
   final String? qrCode;
-  final int? shipmentLineId;
+  final String? shipmentLineId;
   final int? unitId;
   final double pickQty;
   final String? lotNo;

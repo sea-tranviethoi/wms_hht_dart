@@ -4,13 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 import '../../core/di/injection.dart';
+import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
 import '../../data/models/bundle/bundle_line.dart';
 import '../../routes/route_names.dart';
 import '../../core/utils/qr_code_parser.dart';
 import '../widgets/form_widgets.dart';
+import '../widgets/top_notification_mixin.dart';
 
 /// 事前セット詳細 — standalone, no Provider/BLoC needed
 class BundleDetailScreen extends StatefulWidget {
@@ -31,7 +33,8 @@ class BundleDetailScreen extends StatefulWidget {
   State<BundleDetailScreen> createState() => _BundleDetailScreenState();
 }
 
-class _BundleDetailScreenState extends State<BundleDetailScreen> {
+class _BundleDetailScreenState extends State<BundleDetailScreen>
+    with TopNotificationMixin {
   final _binCtrl = TextEditingController();
   final _productCodeCtrl = TextEditingController();
   final _productNameCtrl = TextEditingController();
@@ -220,26 +223,21 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('確認',
-            style: TextStyle(fontFamily: AppTextStyles.font)),
+        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
         content: Text(
           '事前セット ${widget.transNo} が完了しました。送信しますか？',
-          style: const TextStyle(fontFamily: AppTextStyles.font),
+          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            style: TextButton.styleFrom(
-                foregroundColor: AppColors.grayTextColor),
-            child: const Text('いいえ',
-                style: TextStyle(fontFamily: AppTextStyles.font)),
+            style: TextButton.styleFrom(foregroundColor: AppColors.grayTextColor),
+            child: const Text('いいえ', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(
-                foregroundColor: AppColors.settingsColor4),
-            child: const Text('はい',
-                style: TextStyle(fontFamily: AppTextStyles.font)),
+            style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor4),
+            child: const Text('はい', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
           ),
         ],
       ),
@@ -254,25 +252,39 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
   Future<void> _syncData() async {
     setState(() => _isSyncing = true);
     try {
-      final payload = _lines.asMap().entries.map((e) {
+      final hhtInfo = sl<CacheStorage>().getString('hhtInfo') ?? '';
+
+      // Build các line theo schema InventBundlesLineDTO
+      final lines = _lines.asMap().entries.map((e) {
         final i = e.key;
         final line = e.value;
         final data = _scanData[i] ?? {};
-        return {
-          'id': line.id,
+        final m = <String, dynamic>{
           'transNo': widget.transNo,
           'productCode': line.productCode,
           'bin': data['bin'] ?? line.bin ?? '',
+          'lotNo': data['lotNo'] ?? line.lotNo ?? '',
           'demandQty': line.demandQty,
           'actualQty': data['actualQty'] ?? line.actualQty,
-          'lotNo': data['lotNo'] ?? line.lotNo ?? '',
+          'status': line.status,
           'expirationDate':
-              data['expirationDate'] ?? line.expirationDate ?? '',
-          'janCode': data['janCode'] ?? '',
-          'productQRCode': data['qrCode'] ?? '',
-          'pickbox': '',
+              data['expirationDate'] ?? line.expirationDate,
+          'location': line.location,
+          'unitId': line.unitId,
         };
+        // Bỏ id khi null — server không bind được "id": null vào Guid
+        if (line.id != null) m['id'] = line.id;
+        return m;
       }).toList();
+
+      // Server bind 1 InventBundleDTO (object) chứa mảng inventBundleLines
+      final payload = <String, dynamic>{
+        'transNo': widget.transNo,
+        'status': 1, // EnumStatusBundle: hoàn thành
+        'hhtStatus': 1, // EnumHHTStatus
+        if (hhtInfo.isNotEmpty) 'hhtInfo': hhtInfo,
+        'inventBundleLines': lines,
+      };
 
       await sl<BundleRemoteDataSource>().uploadFromHandheld(payload);
       if (mounted) {
@@ -280,21 +292,17 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
         context.go(RouteNames.bundleList);
       }
     } catch (e) {
-      if (mounted) _showSnack('同期に失敗しました: $e', isError: true);
+      if (mounted) _showSnack('同期に失敗しました: ${friendlyError(e)}', isError: true);
     } finally {
       if (mounted) setState(() => _isSyncing = false);
     }
   }
 
   void _showSnack(String message, {required bool isError}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message,
-            style: const TextStyle(fontFamily: AppTextStyles.font)),
-        backgroundColor:
-            isError ? AppColors.settingsColor7 : AppColors.settingsColor5,
-        duration: const Duration(seconds: 2),
-      ),
+    showTopNotification(
+      message,
+      isError ? AppColors.settingsColor7 : AppColors.settingsColor5,
+      duration: const Duration(seconds: 2),
     );
   }
 
@@ -354,15 +362,15 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
         backgroundColor: AppColors.white,
         appBar: AppBar(
           backgroundColor: AppColors.settingsColor4,
-          title: const Text('事前セット詳細', style: AppTextStyles.appBarTitle),
+          title: const Text('事前セット詳細', style: AppStyles.appBarTitle),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+            icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
             onPressed: () => context.pop(),
           ),
         ),
         body: const Center(
           child: Text('明細データがありません',
-              style: TextStyle(fontFamily: AppTextStyles.font)),
+              style: TextStyle(fontFamily: AppStyles.font)),
         ),
       );
     }
@@ -371,8 +379,14 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
       return const Scaffold(
         backgroundColor: AppColors.white,
         body: Center(
-          child: CircularProgressIndicator(
-              color: AppColors.settingsColor4),
+          child: SizedBox(
+            width: AppStyles.sizeSpinner,
+            height: AppStyles.sizeSpinner,
+            child: CircularProgressIndicator(
+              color: AppColors.settingsColor4,
+              strokeWidth: AppStyles.widthSpinnerStroke,
+            ),
+          ),
         ),
       );
     }
@@ -384,12 +398,14 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor4,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
           onPressed: () => context.pop(),
         ),
-        title: Text('事前セット詳細 (${_currentIndex + 1}/${_lines.length})', style: AppTextStyles.appBarTitle),
+        title: Text('事前セット詳細 (${_currentIndex + 1}/${_lines.length})', style: AppStyles.appBarTitle),
       ),
-      body: Column(
+      body: Stack(
+        children: [
+          Column(
         children: [
           // ── Header ────────────────────────────────────────────
           Container(
@@ -401,15 +417,15 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
               children: [
                 const Text('事前セット:',
                     style: TextStyle(
-                        fontFamily: AppTextStyles.font,
-                        fontSize: 13,
+                        fontFamily: AppStyles.font,
+                        fontSize: AppStyles.sizeSub,
                         color: AppColors.grayTextColor)),
                 const SizedBox(width: 8),
                 Text(
                   widget.transNo,
                   style: const TextStyle(
-                      fontFamily: AppTextStyles.font,
-                      fontSize: 14,
+                      fontFamily: AppStyles.font,
+                      fontSize: AppStyles.sizeInfo,
                       fontWeight: FontWeight.bold,
                       color: AppColors.blackTextColor),
                 ),
@@ -432,8 +448,8 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
                   child: Text(
                     line.actualQty >= line.demandQty ? '完了' : '未対応',
                     style: TextStyle(
-                      fontFamily: AppTextStyles.font,
-                      fontSize: 11,
+                      fontFamily: AppStyles.font,
+                      fontSize: AppStyles.sizeMini,
                       fontWeight: FontWeight.bold,
                       color: line.actualQty >= line.demandQty
                           ? AppColors.wageningenGreen
@@ -530,6 +546,9 @@ class _BundleDetailScreenState extends State<BundleDetailScreen> {
               )),
             ],
           ),
+        ],
+      ),
+          buildTopBanner(),
         ],
       ),
     );
