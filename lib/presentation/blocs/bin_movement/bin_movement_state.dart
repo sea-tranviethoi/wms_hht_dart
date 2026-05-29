@@ -22,7 +22,7 @@ class BinMovementError extends BinMovementState {
 // ─── View-model row ───────────────────────────────────────────
 
 class BinMovementRow {
-  final int id;
+  final String id;
   final String transferNo;
   final String? description;
   final String? productNames;

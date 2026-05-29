@@ -24,26 +24,20 @@ class BinMovementRepository {
   Future<List<InventTransferLine>> getLinesByTransferNo(String transferNo) =>
       _remote.getLinesByTransferNo(transferNo);
 
-  // ─── Staging ──────────────────────────────────────────────────
+  // ─── Update line ──────────────────────────────────────────────
 
-  Future<List<Map<String, dynamic>>> getStagingByNo(String transferNo) =>
-      _remote.getStagingByNo(transferNo);
-
-  Future<bool> addStagingRange(List<Map<String, dynamic>> stagingList) =>
-      _remote.addStagingRange(stagingList);
-
-  Future<bool> deleteStaging(Map<String, dynamic> staging) =>
-      _remote.deleteStaging(staging);
+  Future<bool> updateLine(Map<String, dynamic> line) =>
+      _remote.updateLine(line);
 
   // ─── Complete ─────────────────────────────────────────────────
 
-  Future<bool> completeTransfer() => _remote.completeTransfer();
+  Future<bool> completeTransfer(String id) => _remote.completeTransfer(id);
 
   // ─── HHT Status ───────────────────────────────────────────────
 
   Future<bool> updateHHTStatus({
     required int status,
-    required int masterId,
+    required String masterId,
     required int detailId,
     String? hhtInfo,
   }) =>

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_styles.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../core/di/injection.dart';
 import '../../../routes/route_names.dart';
@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 'FBTHHT',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.font,
+                  fontFamily: AppStyles.font,
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
                   color: AppColors.white,
@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 '倉庫管理システム',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.font,
+                  fontFamily: AppStyles.font,
                   fontSize: 14,
                   color: AppColors.lighter,
                 ),
@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       focusNode: _usernameFocus,
                       textInputAction: TextInputAction.next,
                       onSubmitted: (_) => _passwordFocus.requestFocus(),
-                      style: const TextStyle(fontFamily: AppTextStyles.font),
+                      style: const TextStyle(fontFamily: AppStyles.font),
                       decoration: _inputDecoration('ユーザー名を入力', Icons.person_outline),
                     ),
                     const SizedBox(height: 16),
@@ -156,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
                       onSubmitted: (_) => _handleLogin(),
-                      style: const TextStyle(fontFamily: AppTextStyles.font),
+                      style: const TextStyle(fontFamily: AppStyles.font),
                       decoration: _inputDecoration(
                         'パスワードを入力',
                         Icons.lock_outline,
@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         _errorMessage!,
                         style: TextStyle(
-                          fontFamily: AppTextStyles.font,
+                          fontFamily: AppStyles.font,
                           color: AppColors.textError,
                           fontSize: 12,
                         ),
@@ -211,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             : Text(
                                 'ログイン',
                                 style: TextStyle(
-                                  fontFamily: AppTextStyles.font,
+                                  fontFamily: AppStyles.font,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -226,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       icon: const Icon(Icons.qr_code_scanner),
                       label: const Text(
                         'QRコードでログイン',
-                        style: TextStyle(fontFamily: AppTextStyles.font),
+                        style: TextStyle(fontFamily: AppStyles.font),
                       ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.themeBackground,
@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 'V1.10.2 — Development',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.font,
+                  fontFamily: AppStyles.font,
                   color: AppColors.lighter,
                   fontSize: 11,
                 ),
@@ -265,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildLabel(String text) => Text(
         text,
         style: const TextStyle(
-          fontFamily: AppTextStyles.font,
+          fontFamily: AppStyles.font,
           fontSize: 13,
           color: AppColors.blackTextColor,
           fontWeight: FontWeight.w600,
@@ -276,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
       InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(
-          fontFamily: AppTextStyles.font,
+          fontFamily: AppStyles.font,
           color: AppColors.textPlaceholder,
           fontSize: 13,
         ),

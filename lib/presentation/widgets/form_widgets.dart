@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared form widgets for HHT detail screens (design width 360 px).
@@ -22,13 +22,13 @@ import '../../core/constants/app_text_styles.dart';
 
 // ─── Internal constants ───────────────────────────────────────────────────────
 
-const String _kFont = AppTextStyles.font;
-const double _kFieldFontSize = AppTextStyles.sizeBody;
-const double _kLabelFontSize = AppTextStyles.sizeLabel;
-const double _kButtonFontSize = AppTextStyles.sizeButton;
+const String _kFont = AppStyles.font;
+const double _kFieldFontSize = AppStyles.sizeBody;
+const double _kLabelFontSize = AppStyles.sizeLabel;
+const double _kButtonFontSize = AppStyles.sizeBottomButton;
 const double _kFieldRadius = 6;
 const double _kButtonRadius = 12;
-const double _kButtonHeight = 52;
+const double _kButtonHeight = AppStyles.heightBottomButton;
 const EdgeInsets _kContentPadding =
     EdgeInsets.symmetric(horizontal: 12, vertical: 12);
 
@@ -102,7 +102,7 @@ class FormReadOnlyField extends StatelessWidget {
       child: Row(
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 18, color: AppColors.blackTextColor),
+            Icon(icon, size: AppStyles.sizeFieldIcon, color: AppColors.blackTextColor),
             const SizedBox(width: 8),
           ],
           Expanded(
@@ -226,7 +226,7 @@ class _ScanButton extends StatelessWidget {
       ),
       child: IconButton(
         padding: EdgeInsets.zero,
-        icon: const Icon(Icons.qr_code_scanner, size: 22),
+        icon: const Icon(Icons.qr_code_scanner, size: AppStyles.sizeFieldButtonIcon),
         color: AppColors.blackTextColor,
         onPressed: onTap,
       ),
@@ -299,7 +299,7 @@ class FormDateField extends StatelessWidget {
           borderRadius: BorderRadius.circular(_kFieldRadius),
           borderSide: BorderSide(color: focusedColor, width: 2),
         ),
-        prefixIcon: const Icon(Icons.calendar_today, size: 18),
+        prefixIcon: const Icon(Icons.calendar_today, size: AppStyles.sizeFieldIcon),
         suffixIcon: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -309,13 +309,13 @@ class FormDateField extends StatelessWidget {
               builder: (_, value, __) {
                 if (value.text.isEmpty) return const SizedBox.shrink();
                 return IconButton(
-                  icon: const Icon(Icons.clear, size: 18),
+                  icon: const Icon(Icons.clear, size: AppStyles.sizeFieldIcon),
                   onPressed: onClear ?? controller.clear,
                 );
               },
             ),
             IconButton(
-              icon: const Icon(Icons.calendar_month, size: 20),
+              icon: const Icon(Icons.calendar_month, size: AppStyles.sizeFieldButtonIcon),
               onPressed: onTap,
             ),
           ],
@@ -548,7 +548,7 @@ class ActionButton extends StatelessWidget {
     final Widget button = _useIconVariant && icon != null
         ? ElevatedButton.icon(
             onPressed: onPressed,
-            icon: Icon(icon, size: 20),
+            icon: Icon(icon, size: AppStyles.sizeBottomButtonIcon),
             label: Text(label, style: _style),
             style: _buttonStyle(color),
           )
@@ -610,7 +610,7 @@ class TopBanner extends StatelessWidget {
         style: const TextStyle(
           fontFamily: _kFont,
           color: AppColors.white,
-          fontSize: 15,
+          fontSize: AppStyles.sizeCard,
           fontWeight: FontWeight.w600,
         ),
       ),
