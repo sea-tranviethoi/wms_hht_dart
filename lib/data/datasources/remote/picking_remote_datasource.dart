@@ -63,11 +63,11 @@ class PickingRemoteDataSource {
     return res.statusCode == 200;
   }
 
-  /// DELETE /api/WarehousePickingStaging/DeleteRange
-  Future<bool> deleteStagingRange(List<int> ids) async {
-    final res = await _dioClient.dio.delete(
+  /// POST /api/WarehousePickingStaging/DeleteRange
+  Future<bool> deleteStagingRange(List<PickingStaging> items) async {
+    final res = await _dioClient.dio.post(
       '/api/WarehousePickingStaging/DeleteRange',
-      data: ids,
+      data: items.map((e) => e.toJson()).toList(),
     );
     return res.statusCode == 200;
   }
@@ -97,7 +97,7 @@ class PickingRemoteDataSource {
   Future<bool> completePicking(String pickNo) async {
     final res = await _dioClient.dio.post(
       '/api/WarehousePickingList/complete-pickings',
-      data: {'pickNo': pickNo},
+      data: [pickNo],
     );
     final data = res.data;
     if (data is Map) return data['succeeded'] == true;

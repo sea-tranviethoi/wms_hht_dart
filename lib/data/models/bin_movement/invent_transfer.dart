@@ -2,7 +2,7 @@ import '../../../core/utils/json_utils.dart';
 
 /// Header của một lệnh di chuyển bin (棚移動)
 class InventTransfer {
-  final int? id;
+  final String? id;
   final String transferNo;
   final String? description;
   final int tenantId;
@@ -38,7 +38,7 @@ class InventTransfer {
 
   factory InventTransfer.fromJson(Map<String, dynamic> json) {
     return InventTransfer(
-      id: toInt(json['id']),
+      id: json['id']?.toString(),
       transferNo: (json['transferNo'] ?? json['transNo'] ?? '').toString(),
       description: json['description']?.toString(),
       tenantId: toInt(json['tenantId']) ?? 0,
@@ -71,7 +71,7 @@ class InventTransfer {
       };
 
   InventTransfer copyWith({
-    int? id,
+    String? id,
     String? transferNo,
     String? description,
     int? tenantId,

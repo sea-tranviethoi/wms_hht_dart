@@ -40,42 +40,28 @@ class BinMovementRemoteDataSource {
     return _parseList(res.data, InventTransferLine.fromJson);
   }
 
-  // ─── Staging ──────────────────────────────────────────────────
+  // ─── Update single line ───────────────────────────────────────
 
-  /// GET /api/InventTransferStaging/GetByMasterCodeAsync/{transferNo}
-  Future<List<Map<String, dynamic>>> getStagingByNo(String transferNo) async {
-    final res = await _dioClient.dio.get(
-      '/api/InventTransferStaging/GetByMasterCodeAsync/$transferNo',
-    );
-    return _parseListRaw(res.data);
-  }
-
-  /// POST /api/InventTransferStaging/AddRange
-  Future<bool> addStagingRange(List<Map<String, dynamic>> stagingList) async {
+  /// POST /api/InventTransferLine/update
+  Future<bool> updateLine(Map<String, dynamic> line) async {
     final res = await _dioClient.dio.post(
-      '/api/InventTransferStaging/AddRange',
-      data: stagingList,
+      '/api/InventTransferLine/update',
+      data: line,
     );
     final data = res.data;
     if (data is Map) return data['succeeded'] == true;
     return res.statusCode == 200;
   }
 
-  /// POST /api/InventTransferStaging/delete
-  Future<bool> deleteStaging(Map<String, dynamic> staging) async {
-    final res = await _dioClient.dio.post(
-      '/api/InventTransferStaging/delete',
-      data: staging,
-    );
-    return res.statusCode == 200;
-  }
-
   // ─── Complete ─────────────────────────────────────────────────
 
-  /// POST /api/InventTransfer/complete-transfer
-  Future<bool> completeTransfer() async {
+  /// POST /api/InventTransfer/CompletedTransfer/{id}
+  Future<bool> completeTransfer(String id) async {
+    // ignore: avoid_print
+    print('[completeTransfer] id="$id" url=/api/InventTransfer/CompletedTransfer/$id');
     final res = await _dioClient.dio.post(
-      '/api/InventTransfer/complete-transfer',
+      '/api/InventTransfer/CompletedTransfer/$id',
+      data: {},
     );
     final data = res.data;
     if (data is Map) return data['succeeded'] == true;
@@ -87,7 +73,7 @@ class BinMovementRemoteDataSource {
   /// POST /api/Common/UpdateHHTStatusAsync
   Future<bool> updateHHTStatus({
     required int status,
-    required int masterId,
+    required String masterId,
     required int detailId,
     String? hhtInfo,
   }) async {
@@ -120,15 +106,4 @@ class BinMovementRemoteDataSource {
     return list.whereType<Map<String, dynamic>>().map(fromJson).toList();
   }
 
-  List<Map<String, dynamic>> _parseListRaw(dynamic raw) {
-    List<dynamic> list;
-    if (raw is List) {
-      list = raw;
-    } else if (raw is Map && raw['data'] is List) {
-      list = raw['data'] as List;
-    } else {
-      return [];
-    }
-    return list.whereType<Map<String, dynamic>>().toList();
-  }
 }

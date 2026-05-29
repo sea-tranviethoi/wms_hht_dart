@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../config/theme_config.dart';
 import '../../l10n/app_strings.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 
 class ListViewWidget<T> extends StatelessWidget {
   final List<T> items;
@@ -44,7 +44,7 @@ class ListViewWidget<T> extends StatelessWidget {
               child: Text(
                 emptyMessage ?? AppStrings.of(context).noData,
                 style: TextStyle(
-                  fontSize: AppTextStyles.sizeBody,
+                  fontSize: AppStyles.sizeBody,
                   color: AppColors.textPlaceholder,
                 ),
               ),

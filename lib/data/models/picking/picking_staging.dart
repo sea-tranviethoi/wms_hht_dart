@@ -5,7 +5,7 @@ part 'picking_staging.g.dart';
 
 @JsonSerializable()
 class PickingStaging {
-  final int? id;
+  final String? id;
   @JsonKey(name: 'pickNo')
   final String pickNo;
   @JsonKey(name: 'productCode')
@@ -29,7 +29,7 @@ class PickingStaging {
   @JsonKey(name: 'isDeleted')
   final bool isDeleted;
   @JsonKey(name: 'shipmentLineId')
-  final int? shipmentLineId;
+  final String? shipmentLineId;
   @JsonKey(name: 'createAt')
   final DateTime? createAt;
   @JsonKey(name: 'updateAt')
@@ -55,7 +55,7 @@ class PickingStaging {
 
   factory PickingStaging.fromJson(Map<String, dynamic> json) {
     return PickingStaging(
-      id: toInt(json['id']),
+      id: json['id']?.toString(),
       pickNo: (json['pickNo'] ?? '').toString(),
       productCode: (json['productCode'] ?? '').toString(),
       unit: json['unit']?.toString(),
@@ -67,7 +67,7 @@ class PickingStaging {
       actualQty: toDouble(json['actualQty']) ?? 0.0,
       status: toInt(json['status']) ?? 0,
       isDeleted: toBool(json['isDeleted']) ?? false,
-      shipmentLineId: toInt(json['shipmentLineId']),
+      shipmentLineId: json['shipmentLineId']?.toString(),
       createAt: toDate(json['createAt']),
       updateAt: toDate(json['updateAt']),
     );
@@ -76,7 +76,7 @@ class PickingStaging {
   Map<String, dynamic> toJson() => _$PickingStagingToJson(this);
 
   PickingStaging copyWith({
-    int? id,
+    String? id,
     String? pickNo,
     String? productCode,
     String? unit,
@@ -88,7 +88,7 @@ class PickingStaging {
     double? actualQty,
     int? status,
     bool? isDeleted,
-    int? shipmentLineId,
+    String? shipmentLineId,
     DateTime? createAt,
     DateTime? updateAt,
   }) {

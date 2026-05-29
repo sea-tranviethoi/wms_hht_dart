@@ -29,7 +29,10 @@ class BundleRemoteDataSource {
   // ─── Sync ─────────────────────────────────────────────────────
 
   /// POST /api/InventBundle/UploadFromHandheldAsync
-  Future<bool> uploadFromHandheld(List<Map<String, dynamic>> data) async {
+  ///
+  /// Server bind một `InventBundleDTO` (object), KHÔNG phải mảng.
+  /// Các line nằm trong field `inventBundleLines`.
+  Future<bool> uploadFromHandheld(Map<String, dynamic> data) async {
     final res = await _dioClient.dio.post(
       '/api/InventBundle/UploadFromHandheldAsync',
       data: data,

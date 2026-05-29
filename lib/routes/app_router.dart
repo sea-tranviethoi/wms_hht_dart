@@ -218,12 +218,14 @@ final appRouter = GoRouter(
       path: RouteNames.binMovementDetail,
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>? ?? {};
+        final id = extra['id'] as String? ?? '';
         final transferNo = extra['transferNo'] as String? ?? '';
         final description = extra['description'] as String?;
         final lines =
             (extra['lines'] as List?)?.cast<InventTransferLine>() ??
             const <InventTransferLine>[];
         return BinMovementDetailScreen(
+          id: id,
           transferNo: transferNo,
           description: description,
           lines: lines,

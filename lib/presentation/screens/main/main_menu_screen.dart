@@ -7,7 +7,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/key_codes.dart';
 import '../../../core/hardware/keyboard_event_bus.dart';
 import '../../blocs/auth/auth_bloc.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
 
 /// Port từ screens/MainMenu.js
@@ -147,16 +147,16 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       builder: (dialogCtx) => AlertDialog(
         title: const Text(
           'ログアウト',
-          style: TextStyle(fontFamily: AppTextStyles.font),
+          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle),
         ),
         content: const Text(
           'ログアウトしますか？',
-          style: TextStyle(fontFamily: AppTextStyles.font),
+          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('いいえ', style: TextStyle(fontFamily: AppTextStyles.font)),
+            child: const Text('いいえ', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
           ),
           TextButton(
             onPressed: () {
@@ -169,7 +169,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             child: const Text(
               'はい',
               style: TextStyle(
-                fontFamily: AppTextStyles.font,
+                fontFamily: AppStyles.font,
+                fontSize: AppStyles.sizeDialogAction,
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
@@ -189,7 +190,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF2D4A38), // settingsColor5 (BinMove) tối hơn
-        title: const Text('メニュー', style: AppTextStyles.appBarTitle),
+        title: const Text('メニュー', style: AppStyles.appBarTitle),
         actions: [
           // Version badge
           Padding(
@@ -198,9 +199,9 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
               child: Text(
                 'v${AppConstants.appVersion}',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.font,
+                  fontFamily: AppStyles.font,
                   color: AppColors.lighter,
-                  fontSize: AppTextStyles.sizeCaption,
+                  fontSize: AppStyles.sizeCaption,
                 ),
               ),
             ),
@@ -278,19 +279,19 @@ class _LogoutButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          height: AppTextStyles.heightBottomButton,
+          height: AppStyles.heightBottomButton,
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.logout, color: AppColors.white, size: AppTextStyles.sizeBottomButtonIcon),
+              Icon(Icons.logout, color: AppColors.white, size: AppStyles.sizeBottomButtonIcon),
               SizedBox(width: 10),
               Text(
                 'ログアウト',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.font,
+                  fontFamily: AppStyles.font,
                   color: AppColors.white,
-                  fontSize: AppTextStyles.sizeButton,
+                  fontSize: AppStyles.sizeButton,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -333,18 +334,18 @@ class _MenuTile extends StatelessWidget {
                     Text(
                       item.label,
                       style: TextStyle(
-                        fontFamily: AppTextStyles.font,
+                        fontFamily: AppStyles.font,
                         color: AppColors.onColor(item.color),
-                        fontSize: 24,
+                        fontSize: AppStyles.sizeMenuLabel,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       item.subtitle,
                       style: TextStyle(
-                        fontFamily: AppTextStyles.font,
+                        fontFamily: AppStyles.font,
                         color: AppColors.onColor(item.color),
-                        fontSize: 15,
+                        fontSize: AppStyles.sizeMenuSubtitle,
                       ),
                     ),
                   ],

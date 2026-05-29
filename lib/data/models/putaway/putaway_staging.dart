@@ -5,7 +5,7 @@ part 'putaway_staging.g.dart';
 
 @JsonSerializable()
 class PutawayStaging {
-  final int? id;
+  final String? id;
   @JsonKey(name: 'putAwayNo')
   final String putAwayNo;
   @JsonKey(name: 'productCode')
@@ -31,7 +31,7 @@ class PutawayStaging {
   @JsonKey(name: 'expirationDate')
   final String? expirationDate;
   @JsonKey(name: 'putAwayLineId')
-  final int? putAwayLineId;
+  final String? putAwayLineId;
   @JsonKey(name: 'janCode')
   final String? janCode;
   @JsonKey(name: 'createAt')
@@ -61,7 +61,7 @@ class PutawayStaging {
 
   factory PutawayStaging.fromJson(Map<String, dynamic> json) {
     return PutawayStaging(
-      id: toInt(json['id']),
+      id: json['id']?.toString(),
       putAwayNo: (json['putAwayNo'] ?? '').toString(),
       productCode: (json['productCode'] ?? '').toString(),
       unit: json['unit']?.toString(),
@@ -75,7 +75,7 @@ class PutawayStaging {
       expiryDate: json['expiryDate']?.toString(),
       expirationDate: json['expirationDate']?.toString() ??
           json['expiryDate']?.toString(),
-      putAwayLineId: toInt(json['putAwayLineId']),
+      putAwayLineId: json['putAwayLineId']?.toString(),
       janCode: json['janCode']?.toString(),
       createAt: toDate(json['createAt']),
       updateAt: toDate(json['updateAt']),
@@ -85,7 +85,7 @@ class PutawayStaging {
   Map<String, dynamic> toJson() => _$PutawayStagingToJson(this);
 
   PutawayStaging copyWith({
-    int? id,
+    String? id,
     String? putAwayNo,
     String? productCode,
     String? unit,
@@ -98,7 +98,7 @@ class PutawayStaging {
     String? lotNo,
     String? expiryDate,
     String? expirationDate,
-    int? putAwayLineId,
+    String? putAwayLineId,
     String? janCode,
     DateTime? createAt,
     DateTime? updateAt,

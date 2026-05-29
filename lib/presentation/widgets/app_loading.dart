@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 
 class AppLoading extends StatelessWidget {
   final double size;
   final String? message;
   final Color? color;
 
-  const AppLoading({super.key, this.size = 32, this.message, this.color});
+  const AppLoading({super.key, this.size = AppStyles.sizeSpinner, this.message, this.color});
 
   factory AppLoading.compact({Color? color}) =>
-      AppLoading(size: 24, color: color);
+      AppLoading(size: AppStyles.sizeSpinner, color: color);
 
   factory AppLoading.centered({String? message}) =>
-      AppLoading(size: 36, message: message);
+      AppLoading(size: AppStyles.sizeSpinner, message: message);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class AppLoading extends StatelessWidget {
             width: size,
             height: size,
             child: CircularProgressIndicator(
-              strokeWidth: 2.4,
+              strokeWidth: AppStyles.widthSpinnerStroke,
               valueColor: AlwaysStoppedAnimation<Color>(c),
             ),
           ),
@@ -35,9 +35,9 @@ class AppLoading extends StatelessWidget {
             Text(
               message!,
               style: const TextStyle(
-                fontFamily: AppTextStyles.font,
+                fontFamily: AppStyles.font,
                 color: AppColors.grayTextColor,
-                fontSize: AppTextStyles.sizeCaption,
+                fontSize: AppStyles.sizeCaption,
               ),
             ),
           ],

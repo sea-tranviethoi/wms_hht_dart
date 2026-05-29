@@ -72,7 +72,7 @@ class BinMovementBloc extends Bloc<BinMovementEvent, BinMovementState> {
             .join(', ');
 
         return BinMovementRow(
-          id: transfer.id ?? 0,
+          id: transfer.id ?? '',
           transferNo: transfer.transferNo,
           description: transfer.description,
           productNames: names.isNotEmpty ? names : null,
@@ -122,7 +122,7 @@ class BinMovementBloc extends Bloc<BinMovementEvent, BinMovementState> {
     ResetBinMovementStatus event,
     Emitter<BinMovementState> emit,
   ) async {
-    if (event.row.id <= 0) return;
+    if (event.row.id.isEmpty) return;
     emit(BinMovementResetting());
     try {
       await _repository.updateHHTStatus(

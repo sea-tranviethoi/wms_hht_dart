@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../config/theme_config.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 import '../../routes/route_names.dart';
 import 'vendor_screen.dart';
 
@@ -25,7 +25,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: const Text('Warehouse Receipt List', style: AppTextStyles.appBarTitle),
+        title: const Text('Warehouse Receipt List', style: AppStyles.appBarTitle),
         backgroundColor: AppColors.headerColor,
         automaticallyImplyLeading: false,
       ),

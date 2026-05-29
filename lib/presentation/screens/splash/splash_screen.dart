@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
 
 /// Màn hình splash — hiển thị khi app đang kiểm tra token
@@ -61,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Text(
                   'FBTHHT',
                   style: TextStyle(
-                    fontFamily: AppTextStyles.font,
+                    fontFamily: AppStyles.font,
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: AppColors.white,
@@ -73,8 +73,8 @@ class _SplashScreenState extends State<SplashScreen>
               Text(
                 '倉庫管理システム',
                 style: TextStyle(
-                  fontFamily: AppTextStyles.font,
-                  fontSize: AppTextStyles.sizeInfo,
+                  fontFamily: AppStyles.font,
+                  fontSize: AppStyles.sizeInfo,
                   color: AppColors.white,
                 ),
               ),

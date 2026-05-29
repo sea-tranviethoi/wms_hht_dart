@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 
 class ModuleListTile extends StatelessWidget {
   final String title;
@@ -50,8 +50,8 @@ class ModuleListTile extends StatelessWidget {
                         child: Text(
                           title,
                           style: const TextStyle(
-                            fontFamily: AppTextStyles.font,
-                            fontSize: AppTextStyles.sizeListTitle,
+                            fontFamily: AppStyles.font,
+                            fontSize: AppStyles.sizeListTitle,
                             fontWeight: FontWeight.w700,
                             color: AppColors.blackTextColor,
                           ),
@@ -63,8 +63,8 @@ class ModuleListTile extends StatelessWidget {
                       Text(
                         statusLabel,
                         style: TextStyle(
-                          fontFamily: AppTextStyles.font,
-                          fontSize: AppTextStyles.sizeSub,
+                          fontFamily: AppStyles.font,
+                          fontSize: AppStyles.sizeSub,
                           color: statusColor,
                           fontWeight: FontWeight.w500,
                         ),
@@ -76,8 +76,8 @@ class ModuleListTile extends StatelessWidget {
                     Text(
                       subtitle!,
                       style: const TextStyle(
-                        fontFamily: AppTextStyles.font,
-                        fontSize: AppTextStyles.sizeInfo,
+                        fontFamily: AppStyles.font,
+                        fontSize: AppStyles.sizeInfo,
                         color: AppColors.grayTextColor,
                       ),
                       maxLines: 1,
@@ -96,8 +96,8 @@ class ModuleListTile extends StatelessWidget {
                   Text(
                     trailingText!,
                     style: TextStyle(
-                      fontFamily: AppTextStyles.font,
-                      fontSize: AppTextStyles.sizeInput,
+                      fontFamily: AppStyles.font,
+                      fontSize: AppStyles.sizeInput,
                       fontWeight: FontWeight.w700,
                       color: statusColor,
                     ),

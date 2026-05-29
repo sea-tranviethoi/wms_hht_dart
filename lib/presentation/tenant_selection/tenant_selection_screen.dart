@@ -9,7 +9,7 @@ import '../../core/network/api_client.dart';
 import '../../core/storage/local_storage.dart';
 import '../../l10n/app_strings.dart';
 import '../widgets/loading_indicator.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 
 class TenantSelectionScreen extends StatefulWidget {
   final String? funcNumber; // "3" for Picking, null or other for Warehouse Receipt
@@ -143,7 +143,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
             final strings = AppStrings.of(context);
             return Text(
               widget.funcNumber == "3" ? 'ピッキング' : strings.tenantSelectionTitle,
-              style: AppTextStyles.appBarTitle,
+              style: AppStyles.appBarTitle,
             );
           },
         ),
@@ -173,22 +173,22 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                 return TextField(
                   controller: _searchController,
                   style: const TextStyle(
-                    fontFamily: AppTextStyles.font,
-                    fontSize: AppTextStyles.sizeInput,
+                    fontFamily: AppStyles.font,
+                    fontSize: AppStyles.sizeInput,
                     color: AppColors.blackTextColor,
                   ),
                   decoration: InputDecoration(
                     hintText: strings.tenantSearchHint,
                     hintStyle: const TextStyle(
-                      fontFamily: AppTextStyles.font,
+                      fontFamily: AppStyles.font,
                       color: AppColors.gray,
-                      fontSize: AppTextStyles.sizeHint,
+                      fontSize: AppStyles.sizeHint,
                     ),
-                    prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppTextStyles.sizeSearchIcon),
+                    prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
                     prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, color: AppColors.gray, size: AppTextStyles.sizeSearchClearIcon),
+                            icon: const Icon(Icons.clear, color: AppColors.gray, size: AppStyles.sizeSearchClearIcon),
                             onPressed: () { _searchController.clear(); },
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(minWidth: 36, minHeight: 0),
@@ -225,7 +225,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                               children: [
                                 Text(
                                   strings.tenantLoadFailed,
-                                  style: TextStyle(fontSize: AppTextStyles.sizeBody),
+                                  style: TextStyle(fontSize: AppStyles.sizeBody),
                                 ),
                                 const SizedBox(height: 16),
                                 ElevatedButton(

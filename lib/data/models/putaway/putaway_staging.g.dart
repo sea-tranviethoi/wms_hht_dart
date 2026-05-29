@@ -8,7 +8,7 @@ part of 'putaway_staging.dart';
 
 PutawayStaging _$PutawayStagingFromJson(Map<String, dynamic> json) =>
     PutawayStaging(
-      id: (json['id'] as num?)?.toInt(),
+      id: json['id'] as String?,
       putAwayNo: json['putAwayNo'] as String,
       productCode: json['productCode'] as String,
       unit: json['unit'] as String?,
@@ -21,7 +21,7 @@ PutawayStaging _$PutawayStagingFromJson(Map<String, dynamic> json) =>
       lotNo: json['lotNo'] as String?,
       expiryDate: json['expiryDate'] as String?,
       expirationDate: json['expirationDate'] as String?,
-      putAwayLineId: (json['putAwayLineId'] as num?)?.toInt(),
+      putAwayLineId: json['putAwayLineId'] as String?,
       janCode: json['janCode'] as String?,
       createAt: json['createAt'] == null
           ? null
@@ -31,23 +31,27 @@ PutawayStaging _$PutawayStagingFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updateAt'] as String),
     );
 
-Map<String, dynamic> _$PutawayStagingToJson(PutawayStaging instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'putAwayNo': instance.putAwayNo,
-      'productCode': instance.productCode,
-      'unit': instance.unit,
-      'unitId': instance.unitId,
-      'journalQty': instance.journalQty,
-      'transQty': instance.transQty,
-      'bin': instance.bin,
-      'status': instance.status,
-      'isDeleted': instance.isDeleted,
-      'lotNo': instance.lotNo,
-      'expiryDate': instance.expiryDate,
-      'expirationDate': instance.expirationDate,
-      'putAwayLineId': instance.putAwayLineId,
-      'janCode': instance.janCode,
-      'createAt': instance.createAt?.toIso8601String(),
-      'updateAt': instance.updateAt?.toIso8601String(),
-    };
+Map<String, dynamic> _$PutawayStagingToJson(PutawayStaging instance) {
+  final val = <String, dynamic>{
+    'putAwayNo': instance.putAwayNo,
+    'productCode': instance.productCode,
+    'unit': instance.unit,
+    'unitId': instance.unitId,
+    'journalQty': instance.journalQty,
+    'transQty': instance.transQty,
+    'bin': instance.bin,
+    'status': instance.status,
+    'isDeleted': instance.isDeleted,
+    'lotNo': instance.lotNo,
+    'expiryDate': instance.expiryDate,
+    'expirationDate': instance.expirationDate,
+    'janCode': instance.janCode,
+    'createAt': instance.createAt?.toIso8601String(),
+    'updateAt': instance.updateAt?.toIso8601String(),
+  };
+  if (instance.id != null) val['id'] = instance.id;
+  if (instance.putAwayLineId != null) {
+    val['putAwayLineId'] = instance.putAwayLineId;
+  }
+  return val;
+}

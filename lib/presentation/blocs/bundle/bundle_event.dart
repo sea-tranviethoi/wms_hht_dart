@@ -21,15 +21,15 @@ class SelectBundle extends BundleEvent {
 }
 
 /// Sync bundle data to server
+///
+/// [payload] là object InventBundleDTO (chứa field inventBundleLines).
 class SyncBundleData extends BundleEvent {
   final String transNo;
-  final int bundleId;
-  final List<Map<String, dynamic>> lines;
+  final Map<String, dynamic> payload;
 
   SyncBundleData({
     required this.transNo,
-    required this.bundleId,
-    required this.lines,
+    required this.payload,
   });
 }
 

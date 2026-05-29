@@ -5,8 +5,8 @@ import 'app_colors.dart';
 ///
 /// Tất cả giá trị là fixed px — KHÔNG dùng .sp để tránh ScreenUtil scale
 /// trên màn hình nhỏ.
-class AppTextStyles {
-  AppTextStyles._();
+class AppStyles {
+  AppStyles._();
 
   // ─── Font family ─────────────────────────────────────────────
   static const String font = 'MSPGothic';
@@ -16,12 +16,30 @@ class AppTextStyles {
   static const double sizeBottomButtonIcon     = 8; // Icon trong nút bottom bar (戻る, 開始...)
   static const double sizePrimaryButton        = 8; // Text nút primary action (次へ, 完了・送信...)
   static const double sizePrimaryButtonIcon    = 8; // Icon nút primary action
-  static const double heightBottomButton       = 52; // Chiều cao nút bottom bar
-  static const double heightPrimaryButton      = 52; // Chiều cao nút primary action
   static const double sizeSearchIcon        = 8; // Icon kính lúp trong search bar
   static const double sizeSearchClearIcon   = 8; // Icon xóa (×) trong search bar
 
+  // ─── Button height ──────────────────────────────────────────────
+  static const double heightBottomButton       = 16; // Chiều cao nút bottom bar
+  static const double heightPrimaryButton      = 16; // Chiều cao nút primary action
+
+  // ─── Spinner / Progress ─────────────────────────────────────────
+  static const double sizeSpinner          = 16; // Đường kính CircularProgressIndicator
+  static const double widthSpinnerStroke   = 1;  // strokeWidth CircularProgressIndicator
+
   // ─── Font sizes ──────────────────────────────────────────────
+  static const double sizeNavButtonIcon   = 8; // Icon nút điều hướng ← → (prev/next)
+  static const double sizeBadgeCheckIcon = 8; // Icon ✓ trong circular badge
+  static const double sizeCardIcon       = 8; // Icon nhỏ inline trong card (bin, qty...)
+  static const double sizeFieldIcon      = 8; // Icon nhỏ trong form field (商品コード, clear, calendar...)
+  static const double sizeFieldButtonIcon = 8; // Icon nút bên cạnh field (QR scanner, calendar picker)
+  static const double sizeIndicatorIcon = 8; // Icon ↓ chỉ thị giữa form (移動, 入荷...)
+  static const double sizeCounter       = 8; // Badge đếm trang (1 / 1, 2 / 5...)
+  static const double sizeDialogTitle   = 8; // Title trong AlertDialog (通知, 確認...)
+  static const double sizeDialogContent = 8; // Content text trong AlertDialog
+  static const double sizeDialogAction  = 8; // Nút action trong AlertDialog (閉じる, はい...)
+  static const double sizeMenuLabel    = 8; // Label chính trên menu tile (入荷, ピッキング...)
+  static const double sizeMenuSubtitle = 8; // Subtitle phụ trên menu tile (Warehouse Receipt...)
   static const double sizeAppBar    = 8; // AppBar title
   static const double sizeTitle     = 8; // Header chính (receiptNo, stockTakeNo...)
   static const double sizeListTitle = 8; // List tile title (ModuleListTile)

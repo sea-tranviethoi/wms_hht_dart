@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 import '../../core/di/injection.dart';
 import '../../core/storage/cache_storage.dart';
 import '../../data/datasources/remote/putaway_remote_datasource.dart';
@@ -12,6 +12,7 @@ import '../../data/models/putaway/putaway_line.dart';
 import '../../data/models/putaway/putaway_staging.dart';
 import '../../routes/route_names.dart';
 import '../widgets/form_widgets.dart';
+import '../widgets/top_notification_mixin.dart';
 
 /// 棚上げ詳細 — Phase 5b
 /// 商品ごとの棚上げ明細を一覧表示し、bin・数量・ロット・期限を入力して完了登録する。
@@ -31,7 +32,8 @@ class PutawayDetailScreen extends StatefulWidget {
   State<PutawayDetailScreen> createState() => _PutawayDetailScreenState();
 }
 
-class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
+class _PutawayDetailScreenState extends State<PutawayDetailScreen>
+    with TopNotificationMixin {
   // ─── Controllers ─────────────────────────────────────────────
   final TextEditingController _binController = TextEditingController();
   final TextEditingController _transQtyController = TextEditingController();
@@ -113,13 +115,8 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
       return;
     }
     _saveCurrentToMemory();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('保存しました'),
-        backgroundColor: AppColors.settingsColor2,
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    showTopNotification('保存しました', AppColors.settingsColor2,
+        duration: const Duration(seconds: 1));
     if (_currentIndex < _editedLines.length - 1) _handleNext();
   }
 
@@ -139,20 +136,21 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('棚上げ完了'),
+        title: const Text('棚上げ完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
         content: Text(
           '${widget.productCode} — ${_editedLines.length}件の棚上げを登録しますか？',
+          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             style: TextButton.styleFrom(foregroundColor: AppColors.grayTextColor),
-            child: const Text('キャンセル'),
+            child: const Text('キャンセル', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor2),
-            child: const Text('完了'),
+            child: const Text('完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
           ),
         ],
       ),
@@ -204,8 +202,8 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
           if (l.id != null) {
             await remote.updateHHTStatus(
               status: 1,
-              masterId: l.id!,
-              detailId: l.receiptLineId ?? 0,
+              masterId: l.id,
+              detailId: l.receiptLineId,
               hhtInfo: hhtInfo,
             );
           }
@@ -217,18 +215,13 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
 
       if (mounted) {
         setState(() => _isSyncing = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('棚上げが完了しました'),
-            backgroundColor: AppColors.settingsColor2,
-          ),
-        );
+        showTopNotification('棚上げが完了しました', AppColors.settingsColor2);
         context.go(RouteNames.putawayList);
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSyncing = false);
-        _showError('棚上げ完了に失敗しました:\n$e');
+        _showError('棚上げ完了に失敗しました: ${friendlyError(e)}');
       }
     }
   }
@@ -309,9 +302,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
   // ─── Helpers ──────────────────────────────────────────────────
 
   void _showError(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: AppColors.settingsColor7),
-    );
+    showTopNotification(msg, AppColors.settingsColor7);
   }
 
   // ─── Build ────────────────────────────────────────────────────
@@ -325,21 +316,31 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: const Text('棚上げ詳細', style: AppTextStyles.appBarTitle),
+        title: const Text('棚上げ詳細', style: AppStyles.appBarTitle),
         backgroundColor: AppColors.settingsColor2,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
           onPressed: () => context.go(RouteNames.putawayList),
         ),
       ),
-      body: _isSyncing
+      body: Stack(
+        children: [
+          _isSyncing
           ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('棚上げ登録中...', style: TextStyle(fontFamily: AppTextStyles.font)),
+                  SizedBox(
+                    width: AppStyles.sizeSpinner,
+                    height: AppStyles.sizeSpinner,
+                    child: CircularProgressIndicator(
+                        strokeWidth: AppStyles.widthSpinnerStroke),
+                  ),
+                  SizedBox(height: 8),
+                  Text('棚上げ登録中...',
+                      style: TextStyle(
+                          fontFamily: AppStyles.font,
+                          fontSize: AppStyles.sizeBody)),
                 ],
               ),
             )
@@ -361,18 +362,18 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                             Text(
                               widget.productCode,
                               style: TextStyle(
-                                fontSize: AppTextStyles.sizeAppBar,
+                                fontSize: AppStyles.sizeAppBar,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: AppTextStyles.font,
+                                fontFamily: AppStyles.font,
                                 color: AppColors.black,
                               ),
                             ),
                             if (widget.productName.isNotEmpty)
                               Text(
                                 widget.productName,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: AppTextStyles.font,
+                                style: const TextStyle(
+                                  fontSize: AppStyles.sizeBody,
+                                  fontFamily: AppStyles.font,
                                   color: AppColors.black,
                                 ),
                                 maxLines: 1,
@@ -391,9 +392,9 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                         ),
                         child: Text(
                           '${_currentIndex + 1} / ${_editedLines.length}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: AppTextStyles.font,
+                          style: const TextStyle(
+                            fontSize: AppStyles.sizeCounter,
+                            fontFamily: AppStyles.font,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -497,7 +498,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                             const SizedBox(width: 6),
                             SizedBox(
                               width: 52,
-                              height: AppTextStyles.heightBottomButton,
+                              height: AppStyles.heightBottomButton,
                               child: ElevatedButton(
                                 onPressed: isFirst ? null : _handlePrevious,
                                 style: ElevatedButton.styleFrom(
@@ -508,13 +509,13 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                                   elevation: 1,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: const Icon(Icons.arrow_back, size: 22),
+                                child: const Icon(Icons.arrow_back, size: AppStyles.sizeNavButtonIcon),
                               ),
                             ),
                             const SizedBox(width: 6),
                             SizedBox(
                               width: 52,
-                              height: AppTextStyles.heightBottomButton,
+                              height: AppStyles.heightBottomButton,
                               child: ElevatedButton(
                                 onPressed: isLast ? null : _handleNext,
                                 style: ElevatedButton.styleFrom(
@@ -525,7 +526,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                                   elevation: 1,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: const Icon(Icons.arrow_forward, size: 22),
+                                child: const Icon(Icons.arrow_forward, size: AppStyles.sizeNavButtonIcon),
                               ),
                             ),
                             const SizedBox(width: 6),
@@ -553,6 +554,9 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen> {
                 ),
               ],
             ),
+          buildTopBanner(),
+        ],
+      ),
     );
   }
 

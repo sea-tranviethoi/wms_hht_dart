@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_styles.dart';
 import '../../../core/audio/sound_manager.dart';
 
 /// Port từ components/Notification.js — VerifyNotification
@@ -74,8 +74,8 @@ class VerifyNotification extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      fontFamily: AppTextStyles.font,
-                      fontSize: AppTextStyles.sizeBody,
+                      fontFamily: AppStyles.font,
+                      fontSize: AppStyles.sizeBody,
                       fontWeight: FontWeight.bold,
                       color: AppColors.blackTextColor,
                     ),
@@ -86,8 +86,8 @@ class VerifyNotification extends StatelessWidget {
                   Text(
                     message,
                     style: TextStyle(
-                      fontFamily: AppTextStyles.font,
-                      fontSize: AppTextStyles.sizeInfo,
+                      fontFamily: AppStyles.font,
+                      fontSize: AppStyles.sizeInfo,
                       color: AppColors.grayTextColor,
                     ),
                     textAlign: TextAlign.center,
@@ -105,8 +105,8 @@ class VerifyNotification extends StatelessWidget {
                     Text(
                       '${(progressValue * 100).toStringAsFixed(0)}%',
                       style: TextStyle(
-                        fontFamily: AppTextStyles.font,
-                        fontSize: AppTextStyles.sizeCaption,
+                        fontFamily: AppStyles.font,
+                        fontSize: AppStyles.sizeCaption,
                         color: AppColors.grayTextColor,
                       ),
                     ),
@@ -143,7 +143,7 @@ class VerifyNotification extends StatelessWidget {
       ),
       child: Text(
         btn.text,
-        style: TextStyle(fontFamily: AppTextStyles.font, fontSize: 14.sp),
+        style: TextStyle(fontFamily: AppStyles.font, fontSize: 14.sp),
       ),
     );
   }

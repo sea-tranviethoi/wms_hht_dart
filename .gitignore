@@ -97,3 +97,5 @@ app.*.map.json
 
 # Debug symbols (produced by --split-debug-info)
 /build/debug_symbols/
+.claude/
+swagger.json

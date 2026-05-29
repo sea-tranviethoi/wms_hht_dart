@@ -6,7 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/di/injection.dart';
 import '../../blocs/master/master_bloc.dart';
 import '../../../data/models/tenant.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
 
 /// Port từ screens/TenantSelection.js
@@ -113,10 +113,10 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppTextStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
           onPressed: () => context.go(RouteNames.mainMenu),
         ),
-        title: Text(widget.title, style: AppTextStyles.appBarTitle),
+        title: Text(widget.title, style: AppStyles.appBarTitle),
       ),
       body: Column(
         children: [
@@ -136,22 +136,22 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
       child: TextField(
         controller: _searchCtrl,
         style: const TextStyle(
-          fontFamily: AppTextStyles.font,
-          fontSize: AppTextStyles.sizeInput,
+          fontFamily: AppStyles.font,
+          fontSize: AppStyles.sizeInput,
           color: AppColors.blackTextColor,
         ),
         decoration: InputDecoration(
           hintText: 'テナントを検索...',
           hintStyle: const TextStyle(
-            fontFamily: AppTextStyles.font,
+            fontFamily: AppStyles.font,
             color: AppColors.gray,
-            fontSize: AppTextStyles.sizeHint,
+            fontSize: AppStyles.sizeHint,
           ),
-          prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppTextStyles.sizeSearchIcon),
+          prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
           prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
           suffixIcon: _searchCtrl.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear, color: AppColors.gray, size: AppTextStyles.sizeSearchClearIcon),
+                  icon: const Icon(Icons.clear, color: AppColors.gray, size: AppStyles.sizeSearchClearIcon),
                   onPressed: () { _searchCtrl.clear(); },
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(minWidth: 36, minHeight: 0),
@@ -203,7 +203,7 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
                 const SizedBox(height: 12),
                 Text(
                   state.message,
-                  style: const TextStyle(fontFamily: AppTextStyles.font, color: AppColors.textError),
+                  style: const TextStyle(fontFamily: AppStyles.font, color: AppColors.textError),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -214,7 +214,7 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
                     backgroundColor: widget.moduleColor,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('再試行', style: TextStyle(fontFamily: AppTextStyles.font)),
+                  child: const Text('再試行', style: TextStyle(fontFamily: AppStyles.font)),
                 ),
               ],
             ),
@@ -224,7 +224,7 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
           return const Center(
             child: Text(
               'テナントが見つかりません',
-              style: TextStyle(fontFamily: AppTextStyles.font, color: AppColors.gray),
+              style: TextStyle(fontFamily: AppStyles.font, color: AppColors.gray),
             ),
           );
         }
@@ -277,9 +277,9 @@ class _TenantTile extends StatelessWidget {
             child: Text(
               '${index + 1}. ${tenant.tenantFullName}',
               style: TextStyle(
-                fontFamily: AppTextStyles.font,
+                fontFamily: AppStyles.font,
                 color: AppColors.onColor(color),
-                fontSize: AppTextStyles.sizeAppBar,
+                fontSize: AppStyles.sizeAppBar,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,

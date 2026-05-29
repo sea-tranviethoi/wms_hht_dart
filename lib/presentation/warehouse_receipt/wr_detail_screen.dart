@@ -6,7 +6,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_text_styles.dart';
+import '../../core/constants/app_styles.dart';
 import '../../core/di/injection.dart';
 import '../../data/datasources/remote/wr_remote_datasource.dart';
 import '../../data/models/warehouse_receipt/receipt_line.dart';
@@ -289,7 +289,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                       Text(
                         '明細データがありません',
                         style:
-                            TextStyle(fontFamily: AppTextStyles.font, fontSize: 16),
+                            TextStyle(fontFamily: AppStyles.font, fontSize: 16),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
@@ -323,7 +323,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             '入荷番号:',
                             style: TextStyle(
                               fontSize: 16,
-                              fontFamily: AppTextStyles.font,
+                              fontFamily: AppStyles.font,
                               color: AppColors.black,
                             ),
                           ),
@@ -332,7 +332,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             widget.receiptNo,
                             style: TextStyle(
                               fontSize: 16,
-                              fontFamily: AppTextStyles.font,
+                              fontFamily: AppStyles.font,
                               fontWeight: FontWeight.bold,
                               color: AppColors.black,
                             ),
@@ -342,7 +342,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             '${_currentIndex + 1} / ${_lines.length}',
                             style: TextStyle(
                               fontSize: 14,
-                              fontFamily: AppTextStyles.font,
+                              fontFamily: AppStyles.font,
                               color: AppColors.black,
                             ),
                           ),
@@ -443,7 +443,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: AppColors.settingsColor1,
-                                        fontFamily: AppTextStyles.font,
+                                        fontFamily: AppStyles.font,
                                       ),
                                     ),
                                     if (_capturedImages.isNotEmpty)
@@ -520,7 +520,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             child: Text(
                               _topMessage!,
                               style: const TextStyle(
-                                fontFamily: AppTextStyles.font,
+                                fontFamily: AppStyles.font,
                                 color: Colors.white,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -551,7 +551,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             const SizedBox(width: 8),
                             SizedBox(
                               width: 52,
-                              height: AppTextStyles.heightBottomButton,
+                              height: AppStyles.heightBottomButton,
                               child: ElevatedButton(
                                 onPressed: _currentIndex > 0 ? _handlePrevious : null,
                                 style: ElevatedButton.styleFrom(
@@ -569,7 +569,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             const SizedBox(width: 8),
                             SizedBox(
                               width: 52,
-                              height: AppTextStyles.heightBottomButton,
+                              height: AppStyles.heightBottomButton,
                               child: ElevatedButton(
                                 onPressed: _currentIndex < _lines.length - 1 ? _handleNext : null,
                                 style: ElevatedButton.styleFrom(
@@ -610,7 +610,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
         Text(
           '商品',
           style: TextStyle(
-              fontSize: 16, fontFamily: AppTextStyles.font, color: AppColors.black),
+              fontSize: 16, fontFamily: AppStyles.font, color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(
@@ -629,14 +629,14 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
             hint: const Text(
               '商品を選択',
               style: TextStyle(
-                  color: AppColors.textPlaceholder, fontFamily: AppTextStyles.font),
+                  color: AppColors.textPlaceholder, fontFamily: AppStyles.font),
             ),
             items: _lines
                 .map((line) => DropdownMenuItem<String>(
                       value: line.productName ?? line.productCode,
                       child: Text(
                         line.productName ?? line.productCode,
-                        style: const TextStyle(fontFamily: AppTextStyles.font),
+                        style: const TextStyle(fontFamily: AppStyles.font),
                       ),
                     ))
                 .toList(),
@@ -667,7 +667,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
         Text(
           '状態',
           style: TextStyle(
-              fontSize: 16, fontFamily: AppTextStyles.font, color: AppColors.black),
+              fontSize: 16, fontFamily: AppStyles.font, color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(
@@ -684,15 +684,15 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
             items: const [
               DropdownMenuItem(
                 value: '通常',
-                child: Text('通常', style: TextStyle(fontFamily: AppTextStyles.font)),
+                child: Text('通常', style: TextStyle(fontFamily: AppStyles.font)),
               ),
               DropdownMenuItem(
                 value: 'NG',
-                child: Text('NG', style: TextStyle(fontFamily: AppTextStyles.font)),
+                child: Text('NG', style: TextStyle(fontFamily: AppStyles.font)),
               ),
               DropdownMenuItem(
                 value: '不足',
-                child: Text('不足', style: TextStyle(fontFamily: AppTextStyles.font)),
+                child: Text('不足', style: TextStyle(fontFamily: AppStyles.font)),
               ),
             ],
             onChanged: (value) {

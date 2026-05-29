@@ -121,7 +121,7 @@ class BundleBloc extends Bloc<BundleEvent, BundleState> {
   ) async {
     emit(BundleSyncing());
     try {
-      await _remote.uploadFromHandheld(event.lines);
+      await _remote.uploadFromHandheld(event.payload);
       emit(BundleSynced(event.transNo));
     } catch (e) {
       emit(BundleError('データ同期に失敗しました: $e'));
