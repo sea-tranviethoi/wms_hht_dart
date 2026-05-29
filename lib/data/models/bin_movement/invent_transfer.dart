@@ -1,6 +1,6 @@
 import '../../../core/utils/json_utils.dart';
 
-/// Header của một lệnh di chuyển bin (棚移動)
+/// Header of a bin movement order (棚移動)
 class InventTransfer {
   final String? id;
   final String transferNo;
@@ -17,7 +17,7 @@ class InventTransfer {
 
   // UI-only (enriched client-side)
   final String? productNames;
-  final int? scanStatus; // -1: chưa xử lý, 1: máy này, 3: máy khác
+  final int? scanStatus; // -1: not yet processed, 1: this device, 3: another device
 
   InventTransfer({
     this.id,

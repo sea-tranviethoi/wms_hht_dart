@@ -8,11 +8,11 @@ import '../../../data/models/picking/picking_staging.dart';
 part 'picking_event.dart';
 part 'picking_state.dart';
 
-/// BLoC cho module Picking — thay thế PickingProvider
+/// BLoC for the Picking module — replaces PickingProvider
 class PickingBloc extends Bloc<PickingEvent, PickingState> {
   final PickingRemoteDataSource _remote;
 
-  // Cache danh sách đầy đủ để search client-side
+  // Cache the full list for client-side search
   List<PickingRow> _allRows = [];
   int _tenantId = 0;
   String _hhtInfo = '';

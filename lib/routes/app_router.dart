@@ -39,7 +39,7 @@ final appRouter = GoRouter(
     final authState = context.read<AuthBloc>().state;
     final loc = state.matchedLocation;
 
-    // Đang loading → không redirect, hiện splash
+    // Still loading → no redirect, show splash
     if (authState is AuthLoading) return null;
 
     final isAuth = authState is AuthAuthenticated;
@@ -47,10 +47,10 @@ final appRouter = GoRouter(
         loc == RouteNames.qrLogin ||
         loc == RouteNames.splash;
 
-    // Chưa login mà vào trang cần auth → về login
+    // Not logged in but accessing a protected page → redirect to login
     if (!isAuth && !isPublic) return RouteNames.login;
 
-    // Đã login mà vào login page → về main menu
+    // Already logged in but visiting the login page → redirect to main menu
     if (isAuth && (loc == RouteNames.login || loc == RouteNames.splash)) {
       return RouteNames.mainMenu;
     }
@@ -272,7 +272,7 @@ final appRouter = GoRouter(
   ],
 );
 
-/// Placeholder cho các screen chưa implement
+/// Placeholder for screens not yet implemented
 class _PlaceholderScreen extends StatelessWidget {
   final String title;
   const _PlaceholderScreen({required this.title});

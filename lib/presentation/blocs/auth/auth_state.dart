@@ -1,18 +1,18 @@
 part of 'auth_bloc.dart';
 
-/// Port từ initialLoginState trong App.js
+/// Ported from initialLoginState in App.js
 abstract class AuthState extends Equatable {
   const AuthState();
   @override
   List<Object?> get props => [];
 }
 
-/// Đang kiểm tra token (isLoading: true) — hiện SplashScreen
+/// Checking the token (isLoading: true) — show SplashScreen
 class AuthLoading extends AuthState {
   const AuthLoading();
 }
 
-/// Đã xác thực — navigate tới MainMenu
+/// Authenticated — navigate to MainMenu
 class AuthAuthenticated extends AuthState {
   final UserInfo user;
   const AuthAuthenticated(this.user);
@@ -20,19 +20,19 @@ class AuthAuthenticated extends AuthState {
   List<Object?> get props => [user];
 }
 
-/// Chưa xác thực — navigate tới LoginScreen
+/// Not authenticated — navigate to LoginScreen
 class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
 }
 
 /// ─── Domain Model ────────────────────────────────────────────────────────────
 
-/// Thông tin user sau khi login thành công
+/// User information after a successful login
 class UserInfo extends Equatable {
   final String username;
   final String token;
   final String refreshToken;
-  final String? loginType; // 'QR' hoặc 'NORMAL'
+  final String? loginType; // 'QR' or 'NORMAL'
 
   const UserInfo({
     required this.username,

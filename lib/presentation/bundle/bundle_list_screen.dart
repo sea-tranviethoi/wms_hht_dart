@@ -17,7 +17,7 @@ import '../widgets/app_search_bar.dart';
 import '../widgets/back_to_menu_button.dart';
 import '../widgets/module_list_tile.dart';
 
-// ─── Mock data để test giao diện ─────────────────────────────────
+// ─── Mock data for UI testing ────────────────────────────────────
 const _kMockTransNo = 'DEMO-TEST-001';
 final _kMockLines = [
   BundleLine(
@@ -177,7 +177,7 @@ class _BundleListViewState extends State<_BundleListView> {
           itemCount: rows.length + 1,
           separatorBuilder: (_, __) => const ModuleListDivider(),
           itemBuilder: (context, index) {
-            // Demo tile ở cuối
+            // Demo tile at the end
             if (index == rows.length) {
               return _DemoTile(
                 onTap: () => context.push(

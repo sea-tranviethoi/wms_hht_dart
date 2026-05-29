@@ -14,8 +14,8 @@ import '../../routes/route_names.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/top_notification_mixin.dart';
 
-/// 棚上げ詳細 — Phase 5b
-/// 商品ごとの棚上げ明細を一覧表示し、bin・数量・ロット・期限を入力して完了登録する。
+/// Putaway detail screen — Phase 5b
+/// Displays the putaway lines per product and allows entry of bin, quantity, lot, and expiry date to register completion.
 class PutawayDetailScreen extends StatefulWidget {
   final String productCode;
   final String productName;
@@ -410,19 +410,19 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // 棚上げNo (read-only)
+                        // Putaway No (read-only)
                         const FormLabel(label: '棚上げNo'),
                         const SizedBox(height: 4),
                         FormReadOnlyField(value: line.putAwayNo, icon: Icons.assignment),
                         const SizedBox(height: 12),
 
-                        // 予定数量 (read-only)
+                        // Planned quantity (read-only)
                         const FormLabel(label: '予定数量'),
                         const SizedBox(height: 4),
                         FormReadOnlyField(value: line.journalQty.toStringAsFixed(0), icon: Icons.inventory_2),
                         const SizedBox(height: 12),
 
-                        // 棚 (bin) — scan
+                        // Bin (bin) — scan
                         const FormLabel(label: '棚番号'),
                         const SizedBox(height: 4),
                         FormScanField(
@@ -435,7 +435,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                         ),
                         const SizedBox(height: 12),
 
-                        // 実際数量 — scan
+                        // Actual quantity — scan
                         const FormLabel(label: '実際数量'),
                         const SizedBox(height: 4),
                         FormScanField(
@@ -449,7 +449,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                         ),
                         const SizedBox(height: 12),
 
-                        // ロット — scan
+                        // Lot number — scan
                         const FormLabel(label: 'ロット番号'),
                         const SizedBox(height: 4),
                         FormScanField(
@@ -461,7 +461,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                         ),
                         const SizedBox(height: 12),
 
-                        // 賞味期限 — date picker
+                        // Expiration date — date picker
                         const FormLabel(label: '賞味期限'),
                         const SizedBox(height: 4),
                         FormDateField(
@@ -487,7 +487,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Row 1: 戻る | ← | → | 保存
+                        // Row 1: Back | ← | → | Save
                         Row(
                           children: [
                             Expanded(child: ActionButton(
@@ -538,7 +538,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                           ],
                         ),
                         const SizedBox(height: 6),
-                        // Row 2: 棚上げ完了
+                        // Row 2: Putaway complete
                         SizedBox(
                           width: double.infinity,
                           child: ActionButton.icon(

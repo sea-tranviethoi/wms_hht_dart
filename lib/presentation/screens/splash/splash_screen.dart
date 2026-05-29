@@ -6,8 +6,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
 
-/// Màn hình splash — hiển thị khi app đang kiểm tra token
-/// Port từ loginState.isLoading block trong App.js
+/// Splash screen — displayed while the app is verifying the token
+/// Ported from the loginState.isLoading block in App.js
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen>
     )..repeat(reverse: true);
     _fadeAnim = Tween(begin: 0.4, end: 1.0).animate(_controller);
 
-    // Kích hoạt kiểm tra token
+    // Trigger token verification
     context.read<AuthBloc>().add(const AppStarted());
   }
 

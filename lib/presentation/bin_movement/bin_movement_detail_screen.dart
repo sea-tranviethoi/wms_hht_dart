@@ -12,8 +12,8 @@ import '../../routes/route_names.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/top_notification_mixin.dart';
 
-/// 棚移動詳細 — Phase 7
-/// 移動番号に紐づく明細を一件ずつ確認・入力し、最後に棚移動完了を登録する。
+/// Bin movement detail screen — Phase 7
+/// Reviews and enters each line linked to the transfer number, then registers the bin movement as complete.
 class BinMovementDetailScreen extends StatefulWidget {
   final String id;
   final String transferNo;
@@ -410,7 +410,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // 商品番号 + 商品名 (read-only)
+                        // Product code + product name (read-only)
                         const FormLabel(label: '商品番号'),
                         const SizedBox(height: 4),
                         FormReadOnlyField(value: line.productCode, icon: Icons.inventory),
@@ -423,7 +423,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                           const SizedBox(height: 8),
                         ],
 
-                        // 移動元棚 (read-only)
+                        // Source bin (read-only)
                         const FormLabel(label: '移動元棚番号'),
                         const SizedBox(height: 4),
                         FormReadOnlyField(value: line.fromBin ?? '—', icon: Icons.output),
@@ -445,7 +445,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                         ),
                         const SizedBox(height: 12),
 
-                        // 移動先棚 (scan)
+                        // Destination bin (scan)
                         const FormLabel(label: '移動先棚番号'),
                         const SizedBox(height: 4),
                         FormScanField(
@@ -458,13 +458,13 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                         ),
                         const SizedBox(height: 12),
 
-                        // 予定数量 (read-only)
+                        // Planned quantity (read-only)
                         const FormLabel(label: '予定数量'),
                         const SizedBox(height: 4),
                         FormReadOnlyField(value: line.journalQty.toStringAsFixed(0), icon: Icons.inventory_2),
                         const SizedBox(height: 12),
 
-                        // 実際数量 (scan)
+                        // Actual quantity (scan)
                         const FormLabel(label: '実際数量'),
                         const SizedBox(height: 4),
                         FormScanField(
@@ -478,7 +478,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                         ),
                         const SizedBox(height: 12),
 
-                        // ロット (scan)
+                        // Lot number (scan)
                         const FormLabel(label: 'ロット番号'),
                         const SizedBox(height: 4),
                         FormScanField(
@@ -490,7 +490,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                         ),
                         const SizedBox(height: 12),
 
-                        // 賞味期限 (date)
+                        // Expiration date (date picker)
                         const FormLabel(label: '賞味期限'),
                         const SizedBox(height: 4),
                         FormDateField(
@@ -516,7 +516,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Row 1: 戻る | ← | → | 保存
+                        // Row 1: Back | ← | → | Save
                         Row(
                           children: [
                             Expanded(child: ActionButton(
@@ -567,7 +567,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                           ],
                         ),
                         const SizedBox(height: 6),
-                        // Row 2: 棚移動完了
+                        // Row 2: Bin movement complete
                         SizedBox(
                           width: double.infinity,
                           child: ActionButton.icon(

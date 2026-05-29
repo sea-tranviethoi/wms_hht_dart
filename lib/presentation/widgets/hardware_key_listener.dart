@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/hardware/keyboard_event_bus.dart';
 
-/// Widget wrapper tự động subscribe / unsubscribe KeyboardEventBus
-/// khi widget được mount / unmount.
+/// Widget wrapper that automatically subscribes / unsubscribes from KeyboardEventBus
+/// when the widget is mounted / unmounted.
 ///
-/// Dùng bọc bên ngoài Scaffold trong mọi screen cần hardware key.
+/// Wrap around the Scaffold in any screen that needs hardware key handling.
 ///
-/// Ví dụ:
+/// Example:
 /// ```dart
 /// HardwareKeyListener(
 ///   onKey: (keyCode) {
@@ -21,8 +21,8 @@ import '../../core/hardware/keyboard_event_bus.dart';
 /// )
 /// ```
 class HardwareKeyListener extends StatefulWidget {
-  /// Handler nhận keyCode từ thiết bị Keyence.
-  /// Trả về `true` nếu đã xử lý (stop propagation).
+  /// Handler that receives keyCodes from the Keyence device.
+  /// Return `true` if handled (stop propagation).
   final KeyEventHandler onKey;
   final Widget child;
 
@@ -55,15 +55,15 @@ class _HardwareKeyListenerState extends State<HardwareKeyListener> {
   Widget build(BuildContext context) => widget.child;
 }
 
-/// Mixin tiện lợi cho StatefulWidget muốn handle hardware keys
-/// mà không cần wrap thêm HardwareKeyListener.
+/// Convenience mixin for StatefulWidgets that want to handle hardware keys
+/// without wrapping in an extra HardwareKeyListener widget.
 ///
-/// Sử dụng:
+/// Usage:
 /// ```dart
 /// class _MyScreenState extends State<MyScreen> with HardwareKeyMixin {
 ///   @override
 ///   bool handleHardwareKey(int keyCode) {
-///     // xử lý...
+///     // handle...
 ///     return true;
 ///   }
 /// }
@@ -71,14 +71,14 @@ class _HardwareKeyListenerState extends State<HardwareKeyListener> {
 mixin HardwareKeyMixin<T extends StatefulWidget> on State<T> {
   late final VoidCallback _unsubscribe;
 
-  /// Override method này để handle từng keyCode.
+  /// Override this method to handle each keyCode.
   bool handleHardwareKey(int keyCode) => false;
 
   @override
   void initState() {
     super.initState();
     _unsubscribe = KeyboardEventBus.instance.addListener(handleHardwareKey);
-    // Cũng lắng nghe Flutter HardwareKeyboard cho dev mode (không có Keyence)
+    // Also listen to Flutter HardwareKeyboard for dev mode (no Keyence device)
     HardwareKeyboard.instance.addHandler(_onHardwareKeyEvent);
   }
 
@@ -91,8 +91,8 @@ mixin HardwareKeyMixin<T extends StatefulWidget> on State<T> {
 
   bool _onHardwareKeyEvent(KeyEvent event) {
     if (event is! KeyDownEvent) return false;
-    // Keyence device đi qua EventChannel, không qua HardwareKeyboard.
-    // HardwareKeyboard chỉ dùng trên dev machine để test thủ công nếu cần.
+    // Keyence devices go through the EventChannel, not HardwareKeyboard.
+    // HardwareKeyboard is only used on a dev machine for manual testing if needed.
     return false;
   }
 }

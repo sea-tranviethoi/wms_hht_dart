@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// Hằng số typography dùng chung toàn app (HHT — Honeywell CK65, 320px wide)
+/// Shared typography constants for the entire app (HHT — Honeywell CK65, 320px wide)
 ///
-/// Tất cả giá trị là fixed px — KHÔNG dùng .sp để tránh ScreenUtil scale
-/// trên màn hình nhỏ.
+/// All values are fixed px — do NOT use .sp to avoid ScreenUtil scaling
+/// on small screens.
 class AppStyles {
   AppStyles._();
 
@@ -12,48 +12,48 @@ class AppStyles {
   static const String font = 'MSPGothic';
 
   // ─── Icon sizes ──────────────────────────────────────────────
-  static const double sizeAppBarIcon        = 8; // Icon trên AppBar (back, refresh...)
-  static const double sizeBottomButtonIcon     = 8; // Icon trong nút bottom bar (戻る, 開始...)
-  static const double sizePrimaryButton        = 8; // Text nút primary action (次へ, 完了・送信...)
-  static const double sizePrimaryButtonIcon    = 8; // Icon nút primary action
-  static const double sizeSearchIcon        = 8; // Icon kính lúp trong search bar
-  static const double sizeSearchClearIcon   = 8; // Icon xóa (×) trong search bar
+  static const double sizeAppBarIcon        = 8; // Icon on AppBar (back, refresh…)
+  static const double sizeBottomButtonIcon     = 8; // Icon inside bottom bar buttons (戻る, 開始…)
+  static const double sizePrimaryButton        = 8; // Text of primary action button (次へ, 完了・送信…)
+  static const double sizePrimaryButtonIcon    = 8; // Icon of primary action button
+  static const double sizeSearchIcon        = 8; // Magnifier icon in search bar
+  static const double sizeSearchClearIcon   = 8; // Clear (×) icon in search bar
 
   // ─── Button height ──────────────────────────────────────────────
-  static const double heightBottomButton       = 16; // Chiều cao nút bottom bar
-  static const double heightPrimaryButton      = 16; // Chiều cao nút primary action
+  static const double heightBottomButton       = 16; // Height of bottom bar buttons
+  static const double heightPrimaryButton      = 16; // Height of primary action button
 
   // ─── Spinner / Progress ─────────────────────────────────────────
-  static const double sizeSpinner          = 16; // Đường kính CircularProgressIndicator
-  static const double widthSpinnerStroke   = 1;  // strokeWidth CircularProgressIndicator
+  static const double sizeSpinner          = 16; // Diameter of CircularProgressIndicator
+  static const double widthSpinnerStroke   = 1;  // strokeWidth of CircularProgressIndicator
 
   // ─── Font sizes ──────────────────────────────────────────────
-  static const double sizeNavButtonIcon   = 8; // Icon nút điều hướng ← → (prev/next)
-  static const double sizeBadgeCheckIcon = 8; // Icon ✓ trong circular badge
-  static const double sizeCardIcon       = 8; // Icon nhỏ inline trong card (bin, qty...)
-  static const double sizeFieldIcon      = 8; // Icon nhỏ trong form field (商品コード, clear, calendar...)
-  static const double sizeFieldButtonIcon = 8; // Icon nút bên cạnh field (QR scanner, calendar picker)
-  static const double sizeIndicatorIcon = 8; // Icon ↓ chỉ thị giữa form (移動, 入荷...)
-  static const double sizeCounter       = 8; // Badge đếm trang (1 / 1, 2 / 5...)
-  static const double sizeDialogTitle   = 8; // Title trong AlertDialog (通知, 確認...)
-  static const double sizeDialogContent = 8; // Content text trong AlertDialog
-  static const double sizeDialogAction  = 8; // Nút action trong AlertDialog (閉じる, はい...)
-  static const double sizeMenuLabel    = 8; // Label chính trên menu tile (入荷, ピッキング...)
-  static const double sizeMenuSubtitle = 8; // Subtitle phụ trên menu tile (Warehouse Receipt...)
+  static const double sizeNavButtonIcon   = 8; // Navigation button icon ← → (prev/next)
+  static const double sizeBadgeCheckIcon = 8; // ✓ icon inside circular badge
+  static const double sizeCardIcon       = 8; // Small inline icon inside a card (bin, qty…)
+  static const double sizeFieldIcon      = 8; // Small icon inside a form field (product code, clear, calendar…)
+  static const double sizeFieldButtonIcon = 8; // Icon on button next to a field (QR scanner, calendar picker)
+  static const double sizeIndicatorIcon = 8; // ↓ indicator icon between form sections (移動, 入荷…)
+  static const double sizeCounter       = 8; // Page-count badge (1 / 1, 2 / 5…)
+  static const double sizeDialogTitle   = 8; // Title in AlertDialog (通知, 確認…)
+  static const double sizeDialogContent = 8; // Content text in AlertDialog
+  static const double sizeDialogAction  = 8; // Action button in AlertDialog (閉じる, はい…)
+  static const double sizeMenuLabel    = 8; // Primary label on menu tile (入荷, ピッキング…)
+  static const double sizeMenuSubtitle = 8; // Secondary subtitle on menu tile (Warehouse Receipt…)
   static const double sizeAppBar    = 8; // AppBar title
-  static const double sizeTitle     = 8; // Header chính (receiptNo, stockTakeNo...)
+  static const double sizeTitle     = 8; // Main header (receiptNo, stockTakeNo…)
   static const double sizeListTitle = 8; // List tile title (ModuleListTile)
   static const double sizeInput     = 8; // TextField input text
-  static const double sizeBody      = 8; // Text nội dung chính
+  static const double sizeBody      = 8; // Main body text
   static const double sizeCard      = 8; // Card / item title
-  static const double sizeInfo      = 8; // Text phụ (ngày, trạng thái, ghi chú)
-  static const double sizeSub       = 8; // Text nhỏ (description, subtitle)
-  static const double sizeMini      = 8; // Label rất nhỏ (mini label trong card)
-  static const double sizeButton       = 8; // Nút bấm inline
-  static const double sizeBottomButton = 8; // Nút bấm bottom bar (戻る...)
-  static const double sizeHint      = 8; // Hint text trong TextField
-  static const double sizeLabel     = 8; // FormLabel trên field
-  static const double sizeCaption   = 8; // Caption / hint nhỏ
+  static const double sizeInfo      = 8; // Secondary text (date, status, remarks)
+  static const double sizeSub       = 8; // Small text (description, subtitle)
+  static const double sizeMini      = 8; // Very small label (mini label inside a card)
+  static const double sizeButton       = 8; // Inline button text
+  static const double sizeBottomButton = 8; // Bottom bar button text (戻る…)
+  static const double sizeHint      = 8; // Hint text in TextField
+  static const double sizeLabel     = 8; // FormLabel above a field
+  static const double sizeCaption   = 8; // Caption / small hint
 
   // ─── Common TextStyles ───────────────────────────────────────
 

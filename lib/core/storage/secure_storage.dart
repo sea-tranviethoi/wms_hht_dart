@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants/app_constants.dart';
 
-/// Lưu trữ an toàn cho token — thay thế AsyncStorage (token) trong RN
-/// flutter_secure_storage dùng Android Keystore / iOS Keychain
+/// Secure storage for tokens — replaces AsyncStorage (token) in RN
+/// flutter_secure_storage uses Android Keystore / iOS Keychain
 class SecureStorage {
   final FlutterSecureStorage _storage;
 

@@ -151,7 +151,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Always go back to main menu (màn hình chức năng)
+            // Always go back to main menu (function screen)
             context.go(RouteNames.mainMenu);
           },
         ),

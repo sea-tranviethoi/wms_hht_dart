@@ -1,9 +1,9 @@
 import 'package:audioplayers/audioplayers.dart';
 import '../constants/app_constants.dart';
 
-/// Port từ modules/preloadSounds.js + components/Sound.js
+/// Ported from modules/preloadSounds.js + components/Sound.js
 ///
-/// Preload 3 sound khi app khởi động để phát tức thì khi scan
+/// Preloads 3 sounds at app startup so they can play instantly on scan
 class SoundManager {
   SoundManager._();
   static final SoundManager instance = SoundManager._();
@@ -13,19 +13,19 @@ class SoundManager {
   // ─── Init ─────────────────────────────────────────────────────
 
   Future<void> init() async {
-    // Cấu hình audio player
+    // Configure audio player
     await _player.setReleaseMode(ReleaseMode.stop);
   }
 
   // ─── Play ─────────────────────────────────────────────────────
 
-  /// Phát sound khi scan thành công (1-beep.mp3)
+  /// Play sound on successful scan (1-beep.mp3)
   Future<void> playCorrect() => _play(AppConstants.soundCorrect);
 
-  /// Phát sound khi có lỗi (error_sound.mp3)
+  /// Play sound on error (error_sound.mp3)
   Future<void> playError() => _play(AppConstants.soundError);
 
-  /// Phát sound cảnh báo (2-beep.mp3)
+  /// Play warning sound (2-beep.mp3)
   Future<void> playWarning() => _play(AppConstants.soundWarning);
 
   Future<void> _play(String assetPath) async {
@@ -33,7 +33,7 @@ class SoundManager {
       await _player.stop();
       await _player.play(AssetSource(assetPath));
     } catch (_) {
-      // Bỏ qua lỗi sound — không ảnh hưởng logic nghiệp vụ
+      // Ignore sound errors — they do not affect business logic
     }
   }
 

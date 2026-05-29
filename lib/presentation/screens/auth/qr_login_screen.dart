@@ -10,8 +10,8 @@ import '../../../core/di/injection.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
 
-/// Port từ screens/Login.js — phần handleScan
-/// Quét QR → decrypt TripleDES → đăng nhập loginByQR
+/// Ported from screens/Login.js — handleScan section
+/// Scan QR → TripleDES decrypt → login via loginByQR
 class QRLoginScreen extends StatefulWidget {
   const QRLoginScreen({super.key});
 
@@ -30,7 +30,7 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
     super.dispose();
   }
 
-  // ─── Xử lý QR scan ───────────────────────────────────────────
+  // ─── Handle QR scan ──────────────────────────────────────────
   Future<void> _handleScan(BarcodeCapture capture) async {
     if (_isProcessing) return;
     final raw = capture.barcodes.firstOrNull?.rawValue;
@@ -40,7 +40,7 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
     await _scanCtrl.stop();
 
     try {
-      // Decrypt TripleDES giống Login.js → verifyMd5Hash(data)
+      // TripleDES decrypt as in Login.js → verifyMd5Hash(data)
       final decrypted = CryptoService.decryptQRCode(raw);
       if (decrypted.isEmpty) {
         _setError('QRコードの形式が正しくありません');

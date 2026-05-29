@@ -1,4 +1,4 @@
-/// Hằng số toàn app — port từ env/info.js + AppConfig.dart cũ
+/// App-wide constants — ported from env/info.js + legacy AppConfig.dart
 class AppConstants {
   AppConstants._();
 
@@ -8,7 +8,7 @@ class AppConstants {
   static const String appName     = 'FBTHHT';
 
   // ─── Server ───────────────────────────────────────────────────
-  /// Host mặc định — override bằng SharedPreferences nếu cần
+  /// Default host — can be overridden via SharedPreferences if needed
   static const String defaultHost = 'http://133.167.47.242:9500';
 
   // ─── API Timeout ──────────────────────────────────────────────
@@ -35,8 +35,8 @@ class AppConstants {
   static const String tableDevices        = 'devices';
 
   // ─── Crypto ───────────────────────────────────────────────────
-  /// Passphrase cứng cho TripleDES decrypt QR login
-  /// TODO: Đưa ra server config sau khi migrate xong
+  /// Hard-coded passphrase for TripleDES QR login decryption
+  /// TODO: Move to server config after migration is complete
   static const String qrPassphrase        = 'WmsHt123@456';
 
   // ─── Sound Assets ─────────────────────────────────────────────

@@ -25,12 +25,12 @@ void main() async {
       debugPrint(details.stack.toString());
     };
 
-    // Khóa màn hình dọc cho thiết bị HHT
+    // Lock orientation to portrait for HHT devices
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
 
-    // Khởi tạo tất cả dependencies qua get_it
+    // Initialize all dependencies via get_it
     await initDependencies();
 
     runApp(const FbtHhtApp());
@@ -46,9 +46,9 @@ class FbtHhtApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ── ScreenUtil: design baseline = 360×800 (Keyence BT-A series)
-    // minTextAdapt: false → text scale theo chiều RỘNG màn hình (không bị
-    // thu nhỏ do chiều cao trên HHT 3.5" 320×480).
-    // splitScreenMode: false → HHT không có split-screen.
+    // minTextAdapt: false → text scales by screen WIDTH (not shrunk by
+    // the small height on a 3.5" 320×480 HHT display).
+    // splitScreenMode: false → HHT does not support split-screen.
     return ScreenUtilInit(
       designSize: const Size(360, 800),
       minTextAdapt: false,
@@ -68,15 +68,15 @@ class FbtHhtApp extends StatelessWidget {
           BlocProvider<PickingBloc>(
             create: (_) => PickingBloc(remote: sl<PickingRemoteDataSource>()),
           ),
-          // Phase 4-8: thêm BLoC của từng module ở đây
+          // Phase 4-8: add per-module BLoCs here
         ],
         child: MaterialApp.router(
           title: 'FBTHHT',
           debugShowCheckedModeBanner: false,
 
           // ── Clamp system text-scale (accessibility) ────────
-          // Ngăn người dùng/OS phóng to chữ quá mức làm vỡ layout.
-          // Dải [0.85 – 1.2] phù hợp HHT 3.5"–6".
+          // Prevent the user/OS from enlarging text so much that it breaks the layout.
+          // Range [0.85 – 1.2] is appropriate for 3.5"–6" HHT screens.
           builder: (context, child) {
             final mq = MediaQuery.of(context);
             return MediaQuery(

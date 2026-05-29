@@ -6,15 +6,15 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../constants/app_constants.dart';
 import '../network/dio_client.dart';
 
-/// Port từ onHandleUpdateVersion + fc_CheckVersion trong App.js
+/// Ported from onHandleUpdateVersion + fc_CheckVersion in App.js
 class AppUpdater {
   final DioClient _dioClient;
   CancelToken? _cancelToken;
 
   AppUpdater(this._dioClient);
 
-  // ─── Kiểm tra phiên bản mới ───────────────────────────────────
-  /// Trả về version mới nếu có update, null nếu đang là mới nhất
+  // ─── Check for new version ────────────────────────────────────
+  /// Returns the new version info if an update is available, or null if already up to date
   Future<UpdateInfo?> checkForUpdate() async {
     try {
       final response = await _dioClient.dio.get('/api/Devices');
@@ -46,7 +46,7 @@ class AppUpdater {
   }
 
   // ─── Download APK ─────────────────────────────────────────────
-  /// [onProgress]: callback nhận giá trị 0.0 → 1.0
+  /// [onProgress]: callback receiving a value from 0.0 → 1.0
   Future<String?> downloadApk(
     String apkPath, {
     required void Function(double) onProgress,
@@ -55,7 +55,7 @@ class AppUpdater {
       final dir = await getExternalStorageDirectory();
       final savePath = '${dir?.path ?? '/sdcard'}/fbt_hht.apk';
 
-      // Xóa file cũ nếu tồn tại
+      // Delete old file if it exists
       final file = File(savePath);
       if (await file.exists()) await file.delete();
 
@@ -88,11 +88,11 @@ class AppUpdater {
     }
   }
 
-  // ─── Hủy download ─────────────────────────────────────────────
+  // ─── Cancel download ──────────────────────────────────────────
   void cancelDownload() => _cancelToken?.cancel();
 }
 
-/// Thông tin update
+/// Update information
 class UpdateInfo {
   final String serverVersion;
   final String currentVersion;

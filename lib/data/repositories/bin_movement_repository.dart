@@ -2,8 +2,8 @@ import '../datasources/remote/bin_movement_remote_datasource.dart';
 import '../models/bin_movement/invent_transfer.dart';
 import '../models/bin_movement/invent_transfer_line.dart';
 
-/// Repository cho 棚移動 (Bin Movement)
-/// Wrapper mỏng quanh [BinMovementRemoteDataSource] — BLoC gọi qua đây.
+/// Repository for 棚移動 (Bin Movement)
+/// Thin wrapper around [BinMovementRemoteDataSource] — the BLoC calls this.
 class BinMovementRepository {
   final BinMovementRemoteDataSource _remote;
 

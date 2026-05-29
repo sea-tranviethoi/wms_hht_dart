@@ -13,11 +13,11 @@ import '../widgets/app_empty.dart';
 import '../widgets/app_error.dart';
 import '../widgets/app_loading.dart';
 
-/// 事前セット明細
+/// Bundle detail (line list) screen
 class BundleItemsScreen extends StatelessWidget {
   final String transNo;
 
-  /// Khi có preloadedLines → bỏ qua BLoC, dùng trực tiếp (cho mock/test)
+  /// When preloadedLines is provided → bypass BLoC and use them directly (for mock/test)
   final List<BundleLine>? preloadedLines;
 
   const BundleItemsScreen({

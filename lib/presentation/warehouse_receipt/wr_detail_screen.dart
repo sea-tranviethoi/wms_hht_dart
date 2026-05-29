@@ -49,7 +49,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
   final FocusNode _expirationDateFocus = FocusNode();
 
   int _currentIndex = 0;
-  String _selectedStatus = '通常'; // 通常, NG, 不足
+  String _selectedStatus = '通常'; // 通常 (Normal), NG, 不足 (Shortage)
   ReceiptLine? _currentLine;
   List<ReceiptLine> _lines = [];
   bool _isLoading = true;
@@ -107,7 +107,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
     _lotNoController.text = _currentLine!.lotNo ?? '';
     _expirationDateController.text = _currentLine!.expirationDate ?? '';
 
-    // Map status: 1=通常, 2=NG, 3=不足
+    // Map status: 1=通常 (Normal), 2=NG, 3=不足 (Shortage)
     _selectedStatus = switch (_currentLine!.status) {
       2 => 'NG',
       3 => '不足',
@@ -359,7 +359,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // JANコード
+                            // JAN code
                             const FormLabel(label: 'JANコード'),
                             const SizedBox(height: 4),
                             FormScanField(
@@ -372,17 +372,17 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // 商品 dropdown
+                            // Product dropdown
                             _buildProductDropdown(),
                             const SizedBox(height: 16),
 
-                            // 予定数量 (read-only)
+                            // Planned quantity (read-only)
                             const FormLabel(label: '予定数量'),
                             const SizedBox(height: 4),
                             FormReadOnlyField(value: _orderQtyController.text, icon: Icons.shopping_cart),
                             const SizedBox(height: 16),
 
-                            // 実際数量
+                            // Actual quantity
                             const FormLabel(label: '実際数量'),
                             const SizedBox(height: 4),
                             FormScanField(
@@ -395,7 +395,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // 賞味期限
+                            // Expiration date
                             const FormLabel(label: '賞味期限'),
                             const SizedBox(height: 4),
                             FormDateField(
@@ -406,7 +406,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // ロット
+                            // Lot number
                             const FormLabel(label: 'ロット'),
                             const SizedBox(height: 4),
                             FormScanField(
@@ -418,11 +418,11 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // 状態
+                            // Status
                             _buildStatusDropdown(),
                             const SizedBox(height: 24),
 
-                            // 商品写真撮り
+                            // Product photo capture
                             InkWell(
                               onTap: _pickImage,
                               child: Container(

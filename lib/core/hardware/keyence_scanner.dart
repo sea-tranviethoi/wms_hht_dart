@@ -1,10 +1,10 @@
 import 'package:flutter/services.dart';
 
-/// Port từ modules/KeyenceModule.js
+/// Ported from modules/KeyenceModule.js
 ///
-/// Giao tiếp với native Keyence SDK qua MethodChannel + EventChannel
-/// Phase 9 sẽ implement phía Kotlin (Android)
-/// Hiện tại: stub trả về mock data cho dev trên thiết bị thường
+/// Communicates with the native Keyence SDK via MethodChannel + EventChannel.
+/// Phase 9 will implement the Kotlin (Android) side.
+/// Currently: stub that returns mock data for development on a regular device
 class KeyenceScanner {
   KeyenceScanner._();
   static final KeyenceScanner instance = KeyenceScanner._();
@@ -16,7 +16,7 @@ class KeyenceScanner {
   bool _isInitialized = false;
   Stream<String>? _scanStream;
 
-  // ─── Stream nhận barcode từ thiết bị Keyence ─────────────────
+  // ─── Stream receiving barcodes from the Keyence device ───────
   Stream<String> get scanStream {
     _scanStream ??= _eventChannel
         .receiveBroadcastStream()
@@ -31,9 +31,9 @@ class KeyenceScanner {
       await _methodChannel.invokeMethod('createScanManager');
       _isInitialized = true;
     } on MissingPluginException {
-      // Dev mode: không có thiết bị Keyence — bỏ qua
+      // Dev mode: no Keyence device — skip
     } catch (_) {
-      // Không crash app nếu scanner không available
+      // Do not crash the app if the scanner is unavailable
     }
   }
 
@@ -55,7 +55,7 @@ class KeyenceScanner {
     } catch (_) {}
   }
 
-  // ─── Release (gọi khi dispose màn hình) ──────────────────────
+  // ─── Release (call when disposing a screen) ──────────────────
   Future<void> release() async {
     try {
       await _methodChannel.invokeMethod('releaseScanManager');

@@ -5,14 +5,14 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../constants/app_constants.dart';
 import '../storage/secure_storage.dart';
 
-/// HTTP client dùng cho toàn bộ app
-/// Port từ modules/fetchDataModule.js
+/// HTTP client used throughout the app
+/// Ported from modules/fetchDataModule.js
 ///
-/// Tính năng:
-/// - Tự gắn Bearer token vào mọi request
-/// - Retry 1 lần khi 401 (refresh token)
-/// - Timeout 30 giây
-/// - Hiện dialog lỗi + exit app khi không thể refresh token
+/// Features:
+/// - Automatically attaches a Bearer token to every request
+/// - Retries once on 401 (token refresh)
+/// - 30-second timeout
+/// - Shows an error dialog and exits the app when token refresh fails
 class DioClient {
   late final Dio _dio;
   final SecureStorage _secureStorage;
@@ -45,7 +45,7 @@ class DioClient {
 
   Dio get dio => _dio;
 
-  /// Cập nhật baseUrl khi user thay đổi hostname trong settings
+  /// Updates baseUrl when the user changes the hostname in settings
   void updateBaseUrl(String host) {
     _dio.options.baseUrl = host;
   }
@@ -95,14 +95,14 @@ class _AuthInterceptor extends Interceptor {
       return handler.next(err);
     }
 
-    // ── 401 Unauthorized → thử refresh token ─────────────────
+    // ── 401 Unauthorized → attempt token refresh ─────────────
     if (err.response?.statusCode == 401 && !_getIsRefreshing()) {
       _setIsRefreshing(true);
       try {
         final newToken = await _refreshToken();
         if (newToken != null) {
           await _secureStorage.saveToken(newToken);
-          // Retry request gốc với token mới
+          // Retry original request with the new token
           final opts = err.requestOptions;
           opts.headers['Authorization'] = 'Bearer $newToken';
           final response = await _dio.fetch(opts);
@@ -110,7 +110,7 @@ class _AuthInterceptor extends Interceptor {
           return handler.resolve(response);
         }
       } catch (_) {
-        // refresh thất bại
+        // refresh failed
       }
       _setIsRefreshing(false);
       await _secureStorage.clearAll();
@@ -162,8 +162,8 @@ class _AuthInterceptor extends Interceptor {
   }
 }
 
-/// GlobalKey để access context từ interceptor (không dùng BuildContext param)
+/// GlobalKey for accessing the navigator context from the interceptor (without a BuildContext parameter)
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
-/// Export navigatorKey để dùng trong MaterialApp
+/// Exports navigatorKey for use in MaterialApp
 GlobalKey<NavigatorState> get appNavigatorKey => _navigatorKey;

@@ -7,8 +7,8 @@ import '../../../data/repositories/master_repository.dart';
 part 'master_event.dart';
 part 'master_state.dart';
 
-/// BLoC quản lý Master Data (tenants, locations)
-/// Dùng cho TenantSelectionScreen và LocationSelectionScreen
+/// BLoC managing Master Data (tenants, locations)
+/// Used by TenantSelectionScreen and LocationSelectionScreen
 class MasterBloc extends Bloc<MasterEvent, MasterState> {
   final MasterRepository _repository;
 

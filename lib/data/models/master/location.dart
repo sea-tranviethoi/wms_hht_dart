@@ -1,5 +1,5 @@
-/// Model cho warehouse location
-/// Dùng trong LocationSelectionScreen
+/// Model for a warehouse location
+/// Used in LocationSelectionScreen
 class Location {
   final int locationId;
   final String locationCode;

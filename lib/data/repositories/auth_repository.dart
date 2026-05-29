@@ -1,7 +1,7 @@
 import '../datasources/remote/auth_remote_datasource.dart';
 import '../../core/storage/secure_storage.dart';
 
-/// Port từ services/token.js + authContext.signIn / signOut trong App.js
+/// Ported from services/token.js + authContext.signIn / signOut in App.js
 class AuthRepository {
   final AuthRemoteDataSource _remote;
   final SecureStorage _storage;
@@ -12,7 +12,7 @@ class AuthRepository {
   })  : _remote = remote,
         _storage = storage;
 
-  // ─── Login thường ─────────────────────────────────────────────
+  // ─── Standard login ───────────────────────────────────────────
   Future<Map<String, dynamic>?> login(String email, String password) async {
     final data = await _remote.login(email, password);
     if (data != null) {
@@ -33,7 +33,7 @@ class AuthRepository {
   // ─── Logout ───────────────────────────────────────────────────
   Future<void> logout() => _storage.clearAll();
 
-  // ─── Lấy danh sách devices (OTA check) ───────────────────────
+  // ─── Fetch device list (OTA check) ───────────────────────────
   Future<List<dynamic>> getDevices() => _remote.getDevices();
 
   // ─── Private ──────────────────────────────────────────────────

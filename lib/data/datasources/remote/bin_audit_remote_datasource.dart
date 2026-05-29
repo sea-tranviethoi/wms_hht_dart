@@ -1,7 +1,7 @@
 import '../../../core/network/dio_client.dart';
 import '../../models/stocktake/invent_stocktake_recording.dart';
 
-/// 棚卸 remote data source — Phase 8
+/// Bin Audit (棚卸) remote data source — Phase 8
 ///
 /// Endpoints:
 ///   PUT /api/InventStockTakeRecording/GetStockTakeRecordingAsync  → list

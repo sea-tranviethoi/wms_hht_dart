@@ -2,7 +2,7 @@ import '../../../core/network/dio_client.dart';
 import '../../models/bundle/bundle.dart';
 import '../../models/bundle/bundle_line.dart';
 
-/// Remote datasource cho module Bundle (事前セット)
+/// Remote data source for the Bundle module (事前セット)
 class BundleRemoteDataSource {
   final DioClient _dioClient;
 
@@ -30,8 +30,8 @@ class BundleRemoteDataSource {
 
   /// POST /api/InventBundle/UploadFromHandheldAsync
   ///
-  /// Server bind một `InventBundleDTO` (object), KHÔNG phải mảng.
-  /// Các line nằm trong field `inventBundleLines`.
+  /// The server binds a single `InventBundleDTO` (object), NOT an array.
+  /// The lines are in the `inventBundleLines` field.
   Future<bool> uploadFromHandheld(Map<String, dynamic> data) async {
     final res = await _dioClient.dio.post(
       '/api/InventBundle/UploadFromHandheldAsync',

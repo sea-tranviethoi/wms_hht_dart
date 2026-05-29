@@ -10,10 +10,10 @@ import '../../../data/models/master/location.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
 
-/// Port từ screens/LocationSelection.js (nếu có trong RN)
+/// Ported from screens/LocationSelection.js (if it existed in RN)
 ///
-/// Cho phép user chọn warehouse location trước khi bắt đầu làm việc.
-/// Location được lưu vào SharedPreferences để dùng cho toàn app.
+/// Allows the user to select a warehouse location before starting work.
+/// The selected location is saved in SharedPreferences for use throughout the app.
 class LocationSelectionScreen extends StatelessWidget {
   const LocationSelectionScreen({super.key});
 

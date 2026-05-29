@@ -2,8 +2,8 @@ import '../../../core/network/dio_client.dart';
 import '../../models/tenant.dart';
 import '../../models/master/location.dart';
 
-/// Remote datasource cho Master Data
-/// Port từ services/masterData.js (tenants, locations, ...)
+/// Remote data source for Master Data
+/// Ported from services/masterData.js (tenants, locations, …)
 class MasterRemoteDataSource {
   final DioClient _dioClient;
 
@@ -11,7 +11,7 @@ class MasterRemoteDataSource {
 
   // ─── Tenants ──────────────────────────────────────────────────
 
-  /// GET /api/Tenants → danh sách tenant
+  /// GET /api/Tenants → list of tenants
   Future<List<Tenant>> getTenants() async {
     final res = await _dioClient.dio.get('/api/Tenants');
     final data = res.data;
@@ -29,7 +29,7 @@ class MasterRemoteDataSource {
 
   // ─── Locations ────────────────────────────────────────────────
 
-  /// GET /api/Locations → danh sách warehouse locations
+  /// GET /api/Locations → list of warehouse locations
   Future<List<Location>> getLocations() async {
     final res = await _dioClient.dio.get('/api/Locations');
     final data = res.data;

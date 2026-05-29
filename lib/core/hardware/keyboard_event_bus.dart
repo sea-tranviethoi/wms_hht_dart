@@ -1,12 +1,12 @@
 
 
-// Port từ modules/KeyboardEventBus.js
+// Ported from modules/KeyboardEventBus.js
 //
-// Mô hình hoạt động:
-// - Mỗi màn hình subscribe khi được focus, unsubscribe khi blur
-// - Khi nhận event, gọi listener từ CUỐI danh sách (priority cao nhất)
-// - Nếu listener trả về `true` → event đã được xử lý, dừng lại (stop propagation)
-// - Priority chain: Modal (thêm sau = index cao) > Details > List > Home
+// How it works:
+// - Each screen subscribes when focused and unsubscribes when blurred.
+// - On receiving an event, listeners are called from the END of the list (highest priority first).
+// - If a listener returns `true` → the event is consumed and propagation stops.
+// - Priority chain: Modal (added last = highest index) > Detail > List > Home
 
 typedef KeyEventHandler = bool Function(int keyCode);
 
@@ -18,7 +18,7 @@ class KeyboardEventBus {
 
   // ─── Subscribe / Unsubscribe ──────────────────────────────────
 
-  /// Đăng ký listener, trả về hàm hủy để dùng trong dispose()
+  /// Registers a listener and returns an unsubscribe callback for use in dispose()
   ///
   /// ```dart
   /// late final VoidCallback _unsub;
@@ -30,7 +30,7 @@ class KeyboardEventBus {
   ///
   /// bool _handleKey(int keyCode) {
   ///   if (keyCode == HardwareKeyCodes.picking) {
-  ///     // xử lý
+  ///     // handle
   ///     return true; // stop propagation
   ///   }
   ///   return false;
@@ -51,7 +51,7 @@ class KeyboardEventBus {
 
   // ─── Emit ─────────────────────────────────────────────────────
 
-  /// Gửi keyCode tới listeners theo thứ tự ưu tiên (LIFO)
+  /// Dispatches a keyCode to listeners in priority order (LIFO)
   void emit(int keyCode) {
     for (int i = _listeners.length - 1; i >= 0; i--) {
       final handled = _listeners[i](keyCode);
@@ -59,9 +59,9 @@ class KeyboardEventBus {
     }
   }
 
-  // ─── Clear (dùng khi logout) ──────────────────────────────────
+  // ─── Clear (use on logout) ────────────────────────────────────
   void clear() => _listeners.clear();
 }
 
-// Alias cho dễ dùng
+// Convenience alias
 typedef VoidCallback = void Function();

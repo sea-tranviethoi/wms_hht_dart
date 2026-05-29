@@ -14,7 +14,7 @@ import '../../core/utils/qr_code_parser.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/top_notification_mixin.dart';
 
-/// 事前セット詳細 — standalone, no Provider/BLoC needed
+/// Bundle detail screen — standalone, no Provider/BLoC needed
 class BundleDetailScreen extends StatefulWidget {
   final String transNo;
   final BundleLine? bundleLine;
@@ -254,7 +254,7 @@ class _BundleDetailScreenState extends State<BundleDetailScreen>
     try {
       final hhtInfo = sl<CacheStorage>().getString('hhtInfo') ?? '';
 
-      // Build các line theo schema InventBundlesLineDTO
+      // Build lines according to the InventBundlesLineDTO schema
       final lines = _lines.asMap().entries.map((e) {
         final i = e.key;
         final line = e.value;
@@ -272,15 +272,15 @@ class _BundleDetailScreenState extends State<BundleDetailScreen>
           'location': line.location,
           'unitId': line.unitId,
         };
-        // Bỏ id khi null — server không bind được "id": null vào Guid
+        // Omit id when null — the server cannot bind "id": null to a Guid
         if (line.id != null) m['id'] = line.id;
         return m;
       }).toList();
 
-      // Server bind 1 InventBundleDTO (object) chứa mảng inventBundleLines
+      // Server binds one InventBundleDTO (object) that contains the inventBundleLines array
       final payload = <String, dynamic>{
         'transNo': widget.transNo,
-        'status': 1, // EnumStatusBundle: hoàn thành
+        'status': 1, // EnumStatusBundle: completed
         'hhtStatus': 1, // EnumHHTStatus
         if (hhtInfo.isNotEmpty) 'hhtInfo': hhtInfo,
         'inventBundleLines': lines,

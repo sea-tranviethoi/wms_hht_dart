@@ -12,10 +12,10 @@ import '../../routes/route_names.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/top_notification_mixin.dart';
 
-/// 棚卸詳細 — Phase 8
+/// Bin audit detail screen — Phase 8
 ///
-/// 棚卸記録を取得し、明細一覧を表示。
-/// スキャンで対象商品の実際数量をインクリメント、保存で一括更新。
+/// Fetches the stocktake recording and displays its line list.
+/// Scanning a product increments its actual quantity; saving performs a bulk update.
 class BinAuditDetailScreen extends StatefulWidget {
   final String id;
   final String? stockTakeNo;
@@ -561,7 +561,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                 // ── Expected qty / Actual qty ─────────────
                 Row(
                   children: [
-                    // 予定数量 (read-only)
+                    // Planned quantity (read-only)
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -595,7 +595,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // 実際数量 (editable if not done)
+                    // Actual quantity (editable if not done)
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

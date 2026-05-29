@@ -13,9 +13,9 @@ import '../../widgets/app_error.dart';
 import '../../widgets/app_loading.dart';
 import '../../widgets/module_tinted_button.dart';
 
-/// Port từ screens/Picking/PickingItems.js
+/// Ported from screens/Picking/PickingItems.js
 ///
-/// Hiển thị danh sách lines của 1 picking order.
+/// Displays the list of lines for one picking order.
 class PickingItemsScreen extends StatelessWidget {
   final String pickNo;
   final int tenantId;
@@ -98,7 +98,7 @@ class _PickingItemsView extends StatelessWidget {
 
     return Column(
       children: [
-        // ── 件数 header strip — Orange 8% tint ──────────────────
+        // ── Count header strip — Orange 8% tint ─────────────────
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -140,7 +140,7 @@ class _PickingItemsView extends StatelessWidget {
           ),
         ),
 
-        // ── Bottom bar: 戻る + 開始 ───────────────────────────────
+        // ── Bottom bar: Back + Start ──────────────────────────────
         SafeArea(
           top: false,
           child: Container(

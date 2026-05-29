@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_styles.dart';
 
-/// Chuyển exception thành thông báo lỗi thân thiện với user.
+/// Converts an exception into a user-friendly error message.
 /// - DioException → "ネットワークエラー: <statusCode> <message>"
-/// - Exception khác → text gọn (truncate sau dòng đầu)
+/// - Other exceptions → concise text (truncated to the first line)
 String friendlyError(Object e) {
   if (e is DioException) {
     final code = e.response?.statusCode;
@@ -28,7 +28,7 @@ String friendlyError(Object e) {
         return 'ネットワークエラーが発生しました';
     }
   }
-  // Generic error — chỉ lấy dòng đầu, tối đa 120 ký tự
+  // Generic error — take only the first line, at most 120 characters
   final raw = e.toString();
   final firstLine = raw.split('\n').first;
   return firstLine.length > 120
@@ -36,7 +36,7 @@ String friendlyError(Object e) {
       : firstLine;
 }
 
-/// Mixin cung cấp top notification banner cho StatefulWidget.
+/// Mixin that provides a top notification banner for StatefulWidgets.
 ///
 /// Usage:
 /// ```dart
@@ -63,10 +63,10 @@ mixin TopNotificationMixin<T extends StatefulWidget> on State<T> {
   Color _topColor = AppColors.wageningenGreen;
   Timer? _topTimer;
 
-  /// Hiển thị banner ở đỉnh màn hình.
+  /// Displays a banner at the top of the screen.
   ///
-  /// [color] mặc định green. Pass `AppColors.settingsColor7` cho lỗi.
-  /// [duration] mặc định 3 giây.
+  /// [color] defaults to green. Pass `AppColors.settingsColor7` for errors.
+  /// [duration] defaults to 3 seconds.
   void showTopNotification(
     String message,
     Color color, {
@@ -83,13 +83,13 @@ mixin TopNotificationMixin<T extends StatefulWidget> on State<T> {
     });
   }
 
-  /// Đóng ngay notification (nếu đang hiển thị).
+  /// Immediately dismisses the notification (if currently visible).
   void dismissTopNotification() {
     _topTimer?.cancel();
     if (mounted) setState(() => _topMessage = null);
   }
 
-  /// Đặt block này vào trong `Stack` của body để render banner.
+  /// Place this widget inside the body `Stack` to render the banner.
   Widget buildTopBanner() {
     if (_topMessage == null) return const SizedBox.shrink();
     return Positioned(

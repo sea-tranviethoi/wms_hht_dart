@@ -3,8 +3,8 @@ import '../../models/picking/picking_list.dart';
 import '../../models/picking/picking_line.dart';
 import '../../models/picking/picking_staging.dart';
 
-/// Remote datasource cho module Picking
-/// Port từ services/picking.js + PickingRepository (ApiClient version)
+/// Remote data source for the Picking module
+/// Ported from services/picking.js + PickingRepository (ApiClient version)
 class PickingRemoteDataSource {
   final DioClient _dioClient;
 
@@ -12,7 +12,7 @@ class PickingRemoteDataSource {
 
   // ─── Picking Lists ────────────────────────────────────────────
 
-  /// GET /api/WarehousePickingList → tất cả picking lists
+  /// GET /api/WarehousePickingList → all picking lists
   Future<List<PickingList>> getPickingLists() async {
     final res = await _dioClient.dio.get('/api/WarehousePickingList');
     return _parseList(res.data, PickingList.fromJson);
@@ -38,7 +38,7 @@ class PickingRemoteDataSource {
 
   // ─── Picking Staging ──────────────────────────────────────────
 
-  /// GET /api/WarehousePickingStaging → tất cả staging
+  /// GET /api/WarehousePickingStaging → all staging records
   Future<List<PickingStaging>> getAllStaging() async {
     final res = await _dioClient.dio.get('/api/WarehousePickingStaging');
     return _parseList(res.data, PickingStaging.fromJson);

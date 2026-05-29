@@ -1,5 +1,5 @@
-// Deprecated: dùng AuthBloc (presentation/blocs/auth/auth_bloc.dart) thay thế
-// Giữ lại để tránh break các screen cũ đang import
+// Deprecated: use AuthBloc (presentation/blocs/auth/auth_bloc.dart) instead
+// Kept to avoid breaking existing screens that still import it
 import 'package:flutter/foundation.dart';
 import '../../data/repositories/auth_repository.dart';
 

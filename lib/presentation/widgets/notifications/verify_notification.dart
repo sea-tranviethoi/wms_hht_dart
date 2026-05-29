@@ -3,16 +3,16 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../core/audio/sound_manager.dart';
 
-/// Port từ components/Notification.js — VerifyNotification
-/// Dialog đa năng: thông báo, xác nhận, download progress
+/// Ported from components/Notification.js — VerifyNotification
+/// Multi-purpose dialog: notification, confirmation, download progress
 class VerifyNotification extends StatelessWidget {
   final bool visible;
   final String title;
   final String message;
-  final int numberButton;       // 1 hoặc 2
+  final int numberButton;       // 1 or 2
   final NotifyButton? btn1;
   final NotifyButton? btn2;
-  final bool showProgress;      // = extend trong RN
+  final bool showProgress;      // = extend in RN
   final double progressValue;   // 0.0 → 1.0
   final String? soundType;      // 'error' | 'correct' | 'warning'
 
@@ -49,7 +49,7 @@ class VerifyNotification extends StatelessWidget {
 
     return Stack(
       children: [
-        // Overlay mờ
+        // Dim overlay
         const Opacity(
           opacity: 0.6,
           child: ModalBarrier(dismissible: false, color: Colors.black),
@@ -149,7 +149,7 @@ class VerifyNotification extends StatelessWidget {
   }
 }
 
-/// Model cho nút bấm trong VerifyNotification
+/// Model for a button in VerifyNotification
 class NotifyButton {
   final String text;
   final Color? color;

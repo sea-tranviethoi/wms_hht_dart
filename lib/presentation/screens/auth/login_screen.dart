@@ -8,8 +8,8 @@ import '../../../data/repositories/auth_repository.dart';
 import '../../../core/di/injection.dart';
 import '../../../routes/route_names.dart';
 
-/// Port từ screens/Login.js
-/// Login bằng username/password + nút chuyển sang QR login
+/// Ported from screens/Login.js
+/// Login with username/password + button to switch to QR login
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -64,8 +64,8 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         final authBloc = context.read<AuthBloc>();
         authBloc.add(LoggedIn(user));
-        // Đợi bloc xử lý xong event → state chuyển AuthAuthenticated
-        // trước khi navigate, tránh router redirect kick về login.
+        // Wait for the bloc to process the event → state becomes AuthAuthenticated
+        // before navigating, to prevent the router redirect sending back to login.
         await authBloc.stream.firstWhere((s) => s is AuthAuthenticated);
         if (!mounted) return;
         context.go(RouteNames.tenantSelection);

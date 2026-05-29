@@ -9,10 +9,10 @@ import '../../../data/models/tenant.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
 
-/// Port từ screens/TenantSelection.js
+/// Ported from screens/TenantSelection.js
 ///
-/// Hiển thị danh sách tenant để chọn trước khi vào module.
-/// funcNumber xác định module sẽ navigate sau khi chọn:
+/// Displays the tenant list for selection before entering a module.
+/// funcNumber determines which module to navigate to after selection:
 ///   "1" → Warehouse Receipt list
 ///   "3" → Picking list
 ///   (others) → Warehouse Receipt list (default)

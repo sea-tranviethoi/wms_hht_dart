@@ -28,7 +28,7 @@ class BinMovementRow {
   final String? productNames;
   final String? fromBin;
   final String? toBin;
-  /// -1 = 未処理, 1 = この端末, 3 = 別端末
+  /// -1 = not processed (未処理), 1 = this device (この端末), 3 = another device (別端末)
   final int scanStatus;
   final String? hhtInfoOther;
   final List<InventTransferLine> lines;

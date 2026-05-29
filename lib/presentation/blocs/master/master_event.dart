@@ -2,8 +2,8 @@ part of 'master_bloc.dart';
 
 abstract class MasterEvent {}
 
-/// Load danh sách tenant
+/// Load the list of tenants
 class FetchTenants extends MasterEvent {}
 
-/// Load danh sách location
+/// Load the list of locations
 class FetchLocations extends MasterEvent {}

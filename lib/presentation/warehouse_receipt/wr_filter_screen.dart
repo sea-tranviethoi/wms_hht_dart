@@ -198,7 +198,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // 仕入先番号 From
+                  // Supplier number From
                   _buildLabel('仕入先番号（開始）'),
                   const SizedBox(height: 6),
                   _buildDropdown(
@@ -208,7 +208,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // 仕入先番号 To
+                  // Supplier number To
                   _buildLabel('仕入先番号（終了）'),
                   const SizedBox(height: 6),
                   _buildDropdown(
@@ -218,26 +218,26 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // 商品JANコード
+                  // Product JAN code
                   _buildLabel('商品JANコード'),
                   const SizedBox(height: 6),
                   _buildScanField(controller: _janCodeCtrl, field: 'janCode',
                       onChanged: _checkJanCode),
                   const SizedBox(height: 16),
 
-                  // 入荷予定番号
+                  // Expected receipt number
                   _buildLabel('入荷予定番号'),
                   const SizedBox(height: 6),
                   _buildTextField(controller: _arrivalNumberCtrl),
                   const SizedBox(height: 16),
 
-                  // 商品番号
+                  // Product number
                   _buildLabel('商品番号'),
                   const SizedBox(height: 6),
                   _buildScanField(controller: _productCodeCtrl, field: 'productCode'),
                   const SizedBox(height: 16),
 
-                  // 商品名
+                  // Product name
                   _buildLabel('商品名'),
                   const SizedBox(height: 6),
                   _buildTextField(controller: _productNameCtrl),

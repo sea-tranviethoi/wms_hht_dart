@@ -17,14 +17,14 @@ import '../../../data/models/picking/picking_line.dart';
 import '../../../routes/route_names.dart';
 import '../../widgets/top_notification_mixin.dart';
 
-/// Port từ screens/Picking/PickingDetail.js
+/// Ported from screens/Picking/PickingDetail.js
 ///
-/// Màn hình xử lý từng picking line:
-///   1. Scan bin (validate với expected bin)
-///   2. Scan QR code sản phẩm (validate productCode + tăng qty)
-///   3. Nhập actualQty thủ công nếu cần
-///   4. Next / Prev để chuyển line
-///   5. Hoàn thành → sync lên server
+/// Screen for processing each picking line:
+///   1. Scan bin (validate against the expected bin)
+///   2. Scan product QR code (validate productCode + increment qty)
+///   3. Enter actualQty manually if needed
+///   4. Next / Prev to navigate between lines
+///   5. Complete → sync to server
 class PickingDetailScreen extends StatefulWidget {
   final String pickNo;
   final PickingLine? pickingLine;
@@ -165,7 +165,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
     if (expected != null &&
         expected.isNotEmpty &&
         expected.toLowerCase() != binCode.toLowerCase()) {
-      // Bin không khớp → hỏi confirm
+      // Bin mismatch → ask for confirmation
       final ok = await _showConfirmDialog(
         'スキャンした棚番 [$binCode] がピッキングすべきの棚番 [$expected] と違います。続けますか？',
       );
@@ -209,7 +209,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
       return;
     }
 
-    // 数量 +1
+    // Quantity +1
     final current = double.tryParse(_actualQtyCtrl.text) ?? 0.0;
     final newQty = current + 1;
 

@@ -6,11 +6,11 @@ import '../../../data/models/bundle/bundle_line.dart';
 part 'bundle_event.dart';
 part 'bundle_state.dart';
 
-/// BLoC cho module Bundle (事前セット) — thay thế BundleProvider
+/// BLoC for the Bundle module (事前セット) — replaces BundleProvider
 class BundleBloc extends Bloc<BundleEvent, BundleState> {
   final BundleRemoteDataSource _remote;
 
-  // Cache rows để search client-side
+  // Cache rows for client-side search
   List<BundleRow> _allRows = [];
   String _hhtInfo = '';
 

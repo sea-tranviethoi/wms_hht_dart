@@ -1,6 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-/// Port từ modules/checkWifiConnection.js
+/// Ported from modules/checkWifiConnection.js
 abstract class NetworkInfo {
   Future<bool> get isConnected;
 }

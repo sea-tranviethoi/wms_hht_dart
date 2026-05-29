@@ -2,19 +2,19 @@ part of 'bundle_bloc.dart';
 
 abstract class BundleEvent {}
 
-/// Load danh sách bundles
+/// Load the list of bundles
 class FetchBundleLists extends BundleEvent {
   final String hhtInfo;
   FetchBundleLists({this.hhtInfo = ''});
 }
 
-/// Lọc danh sách theo keyword
+/// Filter the list by keyword
 class SearchBundleLists extends BundleEvent {
   final String keyword;
   SearchBundleLists(this.keyword);
 }
 
-/// Chọn 1 bundle → load lines
+/// Select one bundle → load its lines
 class SelectBundle extends BundleEvent {
   final String transNo;
   SelectBundle(this.transNo);
@@ -22,7 +22,7 @@ class SelectBundle extends BundleEvent {
 
 /// Sync bundle data to server
 ///
-/// [payload] là object InventBundleDTO (chứa field inventBundleLines).
+/// [payload] is an InventBundleDTO object (contains the inventBundleLines field).
 class SyncBundleData extends BundleEvent {
   final String transNo;
   final Map<String, dynamic> payload;
