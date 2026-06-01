@@ -56,7 +56,7 @@ class DataTableWidget extends StatelessWidget {
                 textAlign: column.alignment,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: AppStyles.sizeInfo,
+                  fontSize: AppStyles.sizeInfoText,
                   color: AppColors.blackText,
                 ),
               ),

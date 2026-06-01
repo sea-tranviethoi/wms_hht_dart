@@ -45,7 +45,7 @@ class BackToMenuButton extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: AppStyles.font,
                       color: AppColors.white,
-                      fontSize: AppStyles.sizeBottomButton,
+                      fontSize: AppStyles.sizeItemTitle,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

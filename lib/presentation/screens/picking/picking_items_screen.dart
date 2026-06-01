@@ -65,7 +65,7 @@ class _PickingItemsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => _backToList(context),
         ),
         title: Text('ピッキング: $pickNo', style: AppStyles.appBarTitle),
@@ -111,7 +111,7 @@ class _PickingItemsView extends StatelessWidget {
             style: const TextStyle(
               fontFamily: AppStyles.font,
               color: AppColors.grayTextColor,
-              fontSize: AppStyles.sizeSub,
+              fontSize: AppStyles.sizeInfoText,
             ),
           ),
         ),
@@ -174,7 +174,7 @@ class _PickingItemsView extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: AppStyles.font,
                                 color: AppColors.white,
-                                fontSize: AppStyles.sizeBottomButton,
+                                fontSize: AppStyles.sizeItemTitle,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -273,7 +273,7 @@ class _LineCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: AppStyles.sizeInfo,
+                          fontSize: AppStyles.sizeInfoText,
                         ),
                       ),
               ),
@@ -289,7 +289,7 @@ class _LineCard extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppStyles.sizeCard,
+                        fontSize: AppStyles.sizeItemTitle,
                         color: AppColors.blackTextColor,
                       ),
                     ),
@@ -301,7 +301,7 @@ class _LineCard extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: AppStyles.font,
                           color: AppColors.grayTextColor,
-                          fontSize: AppStyles.sizeCaption,
+                          fontSize: AppStyles.sizeSubText,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -318,7 +318,7 @@ class _LineCard extends StatelessWidget {
                             line.bin!,
                             style: const TextStyle(
                               fontFamily: AppStyles.font,
-                              fontSize: AppStyles.sizeCaption,
+                              fontSize: AppStyles.sizeSubText,
                               color: AppColors.grayTextColor,
                             ),
                           ),
@@ -331,7 +331,7 @@ class _LineCard extends StatelessWidget {
                           '${actual.toStringAsFixed(0)} / ${line.pickQty.toStringAsFixed(0)}',
                           style: TextStyle(
                             fontFamily: AppStyles.font,
-                            fontSize: AppStyles.sizeCaption,
+                            fontSize: AppStyles.sizeSubText,
                             color: isDone
                                 ? AppColors.wageningenGreen
                                 : AppColors.settingsColor3,

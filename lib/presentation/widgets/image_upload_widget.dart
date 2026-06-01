@@ -104,7 +104,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
               Text(
                 widget.label!,
                 style: TextStyle(
-                  fontSize: AppStyles.sizeInfo,
+                  fontSize: AppStyles.sizeInfoText,
                   fontWeight: FontWeight.w500,
                   color: AppColors.blackText,
                 ),
@@ -152,7 +152,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
                         'Select image',
                         style: TextStyle(
                           color: AppColors.textPlaceholder,
-                          fontSize: AppStyles.sizeInfo,
+                          fontSize: AppStyles.sizeInfoText,
                         ),
                       ),
                     ],

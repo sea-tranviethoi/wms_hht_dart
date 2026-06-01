@@ -37,7 +37,7 @@ class AppLoading extends StatelessWidget {
               style: const TextStyle(
                 fontFamily: AppStyles.font,
                 color: AppColors.grayTextColor,
-                fontSize: AppStyles.sizeCaption,
+                fontSize: AppStyles.sizeSubText,
               ),
             ),
           ],

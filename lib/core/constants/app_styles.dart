@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// Shared typography constants for the entire app (HHT — Honeywell CK65, 320px wide)
+/// Hằng số typography dùng chung toàn app (HHT — Honeywell CK65, 320px wide)
 ///
-/// All values are fixed px — do NOT use .sp to avoid ScreenUtil scaling
-/// on small screens.
+/// Tất cả giá trị là fixed px — KHÔNG dùng .sp để tránh ScreenUtil scale
+/// trên màn hình nhỏ.
 class AppStyles {
   AppStyles._();
 
@@ -12,100 +12,76 @@ class AppStyles {
   static const String font = 'MSPGothic';
 
   // ─── Icon sizes ──────────────────────────────────────────────
-  static const double sizeAppBarIcon        = 8; // Icon on AppBar (back, refresh…)
-  static const double sizeBottomButtonIcon     = 8; // Icon inside bottom bar buttons (戻る, 開始…)
-  static const double sizePrimaryButton        = 8; // Text of primary action button (次へ, 完了・送信…)
-  static const double sizePrimaryButtonIcon    = 8; // Icon of primary action button
-  static const double sizeSearchIcon        = 8; // Magnifier icon in search bar
-  static const double sizeSearchClearIcon   = 8; // Clear (×) icon in search bar
+  static const double sizeTopBarIcon       = 24; // Icon on AppBar (back, refresh...)
+  static const double sizeBottomButtonIcon = 20; // Icon inside bottom bar buttons (戻る, 開始...)
+  static const double sizeSearchIcon = 20; // Icon size for search bar (magnifier and clear)
 
-  // ─── Button height ──────────────────────────────────────────────
-  static const double heightBottomButton       = 16; // Height of bottom bar buttons
-  static const double heightPrimaryButton      = 16; // Height of primary action button
+  // ─── Button height ───────────────────────────────────────────
+  static const double heightBottomButton = 32; // Height of bottom bar buttons
+  static const double heightTenantTile   = 48; // Height of tenant selection tiles
 
   // ─── Spinner / Progress ─────────────────────────────────────────
-  static const double sizeSpinner          = 16; // Diameter of CircularProgressIndicator
-  static const double widthSpinnerStroke   = 1;  // strokeWidth of CircularProgressIndicator
+  static const double sizeSpinner          = 24; // Đường kính CircularProgressIndicator
+  static const double widthSpinnerStroke   = 2;  // strokeWidth CircularProgressIndicator
 
   // ─── Font sizes ──────────────────────────────────────────────
-  static const double sizeNavButtonIcon   = 8; // Navigation button icon ← → (prev/next)
-  static const double sizeBadgeCheckIcon = 8; // ✓ icon inside circular badge
-  static const double sizeCardIcon       = 8; // Small inline icon inside a card (bin, qty…)
-  static const double sizeFieldIcon      = 8; // Small icon inside a form field (product code, clear, calendar…)
-  static const double sizeFieldButtonIcon = 8; // Icon on button next to a field (QR scanner, calendar picker)
-  static const double sizeIndicatorIcon = 8; // ↓ indicator icon between form sections (移動, 入荷…)
-  static const double sizeCounter       = 8; // Page-count badge (1 / 1, 2 / 5…)
-  static const double sizeDialogTitle   = 8; // Title in AlertDialog (通知, 確認…)
-  static const double sizeDialogContent = 8; // Content text in AlertDialog
-  static const double sizeDialogAction  = 8; // Action button in AlertDialog (閉じる, はい…)
-  static const double sizeMenuLabel    = 8; // Primary label on menu tile (入荷, ピッキング…)
-  static const double sizeMenuSubtitle = 8; // Secondary subtitle on menu tile (Warehouse Receipt…)
-  static const double sizeAppBar    = 8; // AppBar title
-  static const double sizeTitle     = 8; // Main header (receiptNo, stockTakeNo…)
-  static const double sizeListTitle = 8; // List tile title (ModuleListTile)
-  static const double sizeInput     = 8; // TextField input text
-  static const double sizeBody      = 8; // Main body text
-  static const double sizeCard      = 8; // Card / item title
-  static const double sizeInfo      = 8; // Secondary text (date, status, remarks)
-  static const double sizeSub       = 8; // Small text (description, subtitle)
-  static const double sizeMini      = 8; // Very small label (mini label inside a card)
-  static const double sizeButton       = 8; // Inline button text
-  static const double sizeBottomButton = 8; // Bottom bar button text (戻る…)
-  static const double sizeHint      = 8; // Hint text in TextField
-  static const double sizeLabel     = 8; // FormLabel above a field
-  static const double sizeCaption   = 8; // Caption / small hint
+  static const double sizeMainTitle  = 16; // AppBar title, page headers
+  static const double sizeItemTitle  = 16; // List tile / card / button text
+  static const double sizeBodyText   = 16; // Body content, inputs, dialog content
+  static const double sizeInfoText   = 16; // Secondary info, labels, hints
+  static const double sizeSubText    = 16; // Captions, mini labels, smallest text
 
   // ─── Common TextStyles ───────────────────────────────────────
 
   static const TextStyle appBarTitle = TextStyle(
     fontFamily: font,
-    fontSize: sizeAppBar,
+    fontSize: sizeMainTitle,
     fontWeight: FontWeight.bold,
     color: AppColors.white,
   );
 
   static const TextStyle headerTitle = TextStyle(
     fontFamily: font,
-    fontSize: sizeTitle,
+    fontSize: sizeMainTitle,
     fontWeight: FontWeight.bold,
     color: AppColors.blackTextColor,
   );
 
   static const TextStyle body = TextStyle(
     fontFamily: font,
-    fontSize: sizeBody,
+    fontSize: sizeBodyText,
     color: AppColors.blackTextColor,
   );
 
   static const TextStyle bodyBold = TextStyle(
     fontFamily: font,
-    fontSize: sizeBody,
+    fontSize: sizeBodyText,
     fontWeight: FontWeight.bold,
     color: AppColors.blackTextColor,
   );
 
   static const TextStyle info = TextStyle(
     fontFamily: font,
-    fontSize: sizeInfo,
+    fontSize: sizeInfoText,
     color: AppColors.grayTextColor,
   );
 
   static const TextStyle sub = TextStyle(
     fontFamily: font,
-    fontSize: sizeSub,
+    fontSize: sizeInfoText,
     color: AppColors.grayTextColor,
   );
 
   static const TextStyle label = TextStyle(
     fontFamily: font,
-    fontSize: sizeLabel,
+    fontSize: sizeInfoText,
     fontWeight: FontWeight.w600,
     color: AppColors.grayTextColor,
   );
 
   static const TextStyle button = TextStyle(
     fontFamily: font,
-    fontSize: sizeButton,
+    fontSize: sizeItemTitle,
     fontWeight: FontWeight.w700,
     color: AppColors.white,
   );

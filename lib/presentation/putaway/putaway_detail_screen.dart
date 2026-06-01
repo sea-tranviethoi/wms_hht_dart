@@ -136,21 +136,21 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('棚上げ完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
+        title: const Text('棚上げ完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
         content: Text(
           '${widget.productCode} — ${_editedLines.length}件の棚上げを登録しますか？',
-          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
+          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             style: TextButton.styleFrom(foregroundColor: AppColors.grayTextColor),
-            child: const Text('キャンセル', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+            child: const Text('キャンセル', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor2),
-            child: const Text('完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+            child: const Text('完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
         ],
       ),
@@ -319,7 +319,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
         title: const Text('棚上げ詳細', style: AppStyles.appBarTitle),
         backgroundColor: AppColors.settingsColor2,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => context.go(RouteNames.putawayList),
         ),
       ),
@@ -340,7 +340,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                   Text('棚上げ登録中...',
                       style: TextStyle(
                           fontFamily: AppStyles.font,
-                          fontSize: AppStyles.sizeBody)),
+                          fontSize: AppStyles.sizeBodyText)),
                 ],
               ),
             )
@@ -362,7 +362,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                             Text(
                               widget.productCode,
                               style: TextStyle(
-                                fontSize: AppStyles.sizeAppBar,
+                                fontSize: AppStyles.sizeMainTitle,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: AppStyles.font,
                                 color: AppColors.black,
@@ -372,7 +372,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                               Text(
                                 widget.productName,
                                 style: const TextStyle(
-                                  fontSize: AppStyles.sizeBody,
+                                  fontSize: AppStyles.sizeBodyText,
                                   fontFamily: AppStyles.font,
                                   color: AppColors.black,
                                 ),
@@ -393,7 +393,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                         child: Text(
                           '${_currentIndex + 1} / ${_editedLines.length}',
                           style: const TextStyle(
-                            fontSize: AppStyles.sizeCounter,
+                            fontSize: AppStyles.sizeInfoText,
                             fontFamily: AppStyles.font,
                             fontWeight: FontWeight.bold,
                           ),
@@ -509,7 +509,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                                   elevation: 1,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: const Icon(Icons.arrow_back, size: AppStyles.sizeNavButtonIcon),
+                                child: const Icon(Icons.arrow_back, size: AppStyles.sizeBottomButtonIcon),
                               ),
                             ),
                             const SizedBox(width: 6),
@@ -526,7 +526,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                                   elevation: 1,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: const Icon(Icons.arrow_forward, size: AppStyles.sizeNavButtonIcon),
+                                child: const Icon(Icons.arrow_forward, size: AppStyles.sizeBottomButtonIcon),
                               ),
                             ),
                             const SizedBox(width: 6),

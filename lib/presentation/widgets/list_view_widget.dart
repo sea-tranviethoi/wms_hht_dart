@@ -44,7 +44,7 @@ class ListViewWidget<T> extends StatelessWidget {
               child: Text(
                 emptyMessage ?? AppStrings.of(context).noData,
                 style: TextStyle(
-                  fontSize: AppStyles.sizeBody,
+                  fontSize: AppStyles.sizeBodyText,
                   color: AppColors.textPlaceholder,
                 ),
               ),

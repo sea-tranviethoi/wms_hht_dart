@@ -309,21 +309,21 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
     return showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
+        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
         content: Text(message,
-            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent)),
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('いいえ',
-                style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+                style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('はい',
                 style: TextStyle(
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeDialogAction,
+                    fontSize: AppStyles.sizeBodyText,
                     color: AppColors.settingsColor3,
                     fontWeight: FontWeight.bold)),
           ),
@@ -370,7 +370,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => context.pop(),
         ),
         title: Text('ピッキング: ${widget.pickNo}  ${_currentIndex + 1}/$total', style: AppStyles.appBarTitle),
@@ -396,7 +396,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                   Text('データ同期中...',
                       style: TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeBody,
+                        fontSize: AppStyles.sizeBodyText,
                       )),
                 ],
               ),
@@ -448,12 +448,12 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
             Text('進捗: $done / $total 件完了',
                 style: TextStyle(
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeSub,
+                    fontSize: AppStyles.sizeInfoText,
                     color: AppColors.grayTextColor)),
             Text('${(done / total * 100).toStringAsFixed(0)}%',
                 style: TextStyle(
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeSub,
+                    fontSize: AppStyles.sizeInfoText,
                     fontWeight: FontWeight.bold,
                     color: AppColors.settingsColor3)),
           ],
@@ -507,7 +507,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
               label,
               style: TextStyle(
                   fontFamily: AppStyles.font,
-                  fontSize: AppStyles.sizeSub,
+                  fontSize: AppStyles.sizeInfoText,
                   color: AppColors.grayTextColor),
             ),
           ),
@@ -516,7 +516,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
               value,
               style: TextStyle(
                 fontFamily: AppStyles.font,
-                fontSize: AppStyles.sizeInfo,
+                fontSize: AppStyles.sizeInfoText,
                 fontWeight: bold ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -564,7 +564,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                 Text('実数量',
                     style: TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeInfo,
+                        fontSize: AppStyles.sizeInfoText,
                         color: AppColors.blackTextColor)),
                 const SizedBox(width: 12),
                 Expanded(
@@ -575,7 +575,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeTitle,
+                      fontSize: AppStyles.sizeMainTitle,
                       fontWeight: FontWeight.bold,
                       color: AppColors.settingsColor3,
                     ),
@@ -610,19 +610,19 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                 child: OutlinedButton.icon(
                   onPressed: _goPrev,
                   icon: const Icon(Icons.arrow_back,
-                      size: AppStyles.sizePrimaryButtonIcon),
+                      size: AppStyles.sizeBottomButtonIcon),
                   label: const Text(
                     '前へ',
                     style: TextStyle(
                         fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppStyles.sizePrimaryButton),
+                        fontSize: AppStyles.sizeItemTitle),
                   ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.settingsColor3,
                     side: const BorderSide(
                         color: AppColors.settingsColor3, width: 1.5),
-                    minimumSize: const Size.fromHeight(AppStyles.heightPrimaryButton),
+                    minimumSize: const Size.fromHeight(AppStyles.heightBottomButton),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -641,7 +641,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                   isLast
                       ? (allDone ? Icons.cloud_upload : Icons.check)
                       : Icons.arrow_forward,
-                  size: AppStyles.sizePrimaryButtonIcon,
+                  size: AppStyles.sizeBottomButtonIcon,
                 ),
                 label: Text(
                   isLast
@@ -650,14 +650,14 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                   style: const TextStyle(
                       fontFamily: AppStyles.font,
                       fontWeight: FontWeight.bold,
-                      fontSize: AppStyles.sizePrimaryButton),
+                      fontSize: AppStyles.sizeItemTitle),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isLast && allDone
                       ? AppColors.settingsColor5
                       : AppColors.settingsColor3,
                   foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(AppStyles.heightPrimaryButton),
+                  minimumSize: const Size.fromHeight(AppStyles.heightBottomButton),
                   elevation: 1,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -706,18 +706,18 @@ class _ScanField extends StatelessWidget {
                 focusNode: focusNode,
                 textInputAction: TextInputAction.done,
                 onSubmitted: onSubmitted,
-                style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInfo),
+                style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInfoText),
                 decoration: InputDecoration(
                   labelText: label,
                   labelStyle: TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeCaption,
+                      fontSize: AppStyles.sizeSubText,
                       color: AppColors.grayTextColor),
                   hintText: hintText,
                   hintStyle: TextStyle(
                       fontFamily: AppStyles.font,
                       color: AppColors.gray,
-                      fontSize: AppStyles.sizeCaption),
+                      fontSize: AppStyles.sizeSubText),
                   border: InputBorder.none,
                   suffixIcon: controller.text.isNotEmpty
                       ? IconButton(

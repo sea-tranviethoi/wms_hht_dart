@@ -140,12 +140,12 @@ class _BundleListViewState extends State<_BundleListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor4,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: _backToMenu,
         ),
         title: const Text('事前セット一覧', style: AppStyles.appBarTitle),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeAppBarIcon), onPressed: _loadData),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeTopBarIcon), onPressed: _loadData),
         ],
       ),
       body: Column(

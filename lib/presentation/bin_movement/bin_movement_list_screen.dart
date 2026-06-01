@@ -63,16 +63,16 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
+          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.transferNo} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor5),
-              child: const Text('閉じる', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+              child: const Text('閉じる', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
             ),
           ],
         ),
@@ -95,14 +95,14 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: _backToMenu,
         ),
         title: const Text('棚移動一覧', style: AppStyles.appBarTitle),
         actions: [
           BlocBuilder<BinMovementBloc, BinMovementState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
               onPressed: (state is BinMovementLoading || state is BinMovementResetting) ? null : _loadData,
             ),
           ),

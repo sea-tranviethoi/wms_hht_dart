@@ -91,7 +91,7 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor4,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => _backToList(context),
         ),
         title: Text('事前セット: ${widget.transNo}', style: AppStyles.appBarTitle),
@@ -147,14 +147,14 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                 style: const TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.grayTextColor,
-                  fontSize: AppStyles.sizeSub,
+                  fontSize: AppStyles.sizeInfoText,
                 ),
               ),
               Text(
                 '$completedCount / ${lines.length} 完了',
                 style: TextStyle(
                   fontFamily: AppStyles.font,
-                  fontSize: AppStyles.sizeSub,
+                  fontSize: AppStyles.sizeInfoText,
                   fontWeight: FontWeight.bold,
                   color: completedCount == lines.length
                       ? AppColors.wageningenGreen
@@ -201,7 +201,7 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                       label: const Text('戻る',
                           style: TextStyle(
                               fontFamily: AppStyles.font,
-                              fontSize: AppStyles.sizeBottomButton,
+                              fontSize: AppStyles.sizeItemTitle,
                               fontWeight: FontWeight.w700)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.settingsColor7,
@@ -224,7 +224,7 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                       label: const Text('開始',
                           style: TextStyle(
                               fontFamily: AppStyles.font,
-                              fontSize: AppStyles.sizeBottomButton,
+                              fontSize: AppStyles.sizeItemTitle,
                               fontWeight: FontWeight.w700)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.settingsColor4,
@@ -301,13 +301,13 @@ class _BundleLineCard extends StatelessWidget {
                 alignment: Alignment.center,
                 child: isDone
                     ? const Icon(Icons.check,
-                        color: Colors.white, size: AppStyles.sizeBadgeCheckIcon)
+                        color: Colors.white, size: AppStyles.sizeBottomButtonIcon)
                     : Text(
                         '${index + 1}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: AppStyles.sizeInfo,
+                          fontSize: AppStyles.sizeInfoText,
                         ),
                       ),
               ),
@@ -323,7 +323,7 @@ class _BundleLineCard extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppStyles.sizeCard,
+                        fontSize: AppStyles.sizeItemTitle,
                         color: AppColors.blackTextColor,
                       ),
                     ),
@@ -335,7 +335,7 @@ class _BundleLineCard extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: AppStyles.font,
                           color: AppColors.grayTextColor,
-                          fontSize: AppStyles.sizeCaption,
+                          fontSize: AppStyles.sizeSubText,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -347,26 +347,26 @@ class _BundleLineCard extends StatelessWidget {
                         if (line.bin != null &&
                             line.bin!.isNotEmpty) ...[
                           const Icon(Icons.inventory_2_outlined,
-                              size: AppStyles.sizeCardIcon, color: AppColors.gray),
+                              size: AppStyles.sizeBottomButtonIcon, color: AppColors.gray),
                           const SizedBox(width: 4),
                           Text(
                             line.bin!,
                             style: const TextStyle(
                               fontFamily: AppStyles.font,
-                              fontSize: AppStyles.sizeCaption,
+                              fontSize: AppStyles.sizeSubText,
                               color: AppColors.grayTextColor,
                             ),
                           ),
                           const SizedBox(width: 12),
                         ],
                         const Icon(Icons.format_list_numbered,
-                            size: AppStyles.sizeCardIcon, color: AppColors.gray),
+                            size: AppStyles.sizeBottomButtonIcon, color: AppColors.gray),
                         const SizedBox(width: 4),
                         Text(
                           '${line.actualQty.toStringAsFixed(0)} / ${line.demandQty.toStringAsFixed(0)}',
                           style: TextStyle(
                             fontFamily: AppStyles.font,
-                            fontSize: AppStyles.sizeCaption,
+                            fontSize: AppStyles.sizeSubText,
                             color: statusColor,
                             fontWeight: FontWeight.bold,
                           ),
@@ -383,7 +383,7 @@ class _BundleLineCard extends StatelessWidget {
                             statusLabel,
                             style: TextStyle(
                               fontFamily: AppStyles.font,
-                              fontSize: AppStyles.sizeMini,
+                              fontSize: AppStyles.sizeSubText,
                               color: statusColor,
                               fontWeight: FontWeight.bold,
                             ),

@@ -93,7 +93,7 @@ class CustomButton extends StatelessWidget {
                 Text(
                   text,
                   style: TextStyle(
-                    fontSize: AppStyles.sizeBody,
+                    fontSize: AppStyles.sizeBodyText,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

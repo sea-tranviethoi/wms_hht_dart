@@ -55,7 +55,7 @@ class AppError extends StatelessWidget {
                 style: const TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.blackTextColor,
-                  fontSize: AppStyles.sizeBody,
+                  fontSize: AppStyles.sizeBodyText,
                   fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
@@ -67,7 +67,7 @@ class AppError extends StatelessWidget {
               style: const TextStyle(
                 fontFamily: AppStyles.font,
                 color: AppColors.grayTextColor,
-                fontSize: AppStyles.sizeSub,
+                fontSize: AppStyles.sizeInfoText,
                 height: 1.4,
               ),
               textAlign: TextAlign.center,

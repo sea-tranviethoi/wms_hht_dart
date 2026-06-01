@@ -71,14 +71,14 @@ class _PickingListViewState extends State<_PickingListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: _backToTenantSelection,
         ),
         title: Text('ピッキング一覧${widget.company.isNotEmpty ? ' (${widget.company})' : ''}', style: AppStyles.appBarTitle),
         actions: [
           BlocBuilder<PickingBloc, PickingState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
               onPressed: state is PickingLoading
                   ? null
                   : () {
@@ -177,16 +177,16 @@ class _PickingListViewState extends State<_PickingListView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
+          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.pickNo} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor3),
-              child: const Text('閉じる', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+              child: const Text('閉じる', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
             ),
           ],
         ),

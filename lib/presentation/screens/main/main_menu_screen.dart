@@ -147,16 +147,16 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       builder: (dialogCtx) => AlertDialog(
         title: const Text(
           'ログアウト',
-          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle),
+          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle),
         ),
         content: const Text(
           'ログアウトしますか？',
-          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
+          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('いいえ', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+            child: const Text('いいえ', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
           TextButton(
             onPressed: () {
@@ -170,7 +170,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
               'はい',
               style: TextStyle(
                 fontFamily: AppStyles.font,
-                fontSize: AppStyles.sizeDialogAction,
+                fontSize: AppStyles.sizeBodyText,
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
@@ -201,7 +201,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                 style: TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.lighter,
-                  fontSize: AppStyles.sizeCaption,
+                  fontSize: AppStyles.sizeSubText,
                 ),
               ),
             ),
@@ -291,7 +291,7 @@ class _LogoutButton extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.white,
-                  fontSize: AppStyles.sizeButton,
+                  fontSize: AppStyles.sizeItemTitle,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -336,7 +336,7 @@ class _MenuTile extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: AppStyles.font,
                         color: AppColors.onColor(item.color),
-                        fontSize: AppStyles.sizeMenuLabel,
+                        fontSize: AppStyles.sizeMainTitle,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -345,7 +345,7 @@ class _MenuTile extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: AppStyles.font,
                         color: AppColors.onColor(item.color),
-                        fontSize: AppStyles.sizeMenuSubtitle,
+                        fontSize: AppStyles.sizeInfoText,
                       ),
                     ),
                   ],

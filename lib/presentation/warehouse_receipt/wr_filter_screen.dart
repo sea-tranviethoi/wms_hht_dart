@@ -185,7 +185,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('絞り込み (${widget.company})', style: AppStyles.appBarTitle),
@@ -299,7 +299,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
         text,
         style: const TextStyle(
           fontFamily: AppStyles.font,
-          fontSize: AppStyles.sizeLabel,
+          fontSize: AppStyles.sizeInfoText,
           fontWeight: FontWeight.w600,
           color: AppColors.grayTextColor,
         ),
@@ -327,7 +327,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
   Widget _buildTextField({required TextEditingController controller}) =>
       TextField(
         controller: controller,
-        style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInput),
+        style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
         decoration: _fieldDecoration(),
       );
 
@@ -341,9 +341,9 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
         isExpanded: true,
         decoration: _fieldDecoration(),
         hint: Text(hint,
-            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeHint,
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInfoText,
                 color: AppColors.grayTextColor)),
-        style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInput,
+        style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText,
             color: AppColors.blackTextColor),
         items: _vendors.map((v) => DropdownMenuItem<String>(
           value: v['id'],
@@ -362,7 +362,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
           Expanded(
             child: TextField(
               controller: controller,
-              style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInput),
+              style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
               decoration: _fieldDecoration(),
               onChanged: onChanged,
               onSubmitted: onChanged,
@@ -384,7 +384,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: const Icon(Icons.qr_code_scanner,
-                    color: AppColors.grayTextColor, size: AppStyles.sizeFieldButtonIcon),
+                    color: AppColors.grayTextColor, size: AppStyles.sizeBottomButtonIcon),
               ),
             ),
           ),
@@ -411,7 +411,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
           child: Text(label,
               style: const TextStyle(
                   fontFamily: AppStyles.font,
-                  fontSize: AppStyles.sizeBottomButton,
+                  fontSize: AppStyles.sizeItemTitle,
                   fontWeight: FontWeight.w700)),
         ),
       );

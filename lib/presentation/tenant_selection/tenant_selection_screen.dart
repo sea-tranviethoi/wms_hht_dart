@@ -174,7 +174,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                   controller: _searchController,
                   style: const TextStyle(
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeInput,
+                    fontSize: AppStyles.sizeBodyText,
                     color: AppColors.blackTextColor,
                   ),
                   decoration: InputDecoration(
@@ -182,13 +182,13 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                     hintStyle: const TextStyle(
                       fontFamily: AppStyles.font,
                       color: AppColors.gray,
-                      fontSize: AppStyles.sizeHint,
+                      fontSize: AppStyles.sizeInfoText,
                     ),
                     prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
                     prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, color: AppColors.gray, size: AppStyles.sizeSearchClearIcon),
+                            icon: const Icon(Icons.clear, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
                             onPressed: () { _searchController.clear(); },
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(minWidth: 36, minHeight: 0),
@@ -225,7 +225,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                               children: [
                                 Text(
                                   strings.tenantLoadFailed,
-                                  style: TextStyle(fontSize: AppStyles.sizeBody),
+                                  style: TextStyle(fontSize: AppStyles.sizeBodyText),
                                 ),
                                 const SizedBox(height: 16),
                                 ElevatedButton(

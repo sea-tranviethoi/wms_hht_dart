@@ -140,21 +140,21 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('棚移動完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
+        title: const Text('棚移動完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
         content: Text(
           '${widget.transferNo} — ${_editedLines.length}件の棚移動を登録しますか？',
-          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
+          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             style: TextButton.styleFrom(foregroundColor: AppColors.grayTextColor),
-            child: const Text('キャンセル', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+            child: const Text('キャンセル', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor5),
-            child: const Text('完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+            child: const Text('完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
         ],
       ),
@@ -289,7 +289,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
         appBar: AppBar(
           backgroundColor: AppColors.settingsColor5,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+            icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
             onPressed: () => context.go(RouteNames.binMovementList),
           ),
           title: const Text('棚移動詳細', style: AppStyles.appBarTitle),
@@ -298,7 +298,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
           child: Text('明細データがありません',
               style: TextStyle(
                 fontFamily: AppStyles.font,
-                fontSize: AppStyles.sizeBody,
+                fontSize: AppStyles.sizeBodyText,
                 color: AppColors.grayTextColor,
               )),
         ),
@@ -314,7 +314,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => context.go(RouteNames.binMovementList),
         ),
         title: const Text('棚移動詳細', style: AppStyles.appBarTitle),
@@ -337,7 +337,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                   Text('棚移動登録中...',
                       style: TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeBody,
+                        fontSize: AppStyles.sizeBodyText,
                       )),
                 ],
               ),
@@ -359,7 +359,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                             Text(
                               widget.transferNo,
                               style: const TextStyle(
-                                fontSize: AppStyles.sizeBody,
+                                fontSize: AppStyles.sizeBodyText,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: AppStyles.font,
                                 color: AppColors.blackTextColor,
@@ -370,7 +370,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                               Text(
                                 widget.description!,
                                 style: const TextStyle(
-                                  fontSize: AppStyles.sizeCaption,
+                                  fontSize: AppStyles.sizeSubText,
                                   fontFamily: AppStyles.font,
                                   color: AppColors.grayTextColor,
                                 ),
@@ -391,7 +391,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                         child: Text(
                           '${_currentIndex + 1} / ${_editedLines.length}',
                           style: const TextStyle(
-                            fontSize: AppStyles.sizeCounter,
+                            fontSize: AppStyles.sizeInfoText,
                             fontFamily: AppStyles.font,
                             fontWeight: FontWeight.bold,
                             color: AppColors.blackTextColor,
@@ -434,13 +434,13 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(Icons.arrow_downward,
-                                color: AppColors.settingsColor5, size: AppStyles.sizeIndicatorIcon),
+                                color: AppColors.settingsColor5, size: AppStyles.sizeBottomButtonIcon),
                             const SizedBox(width: 6),
                             const Text('移動',
                                 style: TextStyle(
                                     color: AppColors.settingsColor5,
                                     fontFamily: AppStyles.font,
-                                    fontSize: AppStyles.sizeInfo)),
+                                    fontSize: AppStyles.sizeInfoText)),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -538,7 +538,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                                   elevation: 1,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: const Icon(Icons.arrow_back, size: AppStyles.sizeNavButtonIcon),
+                                child: const Icon(Icons.arrow_back, size: AppStyles.sizeBottomButtonIcon),
                               ),
                             ),
                             const SizedBox(width: 6),
@@ -555,7 +555,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                                   elevation: 1,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: const Icon(Icons.arrow_forward, size: AppStyles.sizeNavButtonIcon),
+                                child: const Icon(Icons.arrow_forward, size: AppStyles.sizeBottomButtonIcon),
                               ),
                             ),
                             const SizedBox(width: 6),

@@ -148,7 +148,7 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
                   style: TextStyle(
                     fontFamily: AppStyles.font,
                     color: Colors.white,
-                    fontSize: AppStyles.sizeSub,
+                    fontSize: AppStyles.sizeInfoText,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -165,7 +165,7 @@ class _QRLoginScreenState extends State<QRLoginScreen> {
               style: TextStyle(
                 fontFamily: AppStyles.font,
                 color: Colors.white.withAlpha(180),
-                fontSize: AppStyles.sizeSub,
+                fontSize: AppStyles.sizeInfoText,
               ),
               textAlign: TextAlign.center,
             ),

@@ -64,14 +64,14 @@ class _BinAuditListViewState extends State<_BinAuditListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor6,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: _backToMenu,
         ),
         title: const Text('棚卸一覧', style: AppStyles.appBarTitle),
         actions: [
           BlocBuilder<BinAuditBloc, BinAuditState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
               onPressed: state is BinAuditLoading ? null : _loadData,
             ),
           ),

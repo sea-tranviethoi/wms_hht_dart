@@ -75,7 +75,7 @@ class VerifyNotification extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeBody,
+                      fontSize: AppStyles.sizeBodyText,
                       fontWeight: FontWeight.bold,
                       color: AppColors.blackTextColor,
                     ),
@@ -87,7 +87,7 @@ class VerifyNotification extends StatelessWidget {
                     message,
                     style: TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeInfo,
+                      fontSize: AppStyles.sizeInfoText,
                       color: AppColors.grayTextColor,
                     ),
                     textAlign: TextAlign.center,
@@ -106,7 +106,7 @@ class VerifyNotification extends StatelessWidget {
                       '${(progressValue * 100).toStringAsFixed(0)}%',
                       style: TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeCaption,
+                        fontSize: AppStyles.sizeSubText,
                         color: AppColors.grayTextColor,
                       ),
                     ),

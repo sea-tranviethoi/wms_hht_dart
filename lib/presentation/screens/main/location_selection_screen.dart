@@ -89,7 +89,7 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
       appBar: AppBar(
         backgroundColor: AppColors.themeBackground,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => context.go(RouteNames.mainMenu),
         ),
         title: const Text('ロケーション選択', style: AppStyles.appBarTitle),
@@ -230,7 +230,7 @@ class _LocationTile extends StatelessWidget {
           location.locationCode,
           style: TextStyle(
             fontFamily: AppStyles.font,
-            fontSize: AppStyles.sizeBody,
+            fontSize: AppStyles.sizeBodyText,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -240,7 +240,7 @@ class _LocationTile extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.grayTextColor,
-                  fontSize: AppStyles.sizeSub,
+                  fontSize: AppStyles.sizeInfoText,
                 ),
               )
             : null,

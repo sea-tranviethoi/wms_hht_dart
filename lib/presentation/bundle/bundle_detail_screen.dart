@@ -223,21 +223,21 @@ class _BundleDetailScreenState extends State<BundleDetailScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
+        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
         content: Text(
           '事前セット ${widget.transNo} が完了しました。送信しますか？',
-          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
+          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             style: TextButton.styleFrom(foregroundColor: AppColors.grayTextColor),
-            child: const Text('いいえ', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+            child: const Text('いいえ', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor4),
-            child: const Text('はい', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+            child: const Text('はい', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
         ],
       ),
@@ -364,7 +364,7 @@ class _BundleDetailScreenState extends State<BundleDetailScreen>
           backgroundColor: AppColors.settingsColor4,
           title: const Text('事前セット詳細', style: AppStyles.appBarTitle),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+            icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
             onPressed: () => context.pop(),
           ),
         ),
@@ -398,7 +398,7 @@ class _BundleDetailScreenState extends State<BundleDetailScreen>
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor4,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => context.pop(),
         ),
         title: Text('事前セット詳細 (${_currentIndex + 1}/${_lines.length})', style: AppStyles.appBarTitle),
@@ -418,14 +418,14 @@ class _BundleDetailScreenState extends State<BundleDetailScreen>
                 const Text('事前セット:',
                     style: TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeSub,
+                        fontSize: AppStyles.sizeInfoText,
                         color: AppColors.grayTextColor)),
                 const SizedBox(width: 8),
                 Text(
                   widget.transNo,
                   style: const TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeInfo,
+                      fontSize: AppStyles.sizeInfoText,
                       fontWeight: FontWeight.bold,
                       color: AppColors.blackTextColor),
                 ),
@@ -449,7 +449,7 @@ class _BundleDetailScreenState extends State<BundleDetailScreen>
                     line.actualQty >= line.demandQty ? '完了' : '未対応',
                     style: TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeMini,
+                      fontSize: AppStyles.sizeSubText,
                       fontWeight: FontWeight.bold,
                       color: line.actualQty >= line.demandQty
                           ? AppColors.wageningenGreen

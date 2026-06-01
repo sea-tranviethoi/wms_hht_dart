@@ -49,7 +49,7 @@ class ModuleTintedButton extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: AppStyles.font,
                       color: fg,
-                      fontSize: AppStyles.sizeBottomButton,
+                      fontSize: AppStyles.sizeItemTitle,
                       fontWeight: FontWeight.w700,
                     ),
                     maxLines: 1,
@@ -101,7 +101,7 @@ class ModuleFilledButton extends StatelessWidget {
           label,
           style: const TextStyle(
             fontFamily: AppStyles.font,
-            fontSize: AppStyles.sizeButton,
+            fontSize: AppStyles.sizeItemTitle,
             fontWeight: FontWeight.w700,
           ),
         ),
