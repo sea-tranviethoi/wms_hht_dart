@@ -147,14 +147,14 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                 style: const TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.grayTextColor,
-                  fontSize: AppStyles.sizeInfoText,
+                  fontSize: AppStyles.sizeBodyText,
                 ),
               ),
               Text(
                 '$completedCount / ${lines.length} 完了',
                 style: TextStyle(
                   fontFamily: AppStyles.font,
-                  fontSize: AppStyles.sizeInfoText,
+                  fontSize: AppStyles.sizeBodyText,
                   fontWeight: FontWeight.bold,
                   color: completedCount == lines.length
                       ? AppColors.wageningenGreen
@@ -199,10 +199,7 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                       onPressed: () => _backToList(context),
                       icon: const Icon(Icons.arrow_back, size: AppStyles.sizeBottomButtonIcon),
                       label: const Text('戻る',
-                          style: TextStyle(
-                              fontFamily: AppStyles.font,
-                              fontSize: AppStyles.sizeItemTitle,
-                              fontWeight: FontWeight.w700)),
+                          style: AppStyles.button),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.settingsColor7,
                         foregroundColor: AppColors.white,
@@ -222,10 +219,7 @@ class _BundleItemsViewState extends State<_BundleItemsView> {
                       onPressed: () => _startFirst(context, lines),
                       icon: const Icon(Icons.play_arrow, size: AppStyles.sizeBottomButtonIcon),
                       label: const Text('開始',
-                          style: TextStyle(
-                              fontFamily: AppStyles.font,
-                              fontSize: AppStyles.sizeItemTitle,
-                              fontWeight: FontWeight.w700)),
+                          style: AppStyles.button),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.settingsColor4,
                         foregroundColor: AppColors.white,
@@ -307,7 +301,7 @@ class _BundleLineCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: AppStyles.sizeInfoText,
+                          fontSize: AppStyles.sizeBodyText,
                         ),
                       ),
               ),
@@ -323,7 +317,7 @@ class _BundleLineCard extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppStyles.sizeItemTitle,
+                        fontSize: AppStyles.sizeMainTitle,
                         color: AppColors.blackTextColor,
                       ),
                     ),

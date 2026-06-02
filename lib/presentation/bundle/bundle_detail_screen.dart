@@ -223,7 +223,7 @@ class _BundleDetailScreenState extends State<BundleDetailScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
+        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle)),
         content: Text(
           '事前セット ${widget.transNo} が完了しました。送信しますか？',
           style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
@@ -418,14 +418,14 @@ class _BundleDetailScreenState extends State<BundleDetailScreen>
                 const Text('事前セット:',
                     style: TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeInfoText,
+                        fontSize: AppStyles.sizeBodyText,
                         color: AppColors.grayTextColor)),
                 const SizedBox(width: 8),
                 Text(
                   widget.transNo,
                   style: const TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeInfoText,
+                      fontSize: AppStyles.sizeBodyText,
                       fontWeight: FontWeight.bold,
                       color: AppColors.blackTextColor),
                 ),

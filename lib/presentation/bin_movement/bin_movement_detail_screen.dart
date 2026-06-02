@@ -140,7 +140,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('棚移動完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
+        title: const Text('棚移動完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle)),
         content: Text(
           '${widget.transferNo} — ${_editedLines.length}件の棚移動を登録しますか？',
           style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
@@ -391,7 +391,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                         child: Text(
                           '${_currentIndex + 1} / ${_editedLines.length}',
                           style: const TextStyle(
-                            fontSize: AppStyles.sizeInfoText,
+                            fontSize: AppStyles.sizeBodyText,
                             fontFamily: AppStyles.font,
                             fontWeight: FontWeight.bold,
                             color: AppColors.blackTextColor,
@@ -440,7 +440,7 @@ class _BinMovementDetailScreenState extends State<BinMovementDetailScreen>
                                 style: TextStyle(
                                     color: AppColors.settingsColor5,
                                     fontFamily: AppStyles.font,
-                                    fontSize: AppStyles.sizeInfoText)),
+                                    fontSize: AppStyles.sizeBodyText)),
                           ],
                         ),
                         const SizedBox(height: 12),

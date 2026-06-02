@@ -147,7 +147,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       builder: (dialogCtx) => AlertDialog(
         title: const Text(
           'ログアウト',
-          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle),
+          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle),
         ),
         content: const Text(
           'ログアウトしますか？',
@@ -286,15 +286,7 @@ class _LogoutButton extends StatelessWidget {
             children: [
               Icon(Icons.logout, color: AppColors.white, size: AppStyles.sizeBottomButtonIcon),
               SizedBox(width: 10),
-              Text(
-                'ログアウト',
-                style: TextStyle(
-                  fontFamily: AppStyles.font,
-                  color: AppColors.white,
-                  fontSize: AppStyles.sizeItemTitle,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              Text('ログアウト', style: AppStyles.button),
             ],
           ),
         ),
@@ -345,7 +337,7 @@ class _MenuTile extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: AppStyles.font,
                         color: AppColors.onColor(item.color),
-                        fontSize: AppStyles.sizeInfoText,
+                        fontSize: AppStyles.sizeBodyText,
                       ),
                     ),
                   ],

@@ -299,7 +299,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
         text,
         style: const TextStyle(
           fontFamily: AppStyles.font,
-          fontSize: AppStyles.sizeInfoText,
+          fontSize: AppStyles.sizeBodyText,
           fontWeight: FontWeight.w600,
           color: AppColors.grayTextColor,
         ),
@@ -341,7 +341,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
         isExpanded: true,
         decoration: _fieldDecoration(),
         hint: Text(hint,
-            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInfoText,
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText,
                 color: AppColors.grayTextColor)),
         style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText,
             color: AppColors.blackTextColor),
@@ -411,7 +411,7 @@ class _WRFilterScreenState extends State<WRFilterScreen> {
           child: Text(label,
               style: const TextStyle(
                   fontFamily: AppStyles.font,
-                  fontSize: AppStyles.sizeItemTitle,
+                  fontSize: AppStyles.sizeMainTitle,
                   fontWeight: FontWeight.w700)),
         ),
       );

@@ -51,7 +51,7 @@ class CustomDropdown<T> extends StatelessWidget {
               Text(
                 label!,
                 style: TextStyle(
-                  fontSize: AppStyles.sizeInfoText,
+                  fontSize: AppStyles.sizeBodyText,
                   color: AppColors.blackText,
                   fontWeight: FontWeight.w500,
                 ),

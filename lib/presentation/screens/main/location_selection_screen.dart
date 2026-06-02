@@ -240,7 +240,7 @@ class _LocationTile extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.grayTextColor,
-                  fontSize: AppStyles.sizeInfoText,
+                  fontSize: AppStyles.sizeBodyText,
                 ),
               )
             : null,

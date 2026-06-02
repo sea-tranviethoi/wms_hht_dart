@@ -63,7 +63,7 @@ class _BinMovementListViewState extends State<_BinMovementListView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
+          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.transferNo} を対応してます。ご確認ください。',
             style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),

@@ -110,7 +110,7 @@ mixin TopNotificationMixin<T extends StatefulWidget> on State<T> {
               style: const TextStyle(
                 fontFamily: AppStyles.font,
                 color: AppColors.white,
-                fontSize: AppStyles.sizeItemTitle,
+                fontSize: AppStyles.sizeBodyText,
                 fontWeight: FontWeight.w600,
               ),
             ),

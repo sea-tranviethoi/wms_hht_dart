@@ -46,12 +46,7 @@ class ModuleTintedButton extends StatelessWidget {
                 Flexible(
                   child: Text(
                     label,
-                    style: TextStyle(
-                      fontFamily: AppStyles.font,
-                      color: fg,
-                      fontSize: AppStyles.sizeItemTitle,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: AppStyles.button.copyWith(color: fg),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -97,14 +92,7 @@ class ModuleFilledButton extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
         icon: Icon(icon),
-        label: Text(
-          label,
-          style: const TextStyle(
-            fontFamily: AppStyles.font,
-            fontSize: AppStyles.sizeItemTitle,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        label: Text(label, style: AppStyles.button),
       ),
     );
   }

@@ -309,7 +309,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
     return showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
+        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle)),
         content: Text(message,
             style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
         actions: [
@@ -448,12 +448,12 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
             Text('進捗: $done / $total 件完了',
                 style: TextStyle(
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeInfoText,
+                    fontSize: AppStyles.sizeBodyText,
                     color: AppColors.grayTextColor)),
             Text('${(done / total * 100).toStringAsFixed(0)}%',
                 style: TextStyle(
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeInfoText,
+                    fontSize: AppStyles.sizeBodyText,
                     fontWeight: FontWeight.bold,
                     color: AppColors.settingsColor3)),
           ],
@@ -507,7 +507,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
               label,
               style: TextStyle(
                   fontFamily: AppStyles.font,
-                  fontSize: AppStyles.sizeInfoText,
+                  fontSize: AppStyles.sizeBodyText,
                   color: AppColors.grayTextColor),
             ),
           ),
@@ -516,7 +516,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
               value,
               style: TextStyle(
                 fontFamily: AppStyles.font,
-                fontSize: AppStyles.sizeInfoText,
+                fontSize: AppStyles.sizeBodyText,
                 fontWeight: bold ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -564,7 +564,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                 Text('実数量',
                     style: TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeInfoText,
+                        fontSize: AppStyles.sizeBodyText,
                         color: AppColors.blackTextColor)),
                 const SizedBox(width: 12),
                 Expanded(
@@ -616,7 +616,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                     style: TextStyle(
                         fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppStyles.sizeItemTitle),
+                        fontSize: AppStyles.sizeMainTitle),
                   ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.settingsColor3,
@@ -650,7 +650,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                   style: const TextStyle(
                       fontFamily: AppStyles.font,
                       fontWeight: FontWeight.bold,
-                      fontSize: AppStyles.sizeItemTitle),
+                      fontSize: AppStyles.sizeMainTitle),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isLast && allDone
@@ -706,7 +706,7 @@ class _ScanField extends StatelessWidget {
                 focusNode: focusNode,
                 textInputAction: TextInputAction.done,
                 onSubmitted: onSubmitted,
-                style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInfoText),
+                style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
                 decoration: InputDecoration(
                   labelText: label,
                   labelStyle: TextStyle(

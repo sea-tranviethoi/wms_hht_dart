@@ -182,7 +182,7 @@ class _TenantSelectionScreenState extends State<TenantSelectionScreen> {
                     hintStyle: const TextStyle(
                       fontFamily: AppStyles.font,
                       color: AppColors.gray,
-                      fontSize: AppStyles.sizeInfoText,
+                      fontSize: AppStyles.sizeBodyText,
                     ),
                     prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
                     prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),

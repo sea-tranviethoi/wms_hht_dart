@@ -24,8 +24,8 @@ import '../../core/constants/app_styles.dart';
 
 const String _kFont = AppStyles.font;
 const double _kFieldFontSize = AppStyles.sizeBodyText;
-const double _kLabelFontSize = AppStyles.sizeInfoText;
-const double _kButtonFontSize = AppStyles.sizeItemTitle;
+const double _kLabelFontSize = AppStyles.sizeBodyText;
+const double _kButtonFontSize = AppStyles.sizeButtonLabel;
 const double _kFieldRadius = 6;
 const double _kButtonRadius = 12;
 const double _kButtonHeight = AppStyles.heightBottomButton;
@@ -524,11 +524,7 @@ class ActionButton extends StatelessWidget {
   final IconData? icon;
   final bool _useIconVariant;
 
-  static const _style = TextStyle(
-    fontSize: _kButtonFontSize,
-    fontFamily: _kFont,
-    fontWeight: FontWeight.w700,
-  );
+  static const _style = AppStyles.button;
 
   ButtonStyle _buttonStyle(Color bg) => ElevatedButton.styleFrom(
         backgroundColor: bg,
@@ -610,7 +606,7 @@ class TopBanner extends StatelessWidget {
         style: const TextStyle(
           fontFamily: _kFont,
           color: AppColors.white,
-          fontSize: AppStyles.sizeItemTitle,
+          fontSize: AppStyles.sizeMainTitle,
           fontWeight: FontWeight.w600,
         ),
       ),

@@ -87,7 +87,7 @@ class VerifyNotification extends StatelessWidget {
                     message,
                     style: TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeInfoText,
+                      fontSize: AppStyles.sizeBodyText,
                       color: AppColors.grayTextColor,
                     ),
                     textAlign: TextAlign.center,

@@ -136,10 +136,10 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('棚上げ完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeItemTitle)),
+        title: const Text('棚上げ完了', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
         content: Text(
           '${widget.productCode} — ${_editedLines.length}件の棚上げを登録しますか？',
-          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
+          style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeSubText),
         ),
         actions: [
           TextButton(
@@ -372,7 +372,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                               Text(
                                 widget.productName,
                                 style: const TextStyle(
-                                  fontSize: AppStyles.sizeBodyText,
+                                  fontSize: AppStyles.sizeMainTitle,
                                   fontFamily: AppStyles.font,
                                   color: AppColors.black,
                                 ),
@@ -393,7 +393,7 @@ class _PutawayDetailScreenState extends State<PutawayDetailScreen>
                         child: Text(
                           '${_currentIndex + 1} / ${_editedLines.length}',
                           style: const TextStyle(
-                            fontSize: AppStyles.sizeInfoText,
+                            fontSize: AppStyles.sizeSubText,
                             fontFamily: AppStyles.font,
                             fontWeight: FontWeight.bold,
                           ),

@@ -111,7 +111,7 @@ class _PickingItemsView extends StatelessWidget {
             style: const TextStyle(
               fontFamily: AppStyles.font,
               color: AppColors.grayTextColor,
-              fontSize: AppStyles.sizeInfoText,
+              fontSize: AppStyles.sizeBodyText,
             ),
           ),
         ),
@@ -169,15 +169,7 @@ class _PickingItemsView extends StatelessWidget {
                             Icon(Icons.arrow_back,
                                 color: AppColors.white, size: AppStyles.sizeBottomButtonIcon),
                             SizedBox(width: 8),
-                            Text(
-                              '戻る',
-                              style: TextStyle(
-                                fontFamily: AppStyles.font,
-                                color: AppColors.white,
-                                fontSize: AppStyles.sizeItemTitle,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+                            Text('戻る', style: AppStyles.button),
                           ],
                         ),
                       ),
@@ -273,7 +265,7 @@ class _LineCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: AppStyles.sizeInfoText,
+                          fontSize: AppStyles.sizeBodyText,
                         ),
                       ),
               ),
@@ -289,7 +281,7 @@ class _LineCard extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppStyles.sizeItemTitle,
+                        fontSize: AppStyles.sizeMainTitle,
                         color: AppColors.blackTextColor,
                       ),
                     ),

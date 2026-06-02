@@ -74,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen>
                 '倉庫管理システム',
                 style: TextStyle(
                   fontFamily: AppStyles.font,
-                  fontSize: AppStyles.sizeInfoText,
+                  fontSize: AppStyles.sizeBodyText,
                   color: AppColors.white,
                 ),
               ),

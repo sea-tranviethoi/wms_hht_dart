@@ -80,7 +80,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
           hintStyle: const TextStyle(
             fontFamily: AppStyles.font,
             color: AppColors.grayTextColor,
-            fontSize: AppStyles.sizeInfoText,
+            fontSize: AppStyles.sizeSubText,
           ),
           prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
           prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),

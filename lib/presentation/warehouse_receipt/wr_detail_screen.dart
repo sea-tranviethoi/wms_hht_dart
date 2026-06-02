@@ -322,7 +322,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                           Text(
                             '入荷番号:',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: AppStyles.sizeMainTitle,
                               fontFamily: AppStyles.font,
                               color: AppColors.black,
                             ),
@@ -331,7 +331,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                           Text(
                             widget.receiptNo,
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: AppStyles.sizeMainTitle,
                               fontFamily: AppStyles.font,
                               fontWeight: FontWeight.bold,
                               color: AppColors.black,
@@ -341,7 +341,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
                           Text(
                             '${_currentIndex + 1} / ${_lines.length}',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: AppStyles.sizeMainTitle,
                               fontFamily: AppStyles.font,
                               color: AppColors.black,
                             ),
@@ -610,7 +610,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
         Text(
           '商品',
           style: TextStyle(
-              fontSize: 16, fontFamily: AppStyles.font, color: AppColors.black),
+              fontSize: AppStyles.sizeMainTitle, fontFamily: AppStyles.font, color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(
@@ -667,7 +667,7 @@ class _WRDetailsScreenState extends State<WRDetailsScreen> {
         Text(
           '状態',
           style: TextStyle(
-              fontSize: 16, fontFamily: AppStyles.font, color: AppColors.black),
+              fontSize: AppStyles.sizeMainTitle, fontFamily: AppStyles.font, color: AppColors.black),
         ),
         const SizedBox(height: 4),
         Container(
