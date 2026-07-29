@@ -11,6 +11,9 @@ class AppConstants {
   /// Default host — can be overridden via SharedPreferences if needed
   static const String defaultHost = 'http://133.167.47.242:9500';
 
+  /// OTA server — mock server on PC for update testing
+  static const String otaHost     = 'http://192.168.2.2:9500';
+
   // ─── API Timeout ──────────────────────────────────────────────
   static const Duration apiTimeout        = Duration(seconds: 30);
   static const Duration connectTimeout    = Duration(seconds: 30);

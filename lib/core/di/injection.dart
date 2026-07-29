@@ -13,6 +13,7 @@ import '../network/network_info.dart';
 import '../storage/cache_storage.dart';
 import '../storage/secure_storage.dart';
 import '../update/app_updater.dart';
+import '../../presentation/blocs/update/update_cubit.dart';
 import '../../data/datasources/remote/auth_remote_datasource.dart';
 import '../../data/datasources/remote/master_remote_datasource.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
@@ -87,7 +88,8 @@ Future<void> initDependencies() async {
   }
 
   // ─── Core: Update ─────────────────────────────────────────────
-  sl.registerSingleton<AppUpdater>(AppUpdater(sl<DioClient>()));
+  sl.registerSingleton<AppUpdater>(AppUpdater());
+  sl.registerFactory<UpdateCubit>(() => UpdateCubit(sl<AppUpdater>()));
 
   // ─── Data: Remote DataSources ─────────────────────────────────
   sl.registerSingleton<AuthRemoteDataSource>(

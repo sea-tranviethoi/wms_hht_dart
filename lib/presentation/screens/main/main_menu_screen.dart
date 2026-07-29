@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/key_codes.dart';
 import '../../../core/hardware/keyboard_event_bus.dart';
 import '../../blocs/auth/auth_bloc.dart';
@@ -25,6 +25,7 @@ class MainMenuScreen extends StatefulWidget {
 
 class _MainMenuScreenState extends State<MainMenuScreen> {
   late final VoidCallback _unsubscribeHardwareKey;
+  String _appVersion = '';
 
   // ─── Menu Items Definition ────────────────────────────────────
 
@@ -79,6 +80,12 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     // Subscribe to hardware key events from Keyence
     _unsubscribeHardwareKey =
         KeyboardEventBus.instance.addListener(_handleHardwareKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadVersion());
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) setState(() => _appVersion = info.version);
   }
 
   @override
@@ -197,7 +204,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             padding: const EdgeInsets.only(right: 12),
             child: Center(
               child: Text(
-                'v${AppConstants.appVersion}',
+                _appVersion.isEmpty ? '' : 'v$_appVersion',
                 style: TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.lighter,

@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'routes/route_names.dart';
+
 import 'core/di/injection.dart';
 import 'core/network/network_info.dart';
 import 'core/storage/secure_storage.dart';
@@ -14,6 +16,8 @@ import 'data/repositories/master_repository.dart';
 import 'presentation/blocs/auth/auth_bloc.dart';
 import 'presentation/blocs/master/master_bloc.dart';
 import 'presentation/blocs/picking/picking_bloc.dart';
+import 'presentation/blocs/update/update_cubit.dart';
+import 'presentation/widgets/update_dialog.dart';
 import 'routes/app_router.dart';
 
 void main() async {
@@ -40,6 +44,45 @@ void main() async {
   });
 }
 
+/// Shows the update dialog, but only once we've navigated away from the
+/// splash screen. If the update check finishes while splash is still up
+/// (e.g. before auth resolves), showing the dialog now would be torn down
+/// by the splash → destination navigation. So we retry each frame until the
+/// current route is no longer the splash.
+void _showUpdateWhenOffSplash([int attempt = 0]) {
+  if (attempt == 0) {
+    // ignore: avoid_print
+    print('🟢 [Update] listener fired → trying to show dialog');
+  }
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Use the root navigator's context (below the router) — it can both
+    // read the UpdateCubit and provide a Navigator for showDialog.
+    final navContext = rootNavigatorKey.currentContext;
+    if (navContext == null) {
+      if (attempt < 180) _showUpdateWhenOffSplash(attempt + 1);
+      return;
+    }
+
+    final location =
+        appRouter.routerDelegate.currentConfiguration.uri.path;
+
+    if (location == RouteNames.splash) {
+      // Still on splash — give up after ~3s to avoid an endless loop.
+      if (attempt < 180) {
+        _showUpdateWhenOffSplash(attempt + 1);
+      } else {
+        // ignore: avoid_print
+        print('🔴 [Update] gave up — still on splash after 180 frames');
+      }
+      return;
+    }
+
+    // ignore: avoid_print
+    print('🟢 [Update] showing dialog (route=$location)');
+    UpdateDialog.show(navContext);
+  });
+}
+
 class FbtHhtApp extends StatelessWidget {
   const FbtHhtApp({super.key});
 
@@ -55,6 +98,9 @@ class FbtHhtApp extends StatelessWidget {
       splitScreenMode: false,
       builder: (_, __) => MultiBlocProvider(
         providers: [
+          BlocProvider<UpdateCubit>(
+            create: (_) => sl<UpdateCubit>(),
+          ),
           BlocProvider<AuthBloc>(
             create: (_) => AuthBloc(
               authRepository: sl<AuthRepository>(),
@@ -86,7 +132,11 @@ class FbtHhtApp extends StatelessWidget {
                   maxScaleFactor: 1.20,
                 ),
               ),
-              child: child!,
+              child: BlocListener<UpdateCubit, UpdateState>(
+                listenWhen: (_, curr) => curr is UpdateAvailable,
+                listener: (context, _) => _showUpdateWhenOffSplash(),
+                child: child!,
+              ),
             );
           },
 

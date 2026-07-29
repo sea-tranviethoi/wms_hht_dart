@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_styles.dart';
@@ -26,6 +27,15 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   String? _errorMessage;
+  String _appVersion = '';
+
+  @override
+  void initState() {
+    super.initState();
+    PackageInfo.fromPlatform().then((info) {
+      if (mounted) setState(() => _appVersion = info.version);
+    });
+  }
 
   @override
   void dispose() {
@@ -68,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // before navigating, to prevent the router redirect sending back to login.
         await authBloc.stream.firstWhere((s) => s is AuthAuthenticated);
         if (!mounted) return;
-        context.go(RouteNames.tenantSelection);
+        context.go(RouteNames.mainMenu);
       } else {
         setState(() => _errorMessage =
             'ユーザー名またはパスワードが正しくありません。\n入力内容を確認し再度ログインしてください。');
@@ -244,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Version info
               const SizedBox(height: 24),
               Text(
-                'V1.10.2 — Development',
+                _appVersion.isEmpty ? '' : 'v$_appVersion',
                 style: TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.lighter,

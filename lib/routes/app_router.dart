@@ -33,7 +33,12 @@ import '../presentation/bin_audit/bin_audit_detail_screen.dart';
 import 'route_names.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+/// Root navigator key — lets code outside the route subtree (e.g. the global
+/// update listener in main.dart) obtain a Navigator context for dialogs.
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final appRouter = GoRouter(
+  navigatorKey: rootNavigatorKey,
   initialLocation: RouteNames.splash,
   redirect: (context, state) {
     final authState = context.read<AuthBloc>().state;
