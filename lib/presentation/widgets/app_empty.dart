@@ -53,7 +53,7 @@ class AppEmpty extends StatelessWidget {
                 style: const TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.darker,
-                  fontSize: AppStyles.sizeCard,
+                  fontSize: AppStyles.sizeMainTitle,
                   fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
@@ -66,7 +66,7 @@ class AppEmpty extends StatelessWidget {
                 style: const TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.grayTextColor,
-                  fontSize: AppStyles.sizeCaption,
+                  fontSize: AppStyles.sizeSubText,
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,

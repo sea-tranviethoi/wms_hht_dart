@@ -51,7 +51,7 @@ class ModuleListTile extends StatelessWidget {
                           title,
                           style: const TextStyle(
                             fontFamily: AppStyles.font,
-                            fontSize: AppStyles.sizeListTitle,
+                            fontSize: AppStyles.sizeBodyText,
                             fontWeight: FontWeight.w700,
                             color: AppColors.blackTextColor,
                           ),
@@ -64,7 +64,7 @@ class ModuleListTile extends StatelessWidget {
                         statusLabel,
                         style: TextStyle(
                           fontFamily: AppStyles.font,
-                          fontSize: AppStyles.sizeSub,
+                          fontSize: AppStyles.sizeSubText,
                           color: statusColor,
                           fontWeight: FontWeight.w500,
                         ),
@@ -77,7 +77,7 @@ class ModuleListTile extends StatelessWidget {
                       subtitle!,
                       style: const TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeInfo,
+                        fontSize: AppStyles.sizeBodyText,
                         color: AppColors.grayTextColor,
                       ),
                       maxLines: 1,
@@ -97,7 +97,7 @@ class ModuleListTile extends StatelessWidget {
                     trailingText!,
                     style: TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeInput,
+                      fontSize: AppStyles.sizeBodyText,
                       fontWeight: FontWeight.w700,
                       color: statusColor,
                     ),

@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/key_codes.dart';
 import '../../../core/hardware/keyboard_event_bus.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
 
-/// Port từ screens/MainMenu.js
+/// Ported from screens/MainMenu.js
 ///
-/// 7 tile màu sắc tương ứng với 7 module:
+/// 7 color-coded tiles for the 7 modules:
 ///   入荷 / 棚上げ / ピッキング / 事前セット / 棚移動 / 棚卸 / ログアウト
 ///
-/// Hỗ trợ hardware keys (Keyence side buttons → keyCode 8–14)
+/// Supports hardware keys (Keyence side buttons → keyCode 8–14)
 class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
 
@@ -25,6 +25,7 @@ class MainMenuScreen extends StatefulWidget {
 
 class _MainMenuScreenState extends State<MainMenuScreen> {
   late final VoidCallback _unsubscribeHardwareKey;
+  String _appVersion = '';
 
   // ─── Menu Items Definition ────────────────────────────────────
 
@@ -76,9 +77,15 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   @override
   void initState() {
     super.initState();
-    // Subscribe hardware key từ Keyence
+    // Subscribe to hardware key events from Keyence
     _unsubscribeHardwareKey =
         KeyboardEventBus.instance.addListener(_handleHardwareKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadVersion());
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) setState(() => _appVersion = info.version);
   }
 
   @override
@@ -113,7 +120,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       return;
     }
 
-    // Modules cần chọn tenant trước
+    // Modules that require tenant selection first
     if (item.keyCode == HardwareKeyCodes.warehouseReceipt) {
       context.push(
         '${RouteNames.tenantSelection}?funcNumber=1',
@@ -127,7 +134,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       return;
     }
 
-    // Modules không cần chọn tenant → vào thẳng list
+    // Modules that don't need tenant selection → go straight to their list
     final routeMap = {
       HardwareKeyCodes.putaway     : RouteNames.putawayList,
       HardwareKeyCodes.bundle      : RouteNames.bundleList,
@@ -147,21 +154,21 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       builder: (dialogCtx) => AlertDialog(
         title: const Text(
           'ログアウト',
-          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle),
+          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle),
         ),
         content: const Text(
           'ログアウトしますか？',
-          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
+          style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('いいえ', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+            child: const Text('いいえ', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(dialogCtx).pop();
-              // Clear hardware key bus trước khi logout
+              // Clear the hardware key bus before logout
               KeyboardEventBus.instance.clear();
               context.read<AuthBloc>().add(LoggedOut());
               context.go(RouteNames.login);
@@ -170,7 +177,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
               'はい',
               style: TextStyle(
                 fontFamily: AppStyles.font,
-                fontSize: AppStyles.sizeDialogAction,
+                fontSize: AppStyles.sizeBodyText,
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
@@ -189,7 +196,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       backgroundColor: AppColors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xFF2D4A38), // settingsColor5 (BinMove) tối hơn
+        backgroundColor: const Color(0xFF2D4A38), // settingsColor5 (BinMove) darker shade
         title: const Text('メニュー', style: AppStyles.appBarTitle),
         actions: [
           // Version badge
@@ -197,11 +204,11 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             padding: const EdgeInsets.only(right: 12),
             child: Center(
               child: Text(
-                'v${AppConstants.appVersion}',
+                _appVersion.isEmpty ? '' : 'v$_appVersion',
                 style: TextStyle(
                   fontFamily: AppStyles.font,
                   color: AppColors.lighter,
-                  fontSize: AppStyles.sizeCaption,
+                  fontSize: AppStyles.sizeSubText,
                 ),
               ),
             ),
@@ -210,12 +217,12 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       ),
       body: Column(
         children: [
-          // 6 modules — 2-col grid
+          // 6 module tiles — 2-column grid
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
               child: GridView.builder(
-                itemCount: _items.length - 1, // exclude logout
+                itemCount: _items.length - 1, // excludes the logout tile
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 8,
@@ -272,7 +279,7 @@ class _LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xFF2D4A38), // settingsColor5 (BinMove) tối hơn
+      color: const Color(0xFF2D4A38), // settingsColor5 (BinMove) darker shade
       borderRadius: BorderRadius.circular(12),
       elevation: 1,
       child: InkWell(
@@ -286,15 +293,7 @@ class _LogoutButton extends StatelessWidget {
             children: [
               Icon(Icons.logout, color: AppColors.white, size: AppStyles.sizeBottomButtonIcon),
               SizedBox(width: 10),
-              Text(
-                'ログアウト',
-                style: TextStyle(
-                  fontFamily: AppStyles.font,
-                  color: AppColors.white,
-                  fontSize: AppStyles.sizeButton,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              Text('ログアウト', style: AppStyles.button),
             ],
           ),
         ),
@@ -336,7 +335,7 @@ class _MenuTile extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: AppStyles.font,
                         color: AppColors.onColor(item.color),
-                        fontSize: AppStyles.sizeMenuLabel,
+                        fontSize: AppStyles.sizeMainTitle,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -345,7 +344,7 @@ class _MenuTile extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: AppStyles.font,
                         color: AppColors.onColor(item.color),
-                        fontSize: AppStyles.sizeMenuSubtitle,
+                        fontSize: AppStyles.sizeBodyText,
                       ),
                     ),
                   ],

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import '../../../core/network/dio_client.dart';
 
-/// Port từ services/token.js
+/// Ported from services/token.js
 /// fc_GetToken, fc_GetTokenByQR, fc_RefreshToken
 class AuthRemoteDataSource {
   final DioClient _dioClient;
@@ -10,7 +10,7 @@ class AuthRemoteDataSource {
 
   Dio get _dio => _dioClient.dio;
 
-  // ─── Login thường (username/password) ────────────────────────
+  // ─── Standard login (username/password) ──────────────────────
   Future<Map<String, dynamic>?> login(String email, String password) async {
     try {
       final response = await _dio.post(
@@ -25,7 +25,7 @@ class AuthRemoteDataSource {
     }
   }
 
-  // ─── Login bằng QR (sau khi decrypt) ─────────────────────────
+  // ─── QR login (after decryption) ─────────────────────────────
   Future<Map<String, dynamic>?> loginByQR(String email, String password) async {
     try {
       final response = await _dio.post(
@@ -58,7 +58,7 @@ class AuthRemoteDataSource {
     }
   }
 
-  // ─── Lấy danh sách devices (để check version OTA) ────────────
+  // ─── Fetch device list (for OTA version check) ───────────────
   Future<List<dynamic>> getDevices() async {
     try {
       final response = await _dio.get('/api/Devices');

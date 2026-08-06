@@ -13,6 +13,7 @@ import '../network/network_info.dart';
 import '../storage/cache_storage.dart';
 import '../storage/secure_storage.dart';
 import '../update/app_updater.dart';
+import '../../presentation/blocs/update/update_cubit.dart';
 import '../../data/datasources/remote/auth_remote_datasource.dart';
 import '../../data/datasources/remote/master_remote_datasource.dart';
 import '../../data/datasources/remote/bundle_remote_datasource.dart';
@@ -26,17 +27,17 @@ import '../../data/repositories/bin_audit_repository.dart';
 import '../../data/repositories/bin_movement_repository.dart';
 import '../../data/repositories/master_repository.dart';
 
-/// Service Locator toàn app — thay thế Context API của React Native
+/// App-wide Service Locator — replaces React Native's Context API
 ///
-/// Cách dùng:
+/// Usage:
 /// ```dart
-/// // Lấy instance
+/// // Retrieve an instance
 /// final dioClient = sl<DioClient>();
 /// final soundManager = sl<SoundManager>();
 /// ```
 final GetIt sl = GetIt.instance;
 
-/// Khởi tạo tất cả dependencies — gọi 1 lần trong main()
+/// Initialize all dependencies — called once in main()
 Future<void> initDependencies() async {
   // ─── External / Platform ──────────────────────────────────────
   final prefs = await SharedPreferences.getInstance();
@@ -61,22 +62,22 @@ Future<void> initDependencies() async {
     NetworkInfoImpl(connectivity: sl<Connectivity>()),
   );
 
-  // Hostname có thể đã được save từ lần trước
+  // Hostname may have been saved from a previous session
   final savedHost = await sl<SecureStorage>().getHostname();
   sl.registerSingleton<DioClient>(
     DioClient(sl<SecureStorage>(), baseUrl: savedHost),
   );
 
   // ─── Core: Security ───────────────────────────────────────────
-  // CryptoService chỉ có static methods — không cần register vào sl
-  // Gọi trực tiếp: CryptoService.decryptQRCode(...)
+  // CryptoService has only static methods — no need to register in sl
+  // Call directly: CryptoService.decryptQRCode(...)
 
   // ─── Core: Hardware (Android only) ───────────────────────────
   sl.registerSingleton<KeyboardEventBus>(KeyboardEventBus.instance);
   sl.registerSingleton<KeyenceScanner>(KeyenceScanner.instance);
   if (!kIsWeb) {
     await sl<KeyenceScanner>().init();
-    // Native keyboard events (Keyence side buttons) → KeyboardEventBus
+    // Native keyboard events (Keyence side buttons) → forwarded to KeyboardEventBus
     NativeKeyboardChannel.instance.startListening();
   }
 
@@ -87,7 +88,8 @@ Future<void> initDependencies() async {
   }
 
   // ─── Core: Update ─────────────────────────────────────────────
-  sl.registerSingleton<AppUpdater>(AppUpdater(sl<DioClient>()));
+  sl.registerSingleton<AppUpdater>(AppUpdater());
+  sl.registerFactory<UpdateCubit>(() => UpdateCubit(sl<AppUpdater>()));
 
   // ─── Data: Remote DataSources ─────────────────────────────────
   sl.registerSingleton<AuthRemoteDataSource>(

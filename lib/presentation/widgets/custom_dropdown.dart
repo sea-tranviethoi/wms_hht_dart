@@ -51,7 +51,7 @@ class CustomDropdown<T> extends StatelessWidget {
               Text(
                 label!,
                 style: TextStyle(
-                  fontSize: AppStyles.sizeInfo,
+                  fontSize: AppStyles.sizeBodyText,
                   color: AppColors.blackText,
                   fontWeight: FontWeight.w500,
                 ),
@@ -119,7 +119,7 @@ class CustomDropdown<T> extends StatelessWidget {
                                 Text(
                                   item.subtitle!,
                                   style: TextStyle(
-                                    fontSize: AppStyles.sizeCaption,
+                                    fontSize: AppStyles.sizeSubText,
                                     color: AppColors.textPlaceholder,
                                   ),
                                 ),

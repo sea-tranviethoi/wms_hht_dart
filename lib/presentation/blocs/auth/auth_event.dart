@@ -1,18 +1,18 @@
 part of 'auth_bloc.dart';
 
-/// Port từ loginReducer actions trong App.js
+/// Ported from loginReducer actions in App.js
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
   @override
   List<Object?> get props => [];
 }
 
-/// Kiểm tra token cũ khi app khởi động (= RETRIEVE_TOKEN)
+/// Checks the stored token at app startup (= RETRIEVE_TOKEN)
 class AppStarted extends AuthEvent {
   const AppStarted();
 }
 
-/// Đăng nhập thành công (= LOGIN)
+/// Successful login (= LOGIN)
 class LoggedIn extends AuthEvent {
   final UserInfo user;
   const LoggedIn(this.user);
@@ -20,7 +20,7 @@ class LoggedIn extends AuthEvent {
   List<Object?> get props => [user];
 }
 
-/// Đăng xuất (= LOGOUT)
+/// Logout (= LOGOUT)
 class LoggedOut extends AuthEvent {
   const LoggedOut();
 }

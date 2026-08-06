@@ -1,11 +1,11 @@
 import '../datasources/remote/bin_audit_remote_datasource.dart';
 import '../models/stocktake/invent_stocktake_recording.dart';
 
-/// Repository cho 棚卸 (Bin Audit / Stocktake)
-/// Wrapper mỏng quanh [BinAuditRemoteDataSource] — BLoC gọi qua đây.
+/// Repository for 棚卸 (Bin Audit / Stocktake)
+/// Thin wrapper around [BinAuditRemoteDataSource] — the BLoC calls this.
 ///
-/// Note: stocktake và bin_audit dùng cùng endpoint /api/InventStockTakeRecording,
-/// nên chỉ cần repo này.
+/// Note: stocktake and bin_audit share the same endpoint /api/InventStockTakeRecording,
+/// so only this repository is needed.
 class BinAuditRepository {
   final BinAuditRemoteDataSource _remote;
 

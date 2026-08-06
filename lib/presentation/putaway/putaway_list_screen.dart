@@ -63,16 +63,16 @@ class _PutawayListViewState extends State<_PutawayListView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
+          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.productCode} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor2),
-              child: const Text('閉じる', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+              child: const Text('閉じる', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
             ),
           ],
         ),
@@ -94,12 +94,12 @@ class _PutawayListViewState extends State<_PutawayListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor2,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: _backToMenu,
         ),
         title: const Text('棚上げ一覧', style: AppStyles.appBarTitle),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeAppBarIcon), onPressed: _loadData),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeTopBarIcon), onPressed: _loadData),
         ],
       ),
       body: Column(

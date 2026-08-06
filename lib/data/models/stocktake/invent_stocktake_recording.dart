@@ -185,5 +185,5 @@ class InventStockTakeRecordingLine {
   }
 }
 
-// Đây là file model, không chứa logic gọi API hay provider.
-// Nếu bạn muốn thêm các hàm tiện ích chuyển đổi hoặc validate, hãy nói rõ yêu cầu cụ thể.
+// This is a model file — it contains no API call logic or provider logic.
+// If you want to add conversion or validation helpers, please specify the requirements.

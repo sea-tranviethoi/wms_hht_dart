@@ -41,11 +41,11 @@ class AppColors {
   static Color onColor(Color background) => white;
 
   // ─── Module colors — Dusty Muted Pastel ──────────────────────
-  static const Color settingsColor1 = Color(0xFF3D6E96); // Lam  Steel Blue  — 入荷
-  static const Color settingsColor2 = Color(0xFF6B4E8A); // Tím  Dusty Violet— 棚上げ
-  static const Color settingsColor3 = Color(0xFFB86840); // Cam  Burnt Orange — ピッキング
-  static const Color settingsColor4 = Color(0xFFA85670); // Hồng Dusty Rose  — 事前セット
-  static const Color settingsColor5 = Color(0xFF4E7A5E); // Lục  Sage Green  — 棚移動
-  static const Color settingsColor6 = Color(0xFF8A8030); // Vàng Olive Gold  — 棚卸
-  static const Color settingsColor7 = Color(0xFF8A4040); // Đỏ   Dusty Red   — ログアウト
+  static const Color settingsColor1 = Color(0xFF3D6E96); // Blue  Steel Blue  — 入荷
+  static const Color settingsColor2 = Color(0xFF6B4E8A); // Purple Dusty Violet— 棚上げ
+  static const Color settingsColor3 = Color(0xFFB86840); // Orange Burnt Orange — ピッキング
+  static const Color settingsColor4 = Color(0xFFA85670); // Pink  Dusty Rose  — 事前セット
+  static const Color settingsColor5 = Color(0xFF4E7A5E); // Green Sage Green  — 棚移動
+  static const Color settingsColor6 = Color(0xFF8A8030); // Yellow Olive Gold  — 棚卸
+  static const Color settingsColor7 = Color(0xFF8A4040); // Red   Dusty Red   — ログアウト
 }

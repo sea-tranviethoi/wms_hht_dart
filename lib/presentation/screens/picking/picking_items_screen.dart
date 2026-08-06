@@ -13,9 +13,9 @@ import '../../widgets/app_error.dart';
 import '../../widgets/app_loading.dart';
 import '../../widgets/module_tinted_button.dart';
 
-/// Port từ screens/Picking/PickingItems.js
+/// Ported from screens/Picking/PickingItems.js
 ///
-/// Hiển thị danh sách lines của 1 picking order.
+/// Displays the list of lines for one picking order.
 class PickingItemsScreen extends StatelessWidget {
   final String pickNo;
   final int tenantId;
@@ -65,7 +65,7 @@ class _PickingItemsView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => _backToList(context),
         ),
         title: Text('ピッキング: $pickNo', style: AppStyles.appBarTitle),
@@ -98,7 +98,7 @@ class _PickingItemsView extends StatelessWidget {
 
     return Column(
       children: [
-        // ── 件数 header strip — Orange 8% tint ──────────────────
+        // ── Count header strip — Orange 8% tint ─────────────────
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -111,7 +111,7 @@ class _PickingItemsView extends StatelessWidget {
             style: const TextStyle(
               fontFamily: AppStyles.font,
               color: AppColors.grayTextColor,
-              fontSize: AppStyles.sizeSub,
+              fontSize: AppStyles.sizeBodyText,
             ),
           ),
         ),
@@ -140,7 +140,7 @@ class _PickingItemsView extends StatelessWidget {
           ),
         ),
 
-        // ── Bottom bar: 戻る + 開始 ───────────────────────────────
+        // ── Bottom bar: Back + Start ──────────────────────────────
         SafeArea(
           top: false,
           child: Container(
@@ -169,15 +169,7 @@ class _PickingItemsView extends StatelessWidget {
                             Icon(Icons.arrow_back,
                                 color: AppColors.white, size: AppStyles.sizeBottomButtonIcon),
                             SizedBox(width: 8),
-                            Text(
-                              '戻る',
-                              style: TextStyle(
-                                fontFamily: AppStyles.font,
-                                color: AppColors.white,
-                                fontSize: AppStyles.sizeBottomButton,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+                            Text('戻る', style: AppStyles.button),
                           ],
                         ),
                       ),
@@ -273,7 +265,7 @@ class _LineCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: AppStyles.sizeInfo,
+                          fontSize: AppStyles.sizeBodyText,
                         ),
                       ),
               ),
@@ -289,7 +281,7 @@ class _LineCard extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppStyles.sizeCard,
+                        fontSize: AppStyles.sizeMainTitle,
                         color: AppColors.blackTextColor,
                       ),
                     ),
@@ -301,7 +293,7 @@ class _LineCard extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: AppStyles.font,
                           color: AppColors.grayTextColor,
-                          fontSize: AppStyles.sizeCaption,
+                          fontSize: AppStyles.sizeSubText,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -318,7 +310,7 @@ class _LineCard extends StatelessWidget {
                             line.bin!,
                             style: const TextStyle(
                               fontFamily: AppStyles.font,
-                              fontSize: AppStyles.sizeCaption,
+                              fontSize: AppStyles.sizeSubText,
                               color: AppColors.grayTextColor,
                             ),
                           ),
@@ -331,7 +323,7 @@ class _LineCard extends StatelessWidget {
                           '${actual.toStringAsFixed(0)} / ${line.pickQty.toStringAsFixed(0)}',
                           style: TextStyle(
                             fontFamily: AppStyles.font,
-                            fontSize: AppStyles.sizeCaption,
+                            fontSize: AppStyles.sizeSubText,
                             color: isDone
                                 ? AppColors.wageningenGreen
                                 : AppColors.settingsColor3,

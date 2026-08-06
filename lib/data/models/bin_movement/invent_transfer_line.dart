@@ -1,6 +1,6 @@
 import '../../../core/utils/json_utils.dart';
 
-/// Dòng chi tiết của lệnh di chuyển bin
+/// Detail line of a bin movement order
 class InventTransferLine {
   final String? id;
   final String transferNo;
@@ -8,8 +8,8 @@ class InventTransferLine {
   final String? productName;
   final int? unitId;
   final String? unitName;
-  final double journalQty; // số lượng kế hoạch
-  final double? transQty;  // số lượng thực tế (scanned)
+  final double journalQty; // planned quantity
+  final double? transQty;  // actual quantity (scanned)
   final String? fromBin;
   final String? toBin;
   final String? lotNo;

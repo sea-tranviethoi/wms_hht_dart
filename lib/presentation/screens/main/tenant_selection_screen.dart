@@ -9,10 +9,10 @@ import '../../../data/models/tenant.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
 
-/// Port từ screens/TenantSelection.js
+/// Ported from screens/TenantSelection.js
 ///
-/// Hiển thị danh sách tenant để chọn trước khi vào module.
-/// funcNumber xác định module sẽ navigate sau khi chọn:
+/// Displays the tenant list for selection before entering a module.
+/// funcNumber determines which module to navigate to after selection:
 ///   "1" → Warehouse Receipt list
 ///   "3" → Picking list
 ///   (others) → Warehouse Receipt list (default)
@@ -113,7 +113,7 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => context.go(RouteNames.mainMenu),
         ),
         title: Text(widget.title, style: AppStyles.appBarTitle),
@@ -137,7 +137,7 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
         controller: _searchCtrl,
         style: const TextStyle(
           fontFamily: AppStyles.font,
-          fontSize: AppStyles.sizeInput,
+          fontSize: AppStyles.sizeBodyText,
           color: AppColors.blackTextColor,
         ),
         decoration: InputDecoration(
@@ -145,13 +145,13 @@ class _TenantSelectionViewState extends State<_TenantSelectionView> {
           hintStyle: const TextStyle(
             fontFamily: AppStyles.font,
             color: AppColors.gray,
-            fontSize: AppStyles.sizeHint,
+            fontSize: AppStyles.sizeBodyText,
           ),
           prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
           prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
           suffixIcon: _searchCtrl.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear, color: AppColors.gray, size: AppStyles.sizeSearchClearIcon),
+                  icon: const Icon(Icons.clear, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
                   onPressed: () { _searchCtrl.clear(); },
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(minWidth: 36, minHeight: 0),
@@ -271,18 +271,20 @@ class _TenantTile extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.all(18),
+          child: SizedBox(
+            height: AppStyles.heightTenantTile,
+            child: Align(
             alignment: Alignment.center,
             child: Text(
               '${index + 1}. ${tenant.tenantFullName}',
               style: TextStyle(
                 fontFamily: AppStyles.font,
                 color: AppColors.onColor(color),
-                fontSize: AppStyles.sizeAppBar,
+                fontSize: AppStyles.sizeMainTitle,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
+            ),
             ),
           ),
         ),

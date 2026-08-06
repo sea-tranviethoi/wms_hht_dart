@@ -119,12 +119,12 @@ class _WRListViewState extends State<_WRListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: _backToMenu,
         ),
         title: Text('入荷一覧${widget.company.isNotEmpty ? " (${widget.company})" : ""}', style: AppStyles.appBarTitle),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeAppBarIcon), onPressed: _loadData),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeTopBarIcon), onPressed: _loadData),
         ],
       ),
       body: BlocListener<WRBloc, WRState>(
@@ -236,7 +236,7 @@ class _WRListViewState extends State<_WRListView> {
                       children: [
                         Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeBottomButtonIcon),
                         SizedBox(width: 8),
-                        Text('戻る', style: TextStyle(fontFamily: AppStyles.font, color: AppColors.white, fontSize: AppStyles.sizeBottomButton, fontWeight: FontWeight.w700)),
+                        Text('戻る', style: AppStyles.button),
                       ],
                     ),
                   ),

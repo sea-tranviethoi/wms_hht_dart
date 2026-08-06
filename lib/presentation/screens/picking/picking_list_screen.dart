@@ -14,13 +14,13 @@ import '../../widgets/app_search_bar.dart';
 import '../../widgets/back_to_menu_button.dart';
 import '../../widgets/module_list_tile.dart';
 
-/// Port từ screens/Picking/PickingList.js — minimal modern layout.
+/// Ported from screens/Picking/PickingList.js — minimal modern layout.
 ///
-/// Hiển thị danh sách picking orders của tenant.
+/// Displays the list of picking orders for the tenant.
 /// scanStatus:
-///   0 = 未開始
-///   1 = 進行中 (đang scan bởi thiết bị này)
-///   2 = ロック (đang xử lý bởi thiết bị khác)
+///   0 = 未開始 (not started)
+///   1 = 進行中 (being scanned by this device)
+///   2 = ロック (being processed by another device)
 class PickingListScreen extends StatelessWidget {
   final int tenantId;
   final String company;
@@ -71,14 +71,14 @@ class _PickingListViewState extends State<_PickingListView> {
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: _backToTenantSelection,
         ),
         title: Text('ピッキング一覧${widget.company.isNotEmpty ? ' (${widget.company})' : ''}', style: AppStyles.appBarTitle),
         actions: [
           BlocBuilder<PickingBloc, PickingState>(
             builder: (context, state) => IconButton(
-              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+              icon: const Icon(Icons.refresh, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
               onPressed: state is PickingLoading
                   ? null
                   : () {
@@ -177,16 +177,16 @@ class _PickingListViewState extends State<_PickingListView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
+          title: const Text('通知', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle)),
           content: Text(
             'ユーザー「$other」は別デバイスで ${row.pickNo} を対応してます。ご確認ください。',
-            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent),
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               style: TextButton.styleFrom(foregroundColor: AppColors.settingsColor3),
-              child: const Text('閉じる', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+              child: const Text('閉じる', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
             ),
           ],
         ),

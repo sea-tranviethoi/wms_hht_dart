@@ -72,7 +72,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
         onSubmitted: (_) => widget.onSubmitted?.call(),
         style: const TextStyle(
           fontFamily: AppStyles.font,
-          fontSize: AppStyles.sizeInput,
+          fontSize: AppStyles.sizeBodyText,
           color: AppColors.blackTextColor,
         ),
         decoration: InputDecoration(
@@ -80,13 +80,13 @@ class _AppSearchBarState extends State<AppSearchBar> {
           hintStyle: const TextStyle(
             fontFamily: AppStyles.font,
             color: AppColors.grayTextColor,
-            fontSize: AppStyles.sizeHint,
+            fontSize: AppStyles.sizeSubText,
           ),
           prefixIcon: const Icon(Icons.search, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
           prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
           suffixIcon: _ctrl.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.close, color: AppColors.gray, size: AppStyles.sizeSearchClearIcon),
+                  icon: const Icon(Icons.close, color: AppColors.gray, size: AppStyles.sizeSearchIcon),
                   onPressed: () => _ctrl.clear(),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(minWidth: 36, minHeight: 0),

@@ -25,7 +25,7 @@ class BinAuditRow {
   final String? location;
   final String? personInCharge;
   final DateTime? transactionDate;
-  /// '0' = pending (未処理), '1' = done (完了)
+  /// '0' = pending (未処理 / not processed), '1' = done (完了 / completed)
   final String? status;
 
   const BinAuditRow({

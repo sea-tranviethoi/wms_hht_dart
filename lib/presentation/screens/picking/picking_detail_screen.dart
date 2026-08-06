@@ -17,14 +17,14 @@ import '../../../data/models/picking/picking_line.dart';
 import '../../../routes/route_names.dart';
 import '../../widgets/top_notification_mixin.dart';
 
-/// Port từ screens/Picking/PickingDetail.js
+/// Ported from screens/Picking/PickingDetail.js
 ///
-/// Màn hình xử lý từng picking line:
-///   1. Scan bin (validate với expected bin)
-///   2. Scan QR code sản phẩm (validate productCode + tăng qty)
-///   3. Nhập actualQty thủ công nếu cần
-///   4. Next / Prev để chuyển line
-///   5. Hoàn thành → sync lên server
+/// Screen for processing each picking line:
+///   1. Scan bin (validate against the expected bin)
+///   2. Scan product QR code (validate productCode + increment qty)
+///   3. Enter actualQty manually if needed
+///   4. Next / Prev to navigate between lines
+///   5. Complete → sync to server
 class PickingDetailScreen extends StatefulWidget {
   final String pickNo;
   final PickingLine? pickingLine;
@@ -165,7 +165,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
     if (expected != null &&
         expected.isNotEmpty &&
         expected.toLowerCase() != binCode.toLowerCase()) {
-      // Bin không khớp → hỏi confirm
+      // Bin mismatch → ask for confirmation
       final ok = await _showConfirmDialog(
         'スキャンした棚番 [$binCode] がピッキングすべきの棚番 [$expected] と違います。続けますか？',
       );
@@ -209,7 +209,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
       return;
     }
 
-    // 数量 +1
+    // Quantity +1
     final current = double.tryParse(_actualQtyCtrl.text) ?? 0.0;
     final newQty = current + 1;
 
@@ -309,21 +309,21 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
     return showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogTitle)),
+        title: const Text('確認', style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle)),
         content: Text(message,
-            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogContent)),
+            style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('いいえ',
-                style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeDialogAction)),
+                style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('はい',
                 style: TextStyle(
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeDialogAction,
+                    fontSize: AppStyles.sizeBodyText,
                     color: AppColors.settingsColor3,
                     fontWeight: FontWeight.bold)),
           ),
@@ -370,7 +370,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
       appBar: AppBar(
         backgroundColor: AppColors.settingsColor3,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => context.pop(),
         ),
         title: Text('ピッキング: ${widget.pickNo}  ${_currentIndex + 1}/$total', style: AppStyles.appBarTitle),
@@ -396,7 +396,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                   Text('データ同期中...',
                       style: TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeBody,
+                        fontSize: AppStyles.sizeBodyText,
                       )),
                 ],
               ),
@@ -448,12 +448,12 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
             Text('進捗: $done / $total 件完了',
                 style: TextStyle(
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeSub,
+                    fontSize: AppStyles.sizeBodyText,
                     color: AppColors.grayTextColor)),
             Text('${(done / total * 100).toStringAsFixed(0)}%',
                 style: TextStyle(
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeSub,
+                    fontSize: AppStyles.sizeBodyText,
                     fontWeight: FontWeight.bold,
                     color: AppColors.settingsColor3)),
           ],
@@ -507,7 +507,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
               label,
               style: TextStyle(
                   fontFamily: AppStyles.font,
-                  fontSize: AppStyles.sizeSub,
+                  fontSize: AppStyles.sizeBodyText,
                   color: AppColors.grayTextColor),
             ),
           ),
@@ -516,7 +516,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
               value,
               style: TextStyle(
                 fontFamily: AppStyles.font,
-                fontSize: AppStyles.sizeInfo,
+                fontSize: AppStyles.sizeBodyText,
                 fontWeight: bold ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -564,7 +564,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                 Text('実数量',
                     style: TextStyle(
                         fontFamily: AppStyles.font,
-                        fontSize: AppStyles.sizeInfo,
+                        fontSize: AppStyles.sizeBodyText,
                         color: AppColors.blackTextColor)),
                 const SizedBox(width: 12),
                 Expanded(
@@ -575,7 +575,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeTitle,
+                      fontSize: AppStyles.sizeMainTitle,
                       fontWeight: FontWeight.bold,
                       color: AppColors.settingsColor3,
                     ),
@@ -610,19 +610,19 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                 child: OutlinedButton.icon(
                   onPressed: _goPrev,
                   icon: const Icon(Icons.arrow_back,
-                      size: AppStyles.sizePrimaryButtonIcon),
+                      size: AppStyles.sizeBottomButtonIcon),
                   label: const Text(
                     '前へ',
                     style: TextStyle(
                         fontFamily: AppStyles.font,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppStyles.sizePrimaryButton),
+                        fontSize: AppStyles.sizeMainTitle),
                   ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.settingsColor3,
                     side: const BorderSide(
                         color: AppColors.settingsColor3, width: 1.5),
-                    minimumSize: const Size.fromHeight(AppStyles.heightPrimaryButton),
+                    minimumSize: const Size.fromHeight(AppStyles.heightBottomButton),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
@@ -641,7 +641,7 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                   isLast
                       ? (allDone ? Icons.cloud_upload : Icons.check)
                       : Icons.arrow_forward,
-                  size: AppStyles.sizePrimaryButtonIcon,
+                  size: AppStyles.sizeBottomButtonIcon,
                 ),
                 label: Text(
                   isLast
@@ -650,14 +650,14 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                   style: const TextStyle(
                       fontFamily: AppStyles.font,
                       fontWeight: FontWeight.bold,
-                      fontSize: AppStyles.sizePrimaryButton),
+                      fontSize: AppStyles.sizeMainTitle),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isLast && allDone
                       ? AppColors.settingsColor5
                       : AppColors.settingsColor3,
                   foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(AppStyles.heightPrimaryButton),
+                  minimumSize: const Size.fromHeight(AppStyles.heightBottomButton),
                   elevation: 1,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -706,18 +706,18 @@ class _ScanField extends StatelessWidget {
                 focusNode: focusNode,
                 textInputAction: TextInputAction.done,
                 onSubmitted: onSubmitted,
-                style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeInfo),
+                style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
                 decoration: InputDecoration(
                   labelText: label,
                   labelStyle: TextStyle(
                       fontFamily: AppStyles.font,
-                      fontSize: AppStyles.sizeCaption,
+                      fontSize: AppStyles.sizeSubText,
                       color: AppColors.grayTextColor),
                   hintText: hintText,
                   hintStyle: TextStyle(
                       fontFamily: AppStyles.font,
                       color: AppColors.gray,
-                      fontSize: AppStyles.sizeCaption),
+                      fontSize: AppStyles.sizeSubText),
                   border: InputBorder.none,
                   suffixIcon: controller.text.isNotEmpty
                       ? IconButton(

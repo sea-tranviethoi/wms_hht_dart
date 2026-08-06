@@ -1,5 +1,5 @@
-/// Tất cả route names — port từ navigation/*.js
-/// Dùng constants thay vì hard-code string trong GoRouter
+/// All route name constants — ported from navigation/*.js
+/// Use constants instead of hard-coded strings in GoRouter
 class RouteNames {
   RouteNames._();
 
@@ -53,7 +53,7 @@ class RouteNames {
   static const String camera            = '/camera';
 
   // ─── Legacy (deprecated) ──────────────────────────────────────
-  // Dùng cho các screen cũ chưa migrate sang BLoC
+  // Used by old screens not yet migrated to BLoC
   @Deprecated('Use warehouseReceipt instead')
   static const String whReceiptSubMenu  = '/wh-receipt-sub-menu';
   @Deprecated('Use mainMenu tiles instead')

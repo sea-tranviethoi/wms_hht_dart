@@ -6,11 +6,11 @@ import '../../../data/models/putaway/putaway_line.dart';
 part 'putaway_event.dart';
 part 'putaway_state.dart';
 
-/// BLoC cho module Putaway — thay thế PutawayProvider
+/// BLoC for the Putaway module — replaces PutawayProvider
 class PutawayBloc extends Bloc<PutawayEvent, PutawayState> {
   final PutawayRemoteDataSource _remote;
 
-  // Cache toàn bộ rows để search client-side
+  // Cache all rows for client-side search
   List<PutawayRow> _allRows = [];
   String _hhtInfo = '';
 

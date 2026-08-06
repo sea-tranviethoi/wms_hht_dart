@@ -2,26 +2,26 @@ part of 'picking_bloc.dart';
 
 abstract class PickingEvent {}
 
-/// Load danh sách picking cho 1 tenant
+/// Load the picking list for one tenant
 class FetchPickingLists extends PickingEvent {
   final int tenantId;
-  final String hhtInfo; // tên thiết bị HHT (để check xem ai đang handle)
+  final String hhtInfo; // HHT device name (used to check who is currently handling it)
   FetchPickingLists({required this.tenantId, this.hhtInfo = ''});
 }
 
-/// Lọc danh sách theo keyword
+/// Filter the list by keyword
 class SearchPickingLists extends PickingEvent {
   final String keyword;
   SearchPickingLists(this.keyword);
 }
 
-/// Chọn 1 picking → load các lines
+/// Select one picking order → load its lines
 class SelectPickingList extends PickingEvent {
   final String pickNo;
   SelectPickingList(this.pickNo);
 }
 
-/// Submit staging data lên server + hoàn thành picking
+/// Submit staging data to the server and complete the picking
 class SyncPickingData extends PickingEvent {
   final String pickNo;
   final List<StagingPayload> stagingList;
@@ -36,7 +36,7 @@ class SyncPickingData extends PickingEvent {
   });
 }
 
-/// Reset state về initial (khi rời màn hình)
+/// Reset state to initial (when leaving the screen)
 class ResetPickingState extends PickingEvent {}
 
 // ─── Internal payload ─────────────────────────────────────────

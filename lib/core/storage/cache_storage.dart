@@ -1,8 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
 
-/// Lưu trữ settings đơn giản (language, location, v.v.)
-/// Master data (products, bins...) → sqflite (xem MasterLocalDataSource)
+/// Simple settings storage (language, location, etc.)
+/// Master data (products, bins…) → sqflite (see MasterLocalDataSource)
 class CacheStorage {
   final SharedPreferences _prefs;
 

@@ -1,7 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-// Deprecated: dùng NetworkInfo (core/network/network_info.dart) thay thế
-// Giữ lại để tránh break các file cũ đang import
+// Deprecated: use NetworkInfo (core/network/network_info.dart) instead
+// Kept to avoid breaking existing files that still import it
 class ConnectivityCheck {
   static final Connectivity _connectivity = Connectivity();
 

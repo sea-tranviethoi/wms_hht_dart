@@ -8,12 +8,12 @@ import '../../../data/repositories/auth_repository.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
-/// Port từ loginReducer + authContext (App.js)
+/// Ported from loginReducer + authContext (App.js)
 ///
 /// Flow:
 ///   AppStarted → check token → AuthAuthenticated | AuthUnauthenticated
-///   LoggedIn   → lưu token  → AuthAuthenticated
-///   LoggedOut  → xóa token  → AuthUnauthenticated
+///   LoggedIn   → save token  → AuthAuthenticated
+///   LoggedOut  → clear token → AuthUnauthenticated
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   final SecureStorage _secureStorage;
@@ -33,22 +33,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   // ─── AppStarted ───────────────────────────────────────────────
-  /// Kiểm tra token cũ + refresh khi app khởi động
-  /// Port từ useEffect() đầu tiên trong App.js
+  /// Checks the stored token and refreshes it on app startup
+  /// Ported from the first useEffect() in App.js
   Future<void> _onAppStarted(
     AppStarted event,
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
 
-    // Kiểm tra WiFi
+    // Check Wi-Fi connectivity
     final isConnected = await _networkInfo.isConnected;
     if (!isConnected) {
       emit(const AuthUnauthenticated());
       return;
     }
 
-    // Lấy thông tin user đã lưu
+    // Load saved user info
     final userInfo = await _secureStorage.getUserInfo();
     if (userInfo == null) {
       emit(const AuthUnauthenticated());
@@ -64,7 +64,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
-    // Refresh token
+    // Refresh the token
     try {
       final result = loginType == 'QR'
           ? await _authRepository.loginByQR(username, password)

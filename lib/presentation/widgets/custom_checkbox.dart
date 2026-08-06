@@ -38,7 +38,7 @@ class CustomCheckbox extends StatelessWidget {
             Text(
               label!,
               style: TextStyle(
-                fontSize: AppStyles.sizeInfo,
+                fontSize: AppStyles.sizeBodyText,
                 color: AppColors.blackText,
               ),
             ),

@@ -4,44 +4,44 @@ import 'package:crypto/crypto.dart';
 import 'package:pointycastle/export.dart' as pc;
 import '../constants/app_constants.dart';
 
-/// Port từ services/encryption/MD5.js
+/// Ported from services/encryption/MD5.js
 ///
-/// Logic gốc (JS — CryptoJS):
+/// Original logic (JS — CryptoJS):
 ///   const TDESKey = CryptoJS.MD5(passphrase);   // 16-byte MD5
 ///   CryptoJS.TripleDES.decrypt(message, TDESKey, {
 ///     mode: ECB, padding: Pkcs7
 ///   });
 ///
-/// CryptoJS.TripleDES với 16-byte key → mở rộng thành 24 bytes (DES2 key schedule):
+/// CryptoJS.TripleDES with a 16-byte key → expanded to 24 bytes (DES2 key schedule):
 ///   key24 = key16[0..15] + key16[0..7]
 class CryptoService {
   CryptoService._();
 
   // ─── TripleDES decrypt QR Login ───────────────────────────────
 
-  /// Giải mã chuỗi QR login mã hoá bằng TripleDES/ECB/PKCS7
-  /// [encrypted] : Base64 string từ QR code
-  /// [passphrase]: mặc định 'WmsHt123@456'
+  /// Decrypts a QR login string encrypted with TripleDES/ECB/PKCS7
+  /// [encrypted] : Base64 string from the QR code
+  /// [passphrase]: defaults to 'WmsHt123@456'
   static String decryptQRCode(
     String encrypted, {
     String passphrase = AppConstants.qrPassphrase,
   }) {
     if (encrypted.isEmpty) return '';
     try {
-      // Bước 1: MD5(passphrase) → 16 bytes
+      // Step 1: MD5(passphrase) → 16 bytes
       final md5Bytes = Uint8List.fromList(
         md5.convert(utf8.encode(passphrase)).bytes,
       );
 
-      // Bước 2: Mở rộng 16 → 24 bytes (CryptoJS DES2 key schedule)
+      // Step 2: Expand 16 → 24 bytes (CryptoJS DES2 key schedule)
       final key24 = Uint8List(24);
       key24.setRange(0, 16, md5Bytes);
       key24.setRange(16, 24, md5Bytes.sublist(0, 8));
 
-      // Bước 3: Base64 decode ciphertext
+      // Step 3: Base64-decode the ciphertext
       final cipherBytes = base64.decode(encrypted);
 
-      // Bước 4: TripleDES ECB PKCS7 decrypt dùng pointycastle
+      // Step 4: TripleDES ECB PKCS7 decrypt using pointycastle
       final cipher = pc.PaddedBlockCipherImpl(
         pc.PKCS7Padding(),
         pc.ECBBlockCipher(pc.DESedeEngine()),
@@ -63,7 +63,7 @@ class CryptoService {
 
   // ─── MD5 Hash ─────────────────────────────────────────────────
 
-  /// MD5 hash từ chuỗi → hex string 32 ký tự
+  /// MD5 hash of a string → 32-character hex string
   static String md5Hash(String input) =>
       md5.convert(utf8.encode(input)).toString();
 

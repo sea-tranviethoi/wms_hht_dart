@@ -12,10 +12,10 @@ import '../../routes/route_names.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/top_notification_mixin.dart';
 
-/// 棚卸詳細 — Phase 8
+/// Bin audit detail screen — Phase 8
 ///
-/// 棚卸記録を取得し、明細一覧を表示。
-/// スキャンで対象商品の実際数量をインクリメント、保存で一括更新。
+/// Fetches the stocktake recording and displays its line list.
+/// Scanning a product increments its actual quantity; saving performs a bulk update.
 class BinAuditDetailScreen extends StatefulWidget {
   final String id;
   final String? stockTakeNo;
@@ -157,7 +157,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: AppStyles.font,
-                    fontSize: AppStyles.sizeInfo,
+                    fontSize: AppStyles.sizeBodyText,
                     shadows: [Shadow(blurRadius: 4, color: Colors.black)],
                   ),
                 ),
@@ -270,13 +270,13 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
         title: Text(title, style: AppStyles.appBarTitle),
         backgroundColor: AppColors.settingsColor6,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
           onPressed: () => context.go(RouteNames.binAuditList),
         ),
         actions: [
           if (!_loading && _canEdit && _pendingKeys.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.save, color: AppColors.white, size: AppStyles.sizeAppBarIcon),
+              icon: const Icon(Icons.save, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
               tooltip: '保存',
               onPressed: _saving ? null : _save,
             ),
@@ -353,7 +353,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                       '${rec.stockTakeNo ?? '—'}'
                       '${rec.recordNo != null ? '  #${rec.recordNo}' : ''}',
                       style: const TextStyle(
-                        fontSize: AppStyles.sizeTitle,
+                        fontSize: AppStyles.sizeMainTitle,
                         fontWeight: FontWeight.bold,
                         fontFamily: AppStyles.font,
                         color: AppColors.blackTextColor,
@@ -363,7 +363,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                       Text(
                         dateStr,
                         style: const TextStyle(
-                          fontSize: AppStyles.sizeInfo,
+                          fontSize: AppStyles.sizeBodyText,
                           fontFamily: AppStyles.font,
                           color: AppColors.black,
                         ),
@@ -386,7 +386,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                 child: Text(
                   statusText,
                   style: TextStyle(
-                    fontSize: AppStyles.sizeInfo,
+                    fontSize: AppStyles.sizeBodyText,
                     fontFamily: AppStyles.font,
                     fontWeight: FontWeight.bold,
                     color: isDone ? AppColors.wageningenGreen : AppColors.settingsColor6,
@@ -406,7 +406,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                   child: Text(
                     rec.personInCharge!,
                     style: const TextStyle(
-                      fontSize: AppStyles.sizeInfo,
+                      fontSize: AppStyles.sizeBodyText,
                       fontFamily: AppStyles.font,
                       color: AppColors.black,
                     ),
@@ -423,7 +423,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                   child: Text(
                     rec.location!,
                     style: const TextStyle(
-                      fontSize: AppStyles.sizeInfo,
+                      fontSize: AppStyles.sizeBodyText,
                       fontFamily: AppStyles.font,
                       color: AppColors.black,
                     ),
@@ -439,7 +439,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
             '明細: ${_lines.length}件'
             '${_pendingKeys.isNotEmpty ? '  (未保存: ${_pendingKeys.length}件)' : ''}',
             style: TextStyle(
-              fontSize: AppStyles.sizeInfo,
+              fontSize: AppStyles.sizeBodyText,
               fontFamily: AppStyles.font,
               color: _pendingKeys.isNotEmpty
                   ? AppColors.settingsColor6
@@ -497,7 +497,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                             '${idx + 1}. ${line.itemCode ?? '—'}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: AppStyles.sizeInfo,
+                              fontSize: AppStyles.sizeBodyText,
                               fontFamily: AppStyles.font,
                             ),
                           ),
@@ -506,7 +506,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                             Text(
                               line.description!,
                               style: const TextStyle(
-                                fontSize: AppStyles.sizeInfo,
+                                fontSize: AppStyles.sizeBodyText,
                                 fontFamily: AppStyles.font,
                                 color: AppColors.grayTextColor,
                               ),
@@ -526,7 +526,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                         child: Text(
                           '未保存',
                           style: const TextStyle(
-                            fontSize: AppStyles.sizeInfo,
+                            fontSize: AppStyles.sizeBodyText,
                             color: AppColors.settingsColor7,
                             fontFamily: AppStyles.font,
                           ),
@@ -561,7 +561,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                 // ── Expected qty / Actual qty ─────────────
                 Row(
                   children: [
-                    // 予定数量 (read-only)
+                    // Planned quantity (read-only)
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -569,7 +569,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                           Text(
                             '予定数量',
                             style: const TextStyle(
-                              fontSize: AppStyles.sizeInfo,
+                              fontSize: AppStyles.sizeBodyText,
                               fontFamily: AppStyles.font,
                               color: AppColors.grayTextColor,
                             ),
@@ -585,7 +585,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                             child: Text(
                               line.expectedQty?.toStringAsFixed(0) ?? '—',
                               style: const TextStyle(
-                                fontSize: AppStyles.sizeInfo,
+                                fontSize: AppStyles.sizeBodyText,
                                 fontFamily: AppStyles.font,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -595,7 +595,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // 実際数量 (editable if not done)
+                    // Actual quantity (editable if not done)
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -603,7 +603,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                           Text(
                             '実際数量',
                             style: const TextStyle(
-                              fontSize: AppStyles.sizeInfo,
+                              fontSize: AppStyles.sizeBodyText,
                               fontFamily: AppStyles.font,
                               color: AppColors.grayTextColor,
                             ),
@@ -649,7 +649,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                               ),
                             ),
                             style: const TextStyle(
-                              fontSize: AppStyles.sizeInfo,
+                              fontSize: AppStyles.sizeBodyText,
                               fontFamily: AppStyles.font,
                               fontWeight: FontWeight.w500,
                             ),
@@ -682,7 +682,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
           Text(
             '$label: ',
             style: const TextStyle(
-              fontSize: AppStyles.sizeInfo,
+              fontSize: AppStyles.sizeBodyText,
               fontFamily: AppStyles.font,
               color: AppColors.grayTextColor,
             ),
@@ -691,7 +691,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
             child: Text(
               value,
               style: const TextStyle(
-                fontSize: AppStyles.sizeInfo,
+                fontSize: AppStyles.sizeBodyText,
                 fontFamily: AppStyles.font,
               ),
               overflow: TextOverflow.ellipsis,

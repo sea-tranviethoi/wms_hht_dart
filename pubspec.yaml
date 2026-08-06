@@ -4,7 +4,7 @@ publish_to: 'none'
 
 # Version: major.minor.patch+buildNumber
 # Sync với version server để OTA update kiểm tra
-version: 1.0.0+7
+version: 1.0.1+1
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
