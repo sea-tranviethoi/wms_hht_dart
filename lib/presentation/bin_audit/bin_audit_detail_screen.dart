@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../core/ai/vision_client.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_styles.dart';
 import '../../core/di/injection.dart';
@@ -11,6 +15,7 @@ import '../../data/models/stocktake/invent_stocktake_recording.dart';
 import '../../routes/route_names.dart';
 import '../widgets/form_widgets.dart';
 import '../widgets/top_notification_mixin.dart';
+import 'multi_scan_dialog.dart';
 
 /// Bin audit detail screen — Phase 8
 ///
@@ -47,6 +52,10 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
 
   /// Keys of lines that have unsaved changes
   final Set<String> _pendingKeys = {};
+
+  /// Item codes recognised by the last vision scan — highlighted in the list.
+  Set<String> _visionHighlight = {};
+  bool _visionBusy = false;
 
   MobileScannerController? _scannerController;
 
@@ -110,6 +119,34 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
     if (s == null) return false;
     final n = int.tryParse(s);
     return s != '1' && n != 1;
+  }
+
+  // ─── Discrepancy helpers ─────────────────────────────────────
+
+  /// Signed difference actual − expected, or null if either is missing.
+  num? _diff(InventStockTakeRecordingLine line) {
+    final exp = line.expectedQty;
+    final act = line.actualQty;
+    if (exp == null || act == null) return null;
+    return act - exp;
+  }
+
+  /// Colour for a line based on its discrepancy:
+  ///   equal → green, short (actual<expected) → red, over → orange.
+  Color _diffColor(num diff) {
+    if (diff == 0) return AppColors.wageningenGreen;
+    if (diff < 0) return AppColors.settingsColor7;
+    return Colors.orange.shade700;
+  }
+
+  /// Number of lines whose actual quantity differs from the expected.
+  int get _discrepancyCount {
+    var n = 0;
+    for (final l in _lines) {
+      final d = _diff(l);
+      if (d != null && d != 0) n++;
+    }
+    return n;
   }
 
   // ─── Scan ────────────────────────────────────────────────────
@@ -200,6 +237,125 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
     );
   }
 
+  // ─── Multi-barcode (tap-to-capture) ──────────────────────────
+
+  Future<void> _startMultiScan() async {
+    final validCodes = <String>{
+      for (final l in _lines)
+        if ((l.itemCode ?? '').trim().isNotEmpty) l.itemCode!.trim(),
+    };
+
+    final session = await MultiScanDialog.show(context, validCodes);
+    if (session == null || !mounted) return;
+
+    final split = session.splitBy(validCodes);
+
+    // Accumulate counted units onto the matching lines (consistent with the
+    // single-scan +1 behaviour).
+    int updatedLines = 0;
+    split.matched.forEach((code, counted) {
+      final idx =
+          _lines.indexWhere((l) => (l.itemCode ?? '').trim() == code);
+      if (idx < 0) return;
+      final line = _lines[idx];
+      final key = _lineKey(idx, line);
+      final current = (line.actualQty ?? 0).toInt();
+      final lineJson = Map<String, dynamic>.from(line.toJson());
+      lineJson['actualQty'] = current + counted;
+      _lines[idx] = InventStockTakeRecordingLine.fromJson(lineJson);
+      _qtyControllers[key]?.text = (current + counted).toString();
+      _pendingKeys.add(key);
+      updatedLines++;
+    });
+
+    setState(() {});
+
+    final totalMatched =
+        split.matched.values.fold<int>(0, (a, b) => a + b);
+    final msg = StringBuffer('$updatedLines件に反映 (合計 $totalMatched点)');
+    if (split.hasUnmatched) {
+      msg.write(' / 不一致 ${split.unmatched.length}件');
+    }
+    _showMessage(msg.toString(), isError: split.hasUnmatched);
+  }
+
+  // ─── Vision AI (image recognition) ───────────────────────────
+
+  Future<void> _startVisionScan() async {
+    final photo = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 70,
+      maxWidth: 1280,
+    );
+    if (photo == null || !mounted) return;
+
+    final candidates = <String>[
+      for (final l in _lines)
+        if ((l.itemCode ?? '').trim().isNotEmpty) l.itemCode!.trim(),
+    ];
+
+    setState(() => _visionBusy = true);
+    try {
+      final result =
+          await sl<VisionClient>().identify(File(photo.path), candidates);
+      if (!mounted) return;
+
+      setState(() => _visionHighlight = result.identified.toSet());
+
+      if (result.identified.isEmpty) {
+        _showMessage('画像から商品を認識できませんでした', isError: true);
+        return;
+      }
+      final tag = result.isMock ? '（モック）' : '';
+      _showMessage('認識$tag: ${result.identified.join(", ")}', isError: false);
+      _confirmApplyVision(result.identified);
+    } on VisionException catch (e) {
+      if (mounted) _showMessage(e.message, isError: true);
+    } catch (e) {
+      if (mounted) _showMessage('画像認識に失敗しました: ${friendlyError(e)}', isError: true);
+    } finally {
+      if (mounted) setState(() => _visionBusy = false);
+    }
+  }
+
+  /// Offers to add +1 to each vision-recognised line.
+  void _confirmApplyVision(List<String> codes) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('画像認識',
+            style: TextStyle(fontFamily: AppStyles.font)),
+        content: Text(
+          '認識した${codes.length}件の商品を実際数量に+1しますか？\n\n${codes.join(", ")}',
+          style: const TextStyle(fontFamily: AppStyles.font),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('いいえ',
+                style: TextStyle(fontFamily: AppStyles.font)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              for (final code in codes) {
+                final idx = _lines
+                    .indexWhere((l) => (l.itemCode ?? '').trim() == code);
+                if (idx >= 0) _onScanned(code);
+              }
+            },
+            child: const Text('はい',
+                style: TextStyle(
+                  fontFamily: AppStyles.font,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.settingsColor6,
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+
   // ─── Manual qty edit ─────────────────────────────────────────
 
   void _onQtyChanged(int idx, String value) {
@@ -274,6 +430,27 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
           onPressed: () => context.go(RouteNames.binAuditList),
         ),
         actions: [
+          if (!_loading && _canEdit)
+            IconButton(
+              icon: const Icon(Icons.qr_code_scanner,
+                  color: AppColors.white, size: AppStyles.sizeTopBarIcon),
+              tooltip: 'スキャン（単品）',
+              onPressed: _saving ? null : _startScan,
+            ),
+          if (!_loading && _canEdit)
+            IconButton(
+              icon: _visionBusy
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: AppColors.white),
+                    )
+                  : const Icon(Icons.image_search,
+                      color: AppColors.white, size: AppStyles.sizeTopBarIcon),
+              tooltip: '画像認識',
+              onPressed: _visionBusy ? null : _startVisionScan,
+            ),
           if (!_loading && _canEdit && _pendingKeys.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.save, color: AppColors.white, size: AppStyles.sizeTopBarIcon),
@@ -435,16 +612,32 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
           ),
           // Line count summary
           const SizedBox(height: 4),
-          Text(
-            '明細: ${_lines.length}件'
-            '${_pendingKeys.isNotEmpty ? '  (未保存: ${_pendingKeys.length}件)' : ''}',
-            style: TextStyle(
-              fontSize: AppStyles.sizeBodyText,
-              fontFamily: AppStyles.font,
-              color: _pendingKeys.isNotEmpty
-                  ? AppColors.settingsColor6
-                  : AppColors.black,
-            ),
+          Row(
+            children: [
+              Text(
+                '明細: ${_lines.length}件'
+                '${_pendingKeys.isNotEmpty ? '  (未保存: ${_pendingKeys.length}件)' : ''}',
+                style: TextStyle(
+                  fontSize: AppStyles.sizeBodyText,
+                  fontFamily: AppStyles.font,
+                  color: _pendingKeys.isNotEmpty
+                      ? AppColors.settingsColor6
+                      : AppColors.black,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '差異: $_discrepancyCount件',
+                style: TextStyle(
+                  fontSize: AppStyles.sizeBodyText,
+                  fontFamily: AppStyles.font,
+                  fontWeight: FontWeight.bold,
+                  color: _discrepancyCount > 0
+                      ? AppColors.settingsColor7
+                      : AppColors.wageningenGreen,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -515,6 +708,51 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                         ],
                       ),
                     ),
+                    if ((line.itemCode ?? '').trim().isNotEmpty &&
+                        _visionHighlight.contains(line.itemCode!.trim()))
+                      Container(
+                        margin: const EdgeInsets.only(right: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7B4FA0).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFF7B4FA0)),
+                        ),
+                        child: const Text(
+                          'AI',
+                          style: TextStyle(
+                            fontSize: AppStyles.sizeSubText,
+                            fontFamily: AppStyles.font,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF7B4FA0),
+                          ),
+                        ),
+                      ),
+                    Builder(builder: (_) {
+                      final d = _diff(line);
+                      if (d == null || d == 0) return const SizedBox.shrink();
+                      final c = _diffColor(d);
+                      return Container(
+                        margin: const EdgeInsets.only(right: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: c.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: c),
+                        ),
+                        child: Text(
+                          '差異 ${d > 0 ? '+' : ''}${d.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            fontSize: AppStyles.sizeSubText,
+                            fontFamily: AppStyles.font,
+                            fontWeight: FontWeight.bold,
+                            color: c,
+                          ),
+                        ),
+                      );
+                    }),
                     if (isPending)
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -714,10 +952,10 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
         )),
         if (_canEdit) ...[
           Expanded(child: ActionButton.icon(
-            label: 'スキャン',
-            icon: Icons.qr_code_scanner,
+            label: '連続',
+            icon: Icons.filter_center_focus,
             color: AppColors.settingsColor6,
-            onPressed: _saving ? null : _startScan,
+            onPressed: _saving ? null : _startMultiScan,
           )),
           Expanded(child: _saving
             ? ActionButton.icon(
