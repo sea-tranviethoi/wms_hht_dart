@@ -12,10 +12,10 @@ class AppConstants {
   static const String defaultHost = 'http://133.167.47.242:9500';
 
   /// OTA server — mock server on PC for update testing
-  static const String otaHost     = 'http://192.168.2.2:9500';
+  static const String otaHost     = 'http://192.168.2.3:9500';
 
   /// Vision AI server — mock server on PC for cycle-count image recognition
-  static const String visionHost  = 'http://192.168.2.2:9600';
+  static const String visionHost  = 'http://192.168.2.3:9600';
 
   // ─── API Timeout ──────────────────────────────────────────────
   static const Duration apiTimeout        = Duration(seconds: 30);

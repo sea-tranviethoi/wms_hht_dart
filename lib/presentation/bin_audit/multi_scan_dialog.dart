@@ -7,11 +7,13 @@ import 'bin_audit_scan_session.dart';
 
 /// Tap-to-capture multi-barcode scanner for cycle counting.
 ///
-/// The camera stays open; the latest frame's barcodes are buffered. Pressing
-/// 撮影 snapshots the current frame — every barcode in it counts as one unit,
-/// so identical items sitting side by side each add one. Counts accumulate
-/// across captures and are shown live, split into matched (an existing line)
-/// and unmatched values.
+/// A single camera frame often can't decode every barcode in view at once —
+/// the underlying decoder has a per-frame processing budget, so with several
+/// codes in frame it may only resolve a couple per pass. To work around this,
+/// every code seen in ANY recent frame is accumulated live into a pending set
+/// (shown to the user as it grows) while the camera hovers over a group of
+/// items; 撮影 then commits that whole accumulated set as one count, so codes
+/// missed on one frame but caught a moment later are still included.
 ///
 /// Returns the [BinAuditScanSession] via [Navigator.pop] when the user taps
 /// 完了, or null if cancelled.
@@ -40,22 +42,22 @@ class _MultiScanDialogState extends State<MultiScanDialog> {
   final _session = BinAuditScanSession();
   MobileScannerController? _controller;
 
-  /// Raw values detected in the most recent camera frame.
-  List<String> _latestFrame = const [];
+  /// Distinct raw codes seen across recent frames, not yet committed by 撮影.
+  /// Accumulates across multiple camera frames (not just the latest one) so
+  /// codes the decoder misses on one pass are still caught on the next.
+  final Set<String> _pending = {};
 
   /// Units added by the last capture — shown as a brief confirmation.
   int _lastAdded = 0;
 
-  /// True when the last 撮影 found no barcode in the frame.
+  /// True when the last 撮影 found nothing pending.
   bool _emptyCapture = false;
 
   @override
   void initState() {
     super.initState();
-    // unrestricted → onDetect fires every frame with the barcodes currently in
-    // view, so the buffer stays fresh and 撮影 reliably captures what's visible.
-    // (The default noDuplicates stops reporting a code while it stays in frame,
-    // which leaves the buffer stale/empty at capture time.)
+    // unrestricted → onDetect fires as fast as the decoder can manage, so the
+    // pending set fills in quickly while the camera hovers over the items.
     _controller = MobileScannerController(
       detectionSpeed: DetectionSpeed.unrestricted,
     );
@@ -68,43 +70,52 @@ class _MultiScanDialogState extends State<MultiScanDialog> {
   }
 
   void _onDetect(BarcodeCapture capture) {
-    // Buffer the latest frame only — nothing is counted until 撮影 is pressed.
-    _latestFrame = [
+    final newCodes = <String>[
       for (final b in capture.barcodes)
-        if (b.rawValue != null && b.rawValue!.trim().isNotEmpty) b.rawValue!,
+        if (b.rawValue != null && b.rawValue!.trim().isNotEmpty)
+          b.rawValue!.trim(),
     ];
+    if (newCodes.isEmpty) return;
+    // Only rebuild when something new actually shows up, to avoid
+    // re-rendering on every single frame.
+    final before = _pending.length;
+    _pending.addAll(newCodes);
+    if (_pending.length != before) setState(() {});
   }
 
   void _capture() {
-    final frame = _latestFrame;
-    if (frame.isEmpty) {
-      // No barcode in the current frame — tell the user instead of failing
-      // silently (this is a barcode scanner, not a plain photo capture).
+    if (_pending.isEmpty) {
+      // Nothing detected yet — tell the user instead of failing silently
+      // (this is a barcode scanner, not a plain photo capture).
       setState(() {
         _lastAdded = 0;
         _emptyCapture = true;
       });
       return;
     }
-    _session.addCapture(frame);
+    _session.addCapture(_pending.toList());
     setState(() {
-      _lastAdded = frame.length;
+      _lastAdded = _pending.length;
       _emptyCapture = false;
+      _pending.clear();
     });
   }
 
   void _reset() {
     setState(() {
       _session.reset();
+      _pending.clear();
       _lastAdded = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final matcher = BinAuditCodeMatcher(widget.validCodes);
     final split = _session.splitBy(widget.validCodes);
     final entries = _session.counts.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
+    final pendingSorted = _pending.toList()..sort();
 
     return Dialog(
       insetPadding: const EdgeInsets.all(12),
@@ -115,7 +126,7 @@ class _MultiScanDialogState extends State<MultiScanDialog> {
           children: [
             // ── Camera ──────────────────────────────────────────
             SizedBox(
-              height: 300,
+              height: 260,
               child: Stack(
                 children: [
                   MobileScanner(controller: _controller, onDetect: _onDetect),
@@ -123,11 +134,20 @@ class _MultiScanDialogState extends State<MultiScanDialog> {
                   Center(
                     child: Container(
                       width: 260,
-                      height: 200,
+                      height: 170,
                       decoration: BoxDecoration(
                         border: Border.all(color: AppColors.white, width: 2),
                         borderRadius: BorderRadius.circular(8),
                       ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: IconButton(
+                      icon: const Icon(Icons.flash_on, color: AppColors.white),
+                      tooltip: 'ライト',
+                      onPressed: () => _controller?.toggleTorch(),
                     ),
                   ),
                   Positioned(
@@ -176,6 +196,41 @@ class _MultiScanDialogState extends State<MultiScanDialog> {
               ),
             ),
 
+            // ── Live pending detections ───────────────────────────
+            // Shows what the camera has picked up SO FAR for the current
+            // group, before 撮影 commits it. Lets the user visually confirm
+            // every item is seen (hold steady a moment) instead of guessing.
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              color: AppColors.settingsColor6.withOpacity(0.08),
+              child: Row(
+                children: [
+                  Text(
+                    '検出中 (${_pending.length}):',
+                    style: const TextStyle(
+                      fontFamily: AppStyles.font,
+                      fontSize: AppStyles.sizeSubText,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.settingsColor6,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      pendingSorted.isEmpty ? '—' : pendingSorted.join(', '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontFamily: AppStyles.font,
+                        fontSize: AppStyles.sizeSubText,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             // ── Tally summary ───────────────────────────────────
             Container(
               width: double.infinity,
@@ -198,11 +253,11 @@ class _MultiScanDialogState extends State<MultiScanDialog> {
 
             // ── Counted list ────────────────────────────────────
             SizedBox(
-              height: 160,
+              height: 140,
               child: entries.isEmpty
                   ? const Center(
                       child: Text(
-                        '撮影ボタンでスキャンしてください',
+                        'カメラを商品に向けてください',
                         style: TextStyle(
                           fontFamily: AppStyles.font,
                           color: AppColors.grayTextColor,
@@ -213,7 +268,8 @@ class _MultiScanDialogState extends State<MultiScanDialog> {
                       itemCount: entries.length,
                       itemBuilder: (_, i) {
                         final e = entries[i];
-                        final matched = split.matched.containsKey(e.key);
+                        final itemCode = matcher.matchFor(e.key);
+                        final matched = itemCode != null;
                         return ListTile(
                           dense: true,
                           leading: Icon(
@@ -230,6 +286,16 @@ class _MultiScanDialogState extends State<MultiScanDialog> {
                               fontSize: AppStyles.sizeBodyText,
                             ),
                           ),
+                          subtitle: matched && itemCode != e.key
+                              ? Text(
+                                  '→ $itemCode',
+                                  style: const TextStyle(
+                                    fontFamily: AppStyles.font,
+                                    fontSize: AppStyles.sizeSubText,
+                                    color: AppColors.grayTextColor,
+                                  ),
+                                )
+                              : null,
                           trailing: Text(
                             '× ${e.value}',
                             style: const TextStyle(
