@@ -54,13 +54,21 @@ class BinAuditScanSession {
 
   /// Splits the counted values into those matching [validCodes] (existing
   /// stocktake lines) and those that do not correspond to any line.
+  ///
+  /// Matching is by prefix, not exact equality: many warehouses print one
+  /// barcode per physical unit with a serial suffix appended to the item
+  /// code (e.g. item code "2022MIWA02" printed as "2022MIWA02001",
+  /// "2022MIWA02002", ...). Any scanned code starting with a known item
+  /// code counts toward that item; the longest matching item code wins so a
+  /// more specific code isn't shadowed by a shorter unrelated one.
   BinAuditScanSplit splitBy(Set<String> validCodes) {
-    final normalized = validCodes.map((c) => c.trim()).toSet();
+    final matcher = BinAuditCodeMatcher(validCodes);
     final matched = <String, int>{};
     final unmatched = <String, int>{};
     _counts.forEach((code, qty) {
-      if (normalized.contains(code)) {
-        matched[code] = qty;
+      final itemCode = matcher.matchFor(code);
+      if (itemCode != null) {
+        matched[itemCode] = (matched[itemCode] ?? 0) + qty;
       } else {
         unmatched[code] = qty;
       }
@@ -69,12 +77,34 @@ class BinAuditScanSession {
   }
 }
 
+/// Matches a raw scanned barcode value against a set of known item codes,
+/// by exact match or by prefix (see [BinAuditScanSession.splitBy]).
+class BinAuditCodeMatcher {
+  final List<String> _sortedCodes;
+
+  BinAuditCodeMatcher(Set<String> validCodes)
+      : _sortedCodes = validCodes
+            .map((c) => c.trim())
+            .where((c) => c.isNotEmpty)
+            .toList()
+          ..sort((a, b) => b.length.compareTo(a.length));
+
+  /// Returns the item code [rawCode] belongs to, or null if none matches.
+  String? matchFor(String rawCode) {
+    final code = rawCode.trim();
+    for (final itemCode in _sortedCodes) {
+      if (code == itemCode || code.startsWith(itemCode)) return itemCode;
+    }
+    return null;
+  }
+}
+
 /// Result of matching a scan session against the stocktake line item codes.
 class BinAuditScanSplit {
-  /// code -> counted units, for codes that match an existing line.
+  /// itemCode -> counted units, for scanned codes that matched a line.
   final Map<String, int> matched;
 
-  /// code -> counted units, for codes with no matching line.
+  /// raw code -> counted units, for codes with no matching line.
   final Map<String, int> unmatched;
 
   const BinAuditScanSplit({required this.matched, required this.unmatched});

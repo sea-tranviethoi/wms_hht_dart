@@ -1,13 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import '../constants/app_constants.dart';
 
-/// Client for the cycle-count Vision AI server.
+/// Client for the multi-QR photo scanner used in cycle counting.
 ///
-/// Sends a shelf photo plus the candidate item codes to [AppConstants.visionHost]
-/// and returns which codes the model recognised in the image. Uses its own Dio
-/// instance, separate from the main WMS API client (same pattern as AppUpdater).
+/// Sends one photo (of several items with QR codes stuck on them) plus the
+/// set of valid item codes to [AppConstants.visionHost]. The server decodes
+/// every QR code in the photo with pyzbar, matches each by prefix against the
+/// valid codes, and returns per-item counts plus the photo with highlight
+/// boxes drawn on the matched codes. Uses its own Dio instance, separate from
+/// the main WMS API client (same pattern as AppUpdater).
 class VisionClient {
   late final Dio _dio;
 
@@ -15,16 +19,16 @@ class VisionClient {
     _dio = Dio(BaseOptions(
       baseUrl: AppConstants.visionHost,
       connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 90), // VLM inference can be slow
+      receiveTimeout: const Duration(seconds: 30),
       headers: {'Content-Type': 'application/json'},
     ));
   }
 
-  /// Sends [imageFile] (a JPEG) and [candidateCodes], returns the recognised
-  /// item codes. Throws [VisionException] on failure.
+  /// Sends [imageFile] (a JPEG) and [validCodes], returns the decode result.
+  /// Throws [VisionException] on failure.
   Future<VisionResult> identify(
     File imageFile,
-    List<String> candidateCodes,
+    Set<String> validCodes,
   ) async {
     try {
       final bytes = await imageFile.readAsBytes();
@@ -32,17 +36,22 @@ class VisionClient {
 
       final res = await _dio.post('/api/vision/identify', data: {
         'image': b64,
-        'itemCodes': candidateCodes,
+        'validCodes': validCodes.toList(),
       });
 
       final data = res.data as Map<String, dynamic>;
-      final identified = (data['identified'] as List?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          const [];
+      final matchedRaw = data['matched'] as Map<String, dynamic>? ?? const {};
+      final matched = matchedRaw.map(
+        (k, v) => MapEntry(k, (v as num).toInt()),
+      );
+      final annotatedB64 = data['annotatedImage'] as String? ?? '';
+
       return VisionResult(
-        identified: identified,
-        isMock: data['mock'] == true,
+        matched: matched,
+        unmatchedCount: (data['unmatchedCount'] as num?)?.toInt() ?? 0,
+        totalDetected: (data['totalDetected'] as num?)?.toInt() ?? 0,
+        annotatedImage:
+            annotatedB64.isEmpty ? null : base64Decode(annotatedB64),
       );
     } on DioException catch (e) {
       throw VisionException(_friendly(e));
@@ -57,22 +66,35 @@ class VisionClient {
       case DioExceptionType.connectionError:
         return 'Vision サーバーに接続できません';
       case DioExceptionType.receiveTimeout:
-        return '画像認識がタイムアウトしました';
+        return '画像解析がタイムアウトしました';
       default:
-        return e.message ?? '画像認識に失敗しました';
+        return e.message ?? '画像解析に失敗しました';
     }
   }
 }
 
-/// Result of a vision identify call.
+/// Result of scanning a photo for QR codes.
 class VisionResult {
-  /// Item codes the model recognised in the image.
-  final List<String> identified;
+  /// itemCode -> number of units found in the photo.
+  final Map<String, int> matched;
 
-  /// True when the server returned a canned response (VLM not reachable).
-  final bool isMock;
+  /// QR codes detected in the photo that didn't match any valid item code.
+  final int unmatchedCount;
 
-  const VisionResult({required this.identified, required this.isMock});
+  /// Total QR codes detected in the photo (matched + unmatched).
+  final int totalDetected;
+
+  /// The photo with highlight boxes drawn on every detected QR code.
+  final Uint8List? annotatedImage;
+
+  const VisionResult({
+    required this.matched,
+    required this.unmatchedCount,
+    required this.totalDetected,
+    required this.annotatedImage,
+  });
+
+  bool get isEmpty => matched.isEmpty && unmatchedCount == 0;
 }
 
 class VisionException implements Exception {

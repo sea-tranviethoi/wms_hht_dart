@@ -53,8 +53,6 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
   /// Keys of lines that have unsaved changes
   final Set<String> _pendingKeys = {};
 
-  /// Item codes recognised by the last vision scan — highlighted in the list.
-  Set<String> _visionHighlight = {};
   bool _visionBusy = false;
 
   MobileScannerController? _scannerController;
@@ -279,55 +277,82 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
     _showMessage(msg.toString(), isError: split.hasUnmatched);
   }
 
-  // ─── Vision AI (image recognition) ───────────────────────────
+  // ─── Multi-QR photo scan (pyzbar-decoded, server-highlighted) ────
 
   Future<void> _startVisionScan() async {
     final photo = await ImagePicker().pickImage(
       source: ImageSource.camera,
-      imageQuality: 70,
-      maxWidth: 1280,
+      imageQuality: 85, // higher quality than other captures — QR decode needs sharp edges
+      maxWidth: 1920,
     );
     if (photo == null || !mounted) return;
 
-    final candidates = <String>[
+    final validCodes = <String>{
       for (final l in _lines)
         if ((l.itemCode ?? '').trim().isNotEmpty) l.itemCode!.trim(),
-    ];
+    };
 
     setState(() => _visionBusy = true);
     try {
       final result =
-          await sl<VisionClient>().identify(File(photo.path), candidates);
+          await sl<VisionClient>().identify(File(photo.path), validCodes);
       if (!mounted) return;
 
-      setState(() => _visionHighlight = result.identified.toSet());
-
-      if (result.identified.isEmpty) {
-        _showMessage('画像から商品を認識できませんでした', isError: true);
+      if (result.isEmpty) {
+        _showMessage('写真からQRコードを検出できませんでした', isError: true);
         return;
       }
-      final tag = result.isMock ? '（モック）' : '';
-      _showMessage('認識$tag: ${result.identified.join(", ")}', isError: false);
-      _confirmApplyVision(result.identified);
+      await _confirmApplyPhotoScan(result);
     } on VisionException catch (e) {
       if (mounted) _showMessage(e.message, isError: true);
     } catch (e) {
-      if (mounted) _showMessage('画像認識に失敗しました: ${friendlyError(e)}', isError: true);
+      if (mounted) _showMessage('画像解析に失敗しました: ${friendlyError(e)}', isError: true);
     } finally {
       if (mounted) setState(() => _visionBusy = false);
     }
   }
 
-  /// Offers to add +1 to each vision-recognised line.
-  void _confirmApplyVision(List<String> codes) {
-    showDialog(
+  /// Shows the highlighted photo plus the per-item counts found, and offers
+  /// to add each count to the matching line's actual quantity.
+  Future<void> _confirmApplyPhotoScan(VisionResult result) async {
+    final entries = result.matched.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+
+    await showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('画像認識',
+        title: const Text('写真スキャン結果',
             style: TextStyle(fontFamily: AppStyles.font)),
-        content: Text(
-          '認識した${codes.length}件の商品を実際数量に+1しますか？\n\n${codes.join(", ")}',
-          style: const TextStyle(fontFamily: AppStyles.font),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (result.annotatedImage != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.memory(result.annotatedImage!),
+                ),
+              const SizedBox(height: 12),
+              Text(
+                '検出: ${result.totalDetected}件'
+                '${result.unmatchedCount > 0 ? '（不一致 ${result.unmatchedCount}件）' : ''}',
+                style: const TextStyle(fontFamily: AppStyles.font),
+              ),
+              const SizedBox(height: 4),
+              if (entries.isEmpty)
+                const Text('一致した商品はありません',
+                    style: TextStyle(fontFamily: AppStyles.font))
+              else
+                ...entries.map((e) => Text(
+                      '${e.key}  × ${e.value}',
+                      style: const TextStyle(
+                        fontFamily: AppStyles.font,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -335,22 +360,23 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
             child: const Text('いいえ',
                 style: TextStyle(fontFamily: AppStyles.font)),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              for (final code in codes) {
-                final idx = _lines
-                    .indexWhere((l) => (l.itemCode ?? '').trim() == code);
-                if (idx >= 0) _onScanned(code);
-              }
-            },
-            child: const Text('はい',
-                style: TextStyle(
-                  fontFamily: AppStyles.font,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.settingsColor6,
-                )),
-          ),
+          if (entries.isNotEmpty)
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                for (final e in entries) {
+                  for (var i = 0; i < e.value; i++) {
+                    _onScanned(e.key);
+                  }
+                }
+              },
+              child: const Text('はい',
+                  style: TextStyle(
+                    fontFamily: AppStyles.font,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.settingsColor6,
+                  )),
+            ),
         ],
       ),
     );
@@ -448,7 +474,7 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                     )
                   : const Icon(Icons.image_search,
                       color: AppColors.white, size: AppStyles.sizeTopBarIcon),
-              tooltip: '画像認識',
+              tooltip: '写真スキャン',
               onPressed: _visionBusy ? null : _startVisionScan,
             ),
           if (!_loading && _canEdit && _pendingKeys.isNotEmpty)
@@ -708,27 +734,6 @@ class _BinAuditDetailScreenState extends State<BinAuditDetailScreen>
                         ],
                       ),
                     ),
-                    if ((line.itemCode ?? '').trim().isNotEmpty &&
-                        _visionHighlight.contains(line.itemCode!.trim()))
-                      Container(
-                        margin: const EdgeInsets.only(right: 6),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF7B4FA0).withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: const Color(0xFF7B4FA0)),
-                        ),
-                        child: const Text(
-                          'AI',
-                          style: TextStyle(
-                            fontSize: AppStyles.sizeSubText,
-                            fontFamily: AppStyles.font,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF7B4FA0),
-                          ),
-                        ),
-                      ),
                     Builder(builder: (_) {
                       final d = _diff(line);
                       if (d == null || d == 0) return const SizedBox.shrink();
