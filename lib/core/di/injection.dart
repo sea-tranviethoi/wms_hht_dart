@@ -13,6 +13,7 @@ import '../network/network_info.dart';
 import '../storage/cache_storage.dart';
 import '../storage/secure_storage.dart';
 import '../update/app_updater.dart';
+import '../ai/vision_client.dart';
 import '../../presentation/blocs/update/update_cubit.dart';
 import '../../data/datasources/remote/auth_remote_datasource.dart';
 import '../../data/datasources/remote/master_remote_datasource.dart';
@@ -90,6 +91,9 @@ Future<void> initDependencies() async {
   // ─── Core: Update ─────────────────────────────────────────────
   sl.registerSingleton<AppUpdater>(AppUpdater());
   sl.registerFactory<UpdateCubit>(() => UpdateCubit(sl<AppUpdater>()));
+
+  // ─── Core: Vision AI (cycle count) ────────────────────────────
+  sl.registerSingleton<VisionClient>(VisionClient());
 
   // ─── Data: Remote DataSources ─────────────────────────────────
   sl.registerSingleton<AuthRemoteDataSource>(
