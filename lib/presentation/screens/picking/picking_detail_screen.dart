@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../core/ai/vision_client.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../core/di/injection.dart';
@@ -64,6 +67,8 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
 
   // Track scan data per line index: index → {bin, actualQty, qrCode, ...}
   final Map<int, _LineData> _lineData = {};
+
+  bool _visionBusy = false;
 
   late VoidCallback _unsubscribeKey;
   StreamSubscription? _scannerSub;
@@ -247,6 +252,129 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
     }
   }
 
+  // ─── Vision AI photo scan (pyzbar-decoded, server-highlighted) ─
+
+  Future<void> _startVisionScan() async {
+    final photo = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 85, // higher quality than other captures — QR decode needs sharp edges
+      maxWidth: 1920,
+    );
+    if (photo == null || !mounted) return;
+
+    final line = _lines[_currentIndex];
+    final validCodes = <String>{line.productCode};
+
+    setState(() => _visionBusy = true);
+    try {
+      final result =
+          await sl<VisionClient>().identify(File(photo.path), validCodes);
+      if (!mounted) return;
+
+      if (result.isEmpty) {
+        _showSnack('写真からQRコードを検出できませんでした', isError: true);
+        return;
+      }
+      await _confirmApplyPhotoScan(result, line);
+    } on VisionException catch (e) {
+      if (mounted) _showSnack(e.message, isError: true);
+    } catch (e) {
+      if (mounted) _showSnack('画像解析に失敗しました: $e', isError: true);
+    } finally {
+      if (mounted) setState(() => _visionBusy = false);
+    }
+  }
+
+  /// Shows the highlighted photo plus the count found for the current line's
+  /// product, and offers to add it to the actual quantity (same cap/advance
+  /// behaviour as scanning the QR code one at a time in [_handleQRSubmit]).
+  Future<void> _confirmApplyPhotoScan(VisionResult result, PickingLine line) async {
+    final counted = result.matched[line.productCode] ?? 0;
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('写真スキャン結果',
+            style: TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeMainTitle)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (result.annotatedImage != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.memory(result.annotatedImage!),
+                ),
+              const SizedBox(height: 12),
+              Text(
+                '検出: ${result.totalDetected}件'
+                '${result.unmatchedCount > 0 ? '（不一致 ${result.unmatchedCount}件）' : ''}',
+                style: const TextStyle(fontFamily: AppStyles.font, fontSize: AppStyles.sizeBodyText),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                counted > 0
+                    ? '${line.productCode}  × $counted'
+                    : '一致した商品はありません',
+                style: TextStyle(
+                  fontFamily: AppStyles.font,
+                  fontSize: AppStyles.sizeBodyText,
+                  fontWeight: counted > 0 ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('いいえ',
+                style: TextStyle(
+                    fontFamily: AppStyles.font,
+                    fontSize: AppStyles.sizeBodyText,
+                    color: AppColors.grayTextColor)),
+          ),
+          if (counted > 0)
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                _applyPhotoCount(counted);
+              },
+              child: const Text('はい',
+                  style: TextStyle(
+                      fontFamily: AppStyles.font,
+                      fontSize: AppStyles.sizeBodyText,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.wageningenGreen)),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _applyPhotoCount(int counted) async {
+    final line = _lines[_currentIndex];
+    final current = double.tryParse(_actualQtyCtrl.text) ?? 0.0;
+    var newQty = current + counted;
+
+    if (newQty > line.pickQty) {
+      await sl<SoundManager>().playWarning();
+      _showSnack('実数量が必要数量を超えました', isError: true);
+      newQty = line.pickQty;
+    } else {
+      await sl<SoundManager>().playCorrect();
+      _showSnack('${line.productCode}: $counted個を実数量に反映しました');
+    }
+
+    setState(() => _actualQtyCtrl.text = newQty.toStringAsFixed(0));
+    _saveCurrentLine();
+
+    if (newQty >= line.pickQty) {
+      await _handleLineComplete();
+    }
+  }
+
   // ─── Navigation ───────────────────────────────────────────────
 
   void _goNext() {
@@ -374,6 +502,21 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
           onPressed: () => context.pop(),
         ),
         title: Text('ピッキング: ${widget.pickNo}  ${_currentIndex + 1}/$total', style: AppStyles.appBarTitle),
+        actions: [
+          IconButton(
+            icon: _visionBusy
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: AppColors.white),
+                  )
+                : const Icon(Icons.image_search,
+                    color: AppColors.white, size: AppStyles.sizeTopBarIcon),
+            tooltip: '写真スキャン',
+            onPressed: _visionBusy ? null : _startVisionScan,
+          ),
+        ],
       ),
       body: Stack(
         children: [
