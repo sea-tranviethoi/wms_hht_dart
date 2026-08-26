@@ -14,6 +14,7 @@ import '../storage/cache_storage.dart';
 import '../storage/secure_storage.dart';
 import '../update/app_updater.dart';
 import '../ai/vision_client.dart';
+import '../ai/route_optimizer_client.dart';
 import '../../presentation/blocs/update/update_cubit.dart';
 import '../../data/datasources/remote/auth_remote_datasource.dart';
 import '../../data/datasources/remote/master_remote_datasource.dart';
@@ -94,6 +95,9 @@ Future<void> initDependencies() async {
 
   // ─── Core: Vision AI (cycle count) ────────────────────────────
   sl.registerSingleton<VisionClient>(VisionClient());
+
+  // ─── Core: Route Optimizer (picking route, proposal #7 "Nhóm A") ──
+  sl.registerSingleton<RouteOptimizerClient>(RouteOptimizerClient());
 
   // ─── Data: Remote DataSources ─────────────────────────────────
   sl.registerSingleton<AuthRemoteDataSource>(

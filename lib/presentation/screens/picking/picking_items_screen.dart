@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/ai/route_optimizer_client.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../core/di/injection.dart';
@@ -83,12 +84,94 @@ class _PickingItemsView extends StatelessWidget {
             );
           }
           if (state is PickingLinesLoaded) {
-            return _buildList(context, state.lines);
+            return _OptimizedLinesView(
+              lines: state.lines,
+              pickNo: pickNo,
+              tenantId: tenantId,
+              company: company,
+            );
           }
           return const SizedBox.shrink();
         },
       ),
     );
+  }
+}
+
+/// Reorders [lines] by the picking-route optimizer (proposal #7, "Nhóm A")
+/// before rendering, so the walking order shown here — not just the order
+/// the backend happened to return — reflects the shortest route through the
+/// racks that need a pick. Falls back to the server's original order if the
+/// optimizer is unreachable or any line is missing a bin: this is a display
+/// enhancement, not something that should block the screen.
+class _OptimizedLinesView extends StatefulWidget {
+  final List<PickingLine> lines;
+  final String pickNo;
+  final int tenantId;
+  final String company;
+
+  const _OptimizedLinesView({
+    required this.lines,
+    required this.pickNo,
+    required this.tenantId,
+    required this.company,
+  });
+
+  @override
+  State<_OptimizedLinesView> createState() => _OptimizedLinesViewState();
+}
+
+class _OptimizedLinesViewState extends State<_OptimizedLinesView> {
+  late List<PickingLine> _lines;
+
+  @override
+  void initState() {
+    super.initState();
+    _lines = widget.lines;
+    _optimizeOrder();
+  }
+
+  @override
+  void didUpdateWidget(covariant _OptimizedLinesView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.lines, widget.lines)) {
+      _lines = widget.lines;
+      _optimizeOrder();
+    }
+  }
+
+  Future<void> _optimizeOrder() async {
+    final bins = widget.lines.map((l) => l.bin).toList();
+    if (bins.any((b) => b == null || b.isEmpty)) return;
+
+    try {
+      final order =
+          await sl<RouteOptimizerClient>().optimize(bins.cast<String>());
+      if (!mounted) return;
+
+      final remaining = List<PickingLine>.from(widget.lines);
+      final sorted = <PickingLine>[];
+      for (final bin in order) {
+        final idx = remaining.indexWhere((l) => l.bin == bin);
+        if (idx >= 0) sorted.add(remaining.removeAt(idx));
+      }
+      sorted.addAll(remaining); // any bin the optimizer didn't return (shouldn't happen)
+      setState(() => _lines = sorted);
+    } on RouteOptimizerException {
+      // Non-critical — keep the server's original order.
+    } catch (_) {
+      // Non-critical — keep the server's original order.
+    }
+  }
+
+  void _backToList(BuildContext context) {
+    final c = Uri.encodeComponent(widget.company);
+    context.go('${RouteNames.pickingList}?tenantId=${widget.tenantId}&company=$c');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildList(context, _lines);
   }
 
   Widget _buildList(BuildContext context, List<PickingLine> lines) {
@@ -128,11 +211,11 @@ class _PickingItemsView extends StatelessWidget {
               onTap: () => context.push(
                 RouteNames.pickingDetail,
                 extra: {
-                  'pickNo': pickNo,
+                  'pickNo': widget.pickNo,
                   'pickingLine': lines[index],
                   'currentIndex': index,
-                  'tenantId': tenantId,
-                  'company': company,
+                  'tenantId': widget.tenantId,
+                  'company': widget.company,
                   'allLines': lines,
                 },
               ),
@@ -191,11 +274,11 @@ class _PickingItemsView extends StatelessWidget {
                       context.push(
                         RouteNames.pickingDetail,
                         extra: {
-                          'pickNo': pickNo,
+                          'pickNo': widget.pickNo,
                           'pickingLine': lines[idx],
                           'currentIndex': idx,
-                          'tenantId': tenantId,
-                          'company': company,
+                          'tenantId': widget.tenantId,
+                          'company': widget.company,
                           'allLines': lines,
                         },
                       );

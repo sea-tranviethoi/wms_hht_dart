@@ -335,6 +335,17 @@ class _PickingDetailScreenState extends State<PickingDetailScreen>
                     fontSize: AppStyles.sizeBodyText,
                     color: AppColors.grayTextColor)),
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _startVisionScan();
+            },
+            child: const Text('撮り直す',
+                style: TextStyle(
+                    fontFamily: AppStyles.font,
+                    fontSize: AppStyles.sizeBodyText,
+                    color: AppColors.settingsColor3)),
+          ),
           if (counted > 0)
             TextButton(
               onPressed: () {

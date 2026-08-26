@@ -21,10 +21,14 @@ multi_pass_decode) is used to make decoding robust against glare, moiré, and
 blur, which a single plain zbar pass often misses.
 
 Usage:
-  1. pip install pyzbar pillow opencv-python numpy   (one-time)
-  2. Run:  python scripts/mock_vision_server.py
-  3. Open the firewall for port 9600
-  4. In the app, point AppConstants.visionHost to http://<PC_IP>:9600
+  1. Install Tesseract OCR itself (a system binary, not a pip package) --
+     e.g. `winget install UB-Mannheim.TesseractOCR` on Windows -- needed for
+     the route optimizer below, which reads warehouse_layout.png via OCR.
+  2. pip install pyzbar pillow opencv-python numpy ortools networkx
+     pytesseract scikit-image   (one-time)
+  3. Run:  python scripts/mock_vision_server.py
+  4. Open the firewall for port 9600
+  5. In the app, point AppConstants.visionHost to http://<PC_IP>:9600
 
 Endpoint:
   POST /api/vision/identify
@@ -35,6 +39,19 @@ Endpoint:
         "totalDetected": 5,                # total QR codes found in the photo
         "annotatedImage": "<base64 jpeg>"  # photo with highlight boxes drawn
       }
+
+This server ALSO hosts the picking route optimizer (proposal #7, "Nhóm A")
+on the same port, so only one process needs to run for local testing — see
+the module-level comment above optimize_route() below for what that endpoint
+does and warehouse_layout.png for the floor plan it reads.
+
+Endpoint:
+  POST /api/route/optimize
+      body: {"bins": ["01-A203", "02-B105", ...]}
+      resp: {
+        "order": ["01-A203", "01-C106", "11-A102", ...],
+        "totalDistance": 134   # round-trip distance in warehouse_layout.png pixels
+      }
 """
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -42,12 +59,23 @@ from urllib.parse import urlparse
 import base64
 import io
 import json
+import os
+import re
 import socket
 
 import cv2
+import networkx as nx
 import numpy as np
+import pytesseract
 from PIL import Image, ImageDraw
 from pyzbar.pyzbar import decode as zbar_decode, ZBarSymbol
+from skimage.morphology import skeletonize, binary_opening, binary_closing
+from ortools.constraint_solver import routing_enums_pb2
+from ortools.constraint_solver import pywrapcp
+
+pytesseract.pytesseract.tesseract_cmd = os.environ.get(
+    "TESSERACT_CMD", r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+)
 
 # ─── CONFIG ──────────────────────────────────────────────────────────────────
 
@@ -56,6 +84,9 @@ PORT = 9600
 MATCH_COLOR = "lime"     # box colour for a QR that matched a candidate item code
 NO_MATCH_COLOR = "red"   # box colour for a QR detected but not in the candidate list
 BOX_WIDTH = 6
+
+LAYOUT_PNG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "warehouse_layout.png")
+BIN_CODE_RE = re.compile(r"^(\w+)-([A-Za-z])(\d)(\d{2})$")
 
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -214,14 +245,241 @@ def process_photo(image_b64, valid_codes):
     }
 
 
+# ─── Route optimizer (proposal #7, "Nhóm A") ─────────────────────────────────
+#
+# Layout comes from warehouse_layout.png -- a raster image, so unlike a
+# structured SVG/CAD source, the walkable structure has to be *inferred*:
+#   1. OCR (Tesseract) finds every bin/row/zone label and its pixel position.
+#   2. Classic CV (adaptive threshold + morphological opening/closing) turns
+#      the image into a walkable/blocked mask -- opening erodes away thin
+#      leftover text strokes without eating the much thicker rack/wall lines.
+#   3. skeletonize() reduces the walkable area to a thin path network.
+#   4. Only the LARGEST connected component of that skeleton is kept -- the
+#      rest are small noise fragments (leftover text, stray pixels) that
+#      inflate the component count but hold none of the real bins; verified
+#      by inspection (see project chat log): the largest component alone
+#      covers ~93% of all skeleton pixels and every real bin snaps onto it.
+#   5. Each label's pixel position is snapped to its nearest skeleton pixel,
+#      giving a graph node per bin; walking distance between any two bins is
+#      the shortest path through that skeleton graph.
+#
+# No OCR/CV would be needed if the source were a structured SVG/CAD file
+# instead of a photo/raster export -- that case can read exact coordinates
+# directly. This pipeline is specifically for when only a raster image is
+# available.
+#
+# Every rack is a dead-end aisle branching off one shared spine (confirmed:
+# rows don't connect directly to each other, only via the spine), so this
+# reduces to a TSP over the requested bins, solved as a closed loop (the
+# entrance -- the DOCK area -- is both the start and end point).
+
+ENTRANCE_XY_FRAC = (0.452, 0.043)  # centre of the DOCK area, as a fraction of image size
+
+_layout_graph_cache = None  # (graph, spatial_bin_keys, special_bin_keys), built once
+
+
+def _ocr_tokens(img_gray):
+    data = pytesseract.image_to_data(img_gray, output_type=pytesseract.Output.DICT, config="--psm 11")
+    tokens = []
+    for i in range(len(data["text"])):
+        t = data["text"][i].strip()
+        if t and data["conf"][i] > 40:
+            tokens.append({"text": t, "x": data["left"][i], "y": data["top"][i],
+                           "w": data["width"][i], "h": data["height"][i]})
+    return tokens
+
+
+def _parse_layout_png():
+    img = Image.open(LAYOUT_PNG).convert("L")
+    arr = np.array(img)
+    H, W = arr.shape
+    tokens = _ocr_tokens(img)
+
+    # Special zone: OCR reads the full bin code directly (e.g. "11-A101").
+    special_bins = {}
+    for t in tokens:
+        if re.fullmatch(r"11-A10\d", t["text"]):
+            special_bins[t["text"]] = (t["x"] + t["w"] / 2, t["y"] + t["h"] / 2)
+
+    # Row labels: big "Lối đi 0X" numbers (tall text, near the left margin) --
+    # distinct from the small per-cell position numbers "01".."06", which
+    # reuse the same text but are much shorter and spread across the width.
+    row_label_tokens = sorted(
+        (t for t in tokens if re.fullmatch(r"0[1-5]", t["text"]) and t["h"] > 18 and t["x"] < W * 0.13),
+        key=lambda t: t["y"],
+    )
+
+    def nearest_rack(y):
+        return min(row_label_tokens, key=lambda t: abs(t["y"] - y))["text"]
+
+    # Zone column bands ("Khu A/B/C") repeat at the same x in every row, so
+    # ANY row's letter tokens are enough to classify any cell's column --
+    # no need to isolate "the first row" (fragile: depends on exact layout
+    # proportions, and broke when the row-height threshold didn't match).
+    khu_letter_tokens = []
+    for t in tokens:
+        if t["text"] == "Khu":
+            for t2 in tokens:
+                if t2["text"] in ("A", "B", "C") and abs(t2["y"] - t["y"]) < 5 and t2["x"] > t["x"]:
+                    khu_letter_tokens.append(t2)
+                    break
+
+    def nearest_zone_letter(x):
+        return min(khu_letter_tokens, key=lambda t: abs(t["x"] - x))["text"]
+
+    pos_tokens = [t for t in tokens if re.fullmatch(r"0[1-6]", t["text"]) and t["h"] <= 18]
+
+    bins = {}  # "{rack}-{row}{pos:02d}" (level omitted, spatial only) -> (x, y)
+    for t in pos_tokens:
+        cx, cy = t["x"] + t["w"] / 2, t["y"] + t["h"] / 2
+        key = f"{nearest_rack(cy)}-{nearest_zone_letter(cx)}{t['text']}"
+        bins.setdefault(key, (cx, cy))
+
+    # Walkable/blocked mask -> skeleton path network.
+    dark = (arr < 200).astype(np.uint8)
+    opened = binary_opening(dark, footprint=np.ones((3, 3)))
+    closed = binary_closing(opened, footprint=np.ones((5, 5)))
+    walkable = ~closed
+    skeleton = skeletonize(walkable)
+    ys, xs = np.nonzero(skeleton)
+    skel_set = set(zip(xs.tolist(), ys.tolist()))
+
+    raw_graph = nx.Graph()
+    for x, y in skel_set:
+        for dx, dy in ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)):
+            nb = (x + dx, y + dy)
+            if nb in skel_set:
+                raw_graph.add_edge((x, y), nb, weight=(dx * dx + dy * dy) ** 0.5)
+
+    largest = max(nx.connected_components(raw_graph), key=len)
+    walk_graph = raw_graph.subgraph(largest)
+
+    def nearest_skel_node(px, py, max_r=80):
+        best, best_d = None, float("inf")
+        for x, y in largest:
+            d = (x - px) ** 2 + (y - py) ** 2
+            if d < best_d:
+                best_d, best = d, (x, y)
+        return best if best_d <= max_r ** 2 else None
+
+    graph = nx.Graph()
+    all_points = {**{f"BIN_{k}": v for k, v in bins.items()},
+                  **{f"BIN_{k}": v for k, v in special_bins.items()},
+                  "ENTRANCE": (W * ENTRANCE_XY_FRAC[0], H * ENTRANCE_XY_FRAC[1])}
+    hub = {}
+    unplaced = []
+    for node_id, (x, y) in all_points.items():
+        anchor = nearest_skel_node(x, y)
+        if anchor is None:
+            unplaced.append(node_id)
+            continue
+        hub[node_id] = anchor
+    if unplaced:
+        print(f"[Route]    WARNING: could not place on skeleton: {unplaced}")
+
+    # Connect every hub through the walk graph via its nearest anchor pixel;
+    # edges between two hubs are the shortest path in walk_graph between
+    # their anchors (computed lazily per-request in optimize_route, not
+    # precomputed here -- keeps this one-time parse step fast).
+    graph.add_nodes_from(hub.keys())
+    graph.graph["walk_graph"] = walk_graph
+    graph.graph["anchors"] = hub
+
+    spatial_bins = set(bins.keys())
+    special_bin_codes = set(special_bins.keys())
+    return graph, spatial_bins, special_bin_codes
+
+
+def load_layout_graph():
+    global _layout_graph_cache
+    if _layout_graph_cache is None:
+        _layout_graph_cache = _parse_layout_png()
+    return _layout_graph_cache
+
+
+def _hub_distance(graph, node_a, node_b):
+    walk_graph = graph.graph["walk_graph"]
+    anchors = graph.graph["anchors"]
+    if node_a not in anchors or node_b not in anchors:
+        raise ValueError(f"Bin khong the dat len ban do (OCR khong doc duoc hoac qua xa loi di): {node_a!r}/{node_b!r}")
+    return nx.shortest_path_length(walk_graph, anchors[node_a], anchors[node_b], weight="weight")
+
+
+def bin_node(code, spatial_bins, special_bins):
+    """"01-A203" -> graph node "BIN_01-A03" (level digit dropped -- it's
+    vertical, not spatial). Special-zone codes ("11-A101") already include
+    their level digit and match a graph node as-is."""
+    m = BIN_CODE_RE.match(code.strip())
+    if not m:
+        raise ValueError(f"Bin code khong dung dinh dang: {code!r}")
+    rack, row, _level, pos = m.groups()
+    spatial_key = f"{rack}-{row.upper()}{pos}"
+    if spatial_key in spatial_bins:
+        return f"BIN_{spatial_key}"
+    if code in special_bins:
+        return f"BIN_{code}"
+    raise ValueError(f"Khong tim thay bin {code!r} trong warehouse_layout.png")
+
+
+def optimize_route(bins):
+    graph, spatial_bins, special_bins = load_layout_graph()
+    nodes = ["ENTRANCE"] + bins
+    graph_nodes = ["ENTRANCE"] + [bin_node(c, spatial_bins, special_bins) for c in bins]
+    n = len(nodes)
+
+    if n <= 2:  # 0 or 1 bin -- nothing to order, just report the round trip
+        total = 0 if n < 2 else 2 * _hub_distance(graph, graph_nodes[0], graph_nodes[1])
+        return {"order": bins, "totalDistance": round(total)}
+
+    # OR-Tools' transit callback must return an int; pixel distances are
+    # floats, so scale up before rounding to avoid losing precision.
+    SCALE = 1000
+    dist = [[round(_hub_distance(graph, graph_nodes[i], graph_nodes[j]) * SCALE)
+             for j in range(n)] for i in range(n)]
+
+    manager = pywrapcp.RoutingIndexManager(n, 1, 0)
+    routing = pywrapcp.RoutingModel(manager)
+
+    def distance_callback(from_index, to_index):
+        return dist[manager.IndexToNode(from_index)][manager.IndexToNode(to_index)]
+
+    transit_index = routing.RegisterTransitCallback(distance_callback)
+    routing.SetArcCostEvaluatorOfAllVehicles(transit_index)
+
+    params = pywrapcp.DefaultRoutingSearchParameters()
+    params.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+    params.local_search_metaheuristic = routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
+    params.time_limit.FromSeconds(2)
+
+    solution = routing.SolveWithParameters(params)
+    if solution is None:
+        raise RuntimeError("OR-Tools khong tim duoc loi giai")
+
+    order, travel = [], 0
+    index = routing.Start(0)
+    while not routing.IsEnd(index):
+        node = manager.IndexToNode(index)
+        if nodes[node] != "ENTRANCE":
+            order.append(nodes[node])
+        next_index = solution.Value(routing.NextVar(index))
+        travel += routing.GetArcCostForVehicle(index, next_index, 0)
+        index = next_index
+
+    return {"order": order, "totalDistance": round(travel / SCALE)}
+
+
 class VisionHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urlparse(self.path)
-        if parsed.path != "/api/vision/identify":
+        if parsed.path == "/api/vision/identify":
+            self._handle_vision_identify()
+        elif parsed.path == "/api/route/optimize":
+            self._handle_route_optimize()
+        else:
             self._send_404(parsed.path)
-            return
 
+    def _handle_vision_identify(self):
         try:
             length = int(self.headers.get("Content-Length", 0))
             body = json.loads(self.rfile.read(length).decode("utf-8"))
@@ -244,6 +502,29 @@ class VisionHandler(BaseHTTPRequestHandler):
             print(f"[Vision]   ERROR: {e}")
             self._send_json({"error": str(e)}, 500)
 
+    def _handle_route_optimize(self):
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length).decode("utf-8"))
+        except Exception as e:
+            self._send_json({"error": f"bad request: {e}"}, 400)
+            return
+
+        bins = body.get("bins", [])
+        print(f"[Route]    {len(bins)} bins: {bins}")
+
+        try:
+            result = optimize_route(bins)
+            print(f"[Route]    order={result['order']} "
+                  f"total={result['totalDistance']}")
+            self._send_json(result)
+        except ValueError as e:
+            print(f"[Route]    REJECTED: {e}")
+            self._send_json({"error": str(e)}, 400)
+        except Exception as e:
+            print(f"[Route]    ERROR: {e}")
+            self._send_json({"error": str(e)}, 500)
+
     def _send_json(self, obj, code=200):
         body = json.dumps(obj).encode("utf-8")
         self.send_response(code)
@@ -262,13 +543,16 @@ class VisionHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    load_layout_graph()  # fail fast if warehouse_layout.png is missing/invalid
     local_ip = get_local_ip()
     print("=" * 55)
-    print("  Multi-QR Photo Scanner (cycle count)")
+    print("  Multi-QR Photo Scanner + Route Optimizer")
     print("=" * 55)
     print(f"  Server URL  : http://{local_ip}:{PORT}")
-    print(f"  Endpoint    : POST /api/vision/identify")
+    print(f"  Endpoints   : POST /api/vision/identify")
+    print(f"                POST /api/route/optimize")
     print(f"  Decoder     : pyzbar + OpenCV multi-pass (no LLM needed)")
+    print(f"  Layout file : {LAYOUT_PNG}")
     print("=" * 55)
     print("  Ctrl+C to stop the server")
     print()
