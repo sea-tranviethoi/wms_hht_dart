@@ -26,7 +26,12 @@ Usage:
      the route optimizer below, which reads warehouse_layout.png via OCR.
   2. pip install pyzbar pillow opencv-python numpy ortools networkx
      pytesseract scikit-image   (one-time)
-  3. Run:  python scripts/mock_vision_server.py
+  3. Run:  python scripts/vision_ai/mock_vision_server.py
+     The warehouse layout graph (OCR + skeletonize -- the slow part) is
+     cached to warehouse_layout_cache.pkl after the first parse. Every
+     later run reuses that cache instantly instead of re-parsing the PNG.
+     Run with `--rebuild-layout` to force a fresh parse (e.g. after editing
+     warehouse_layout.png) and overwrite the cache.
   4. Open the firewall for port 9600
   5. In the app, point AppConstants.visionHost to http://<PC_IP>:9600
 
@@ -56,10 +61,12 @@ Endpoint:
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
+import argparse
 import base64
 import io
 import json
 import os
+import pickle
 import re
 import socket
 
@@ -86,6 +93,11 @@ NO_MATCH_COLOR = "red"   # box colour for a QR detected but not in the candidate
 BOX_WIDTH = 6
 
 LAYOUT_PNG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "warehouse_layout.png")
+# Parsing warehouse_layout.png (OCR + skeletonize) is the slow, one-time part
+# of the route optimizer. The result is cached here so restarting the server
+# does NOT re-run OCR/skeletonize every time -- only an explicit
+# `--rebuild-layout` run (or a missing cache file) triggers a fresh parse.
+LAYOUT_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "warehouse_layout_cache.pkl")
 BIN_CODE_RE = re.compile(r"^(\w+)-([A-Za-z])(\d)(\d{2})$")
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -273,7 +285,7 @@ def process_photo(image_b64, valid_codes):
 # reduces to a TSP over the requested bins, solved as a closed loop (the
 # entrance -- the DOCK area -- is both the start and end point).
 
-ENTRANCE_XY_FRAC = (0.452, 0.043)  # centre of the DOCK area, as a fraction of image size
+ENTRANCE_XY_FRAC = (0.4909, 0.0500)  # main entrance doorway on Khu A's outer wall (warehouse_layout.png)
 
 _layout_graph_cache = None  # (graph, spatial_bin_keys, special_bin_keys), built once
 
@@ -390,10 +402,32 @@ def _parse_layout_png():
     return graph, spatial_bins, special_bin_codes
 
 
-def load_layout_graph():
+def load_layout_graph(force_rebuild=False):
+    """Returns the (graph, spatial_bins, special_bin_codes) tuple.
+
+    Resolution order: in-memory cache -> disk cache (LAYOUT_CACHE) -> parse
+    warehouse_layout.png from scratch (OCR + skeletonize, the slow path).
+    [force_rebuild] skips the first two and always re-parses + overwrites the
+    disk cache -- this is what `--rebuild-layout` triggers.
+    """
     global _layout_graph_cache
-    if _layout_graph_cache is None:
-        _layout_graph_cache = _parse_layout_png()
+
+    if _layout_graph_cache is not None and not force_rebuild:
+        return _layout_graph_cache
+
+    if not force_rebuild and os.path.exists(LAYOUT_CACHE):
+        print(f"[Route]    Loading cached layout graph from {LAYOUT_CACHE}")
+        with open(LAYOUT_CACHE, "rb") as f:
+            _layout_graph_cache = pickle.load(f)
+        return _layout_graph_cache
+
+    print(f"[Route]    Parsing {LAYOUT_PNG} (OCR + skeletonize)... "
+          f"this can take a few seconds")
+    _layout_graph_cache = _parse_layout_png()
+    with open(LAYOUT_CACHE, "wb") as f:
+        pickle.dump(_layout_graph_cache, f)
+    print(f"[Route]    Saved layout graph cache to {LAYOUT_CACHE}")
+
     return _layout_graph_cache
 
 
@@ -543,7 +577,18 @@ class VisionHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    load_layout_graph()  # fail fast if warehouse_layout.png is missing/invalid
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--rebuild-layout", action="store_true",
+        help="Force re-parsing warehouse_layout.png (OCR + skeletonize) even "
+             "if a cached graph already exists, and overwrite the cache.",
+    )
+    args = parser.parse_args()
+
+    # Fail fast if warehouse_layout.png is missing/invalid; also builds or
+    # loads the layout graph cache before the server starts accepting requests.
+    load_layout_graph(force_rebuild=args.rebuild_layout)
+
     local_ip = get_local_ip()
     print("=" * 55)
     print("  Multi-QR Photo Scanner + Route Optimizer")
@@ -553,6 +598,7 @@ if __name__ == "__main__":
     print(f"                POST /api/route/optimize")
     print(f"  Decoder     : pyzbar + OpenCV multi-pass (no LLM needed)")
     print(f"  Layout file : {LAYOUT_PNG}")
+    print(f"  Layout cache: {LAYOUT_CACHE}")
     print("=" * 55)
     print("  Ctrl+C to stop the server")
     print()

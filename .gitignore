@@ -1,6 +1,9 @@
 .DS_Store
 Thumbs.db
 
+# Derived cache — rebuild with `python scripts/mock_vision_server.py --rebuild-layout`
+scripts/vision_ai/warehouse_layout_cache.pkl
+
 # Flutter/Dart
 .dart_tool/
 .packages
