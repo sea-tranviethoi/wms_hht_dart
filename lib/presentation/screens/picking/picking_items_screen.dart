@@ -6,6 +6,7 @@ import '../../../core/ai/route_optimizer_client.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/storage/cache_storage.dart';
 import '../../blocs/picking/picking_bloc.dart';
 import '../../../data/models/picking/picking_line.dart';
 import '../../../routes/route_names.dart';
@@ -141,12 +142,52 @@ class _OptimizedLinesViewState extends State<_OptimizedLinesView> {
   }
 
   Future<void> _optimizeOrder() async {
-    final bins = widget.lines.map((l) => l.bin).toList();
-    if (bins.any((b) => b == null || b.isEmpty)) return;
+    // TEMP DEBUG — remove once the silent-skip cause is confirmed.
+    // ignore: avoid_print
+    print('[RouteOptimize] _optimizeOrder() called, pick=${widget.pickNo}, '
+        'lines=${widget.lines.length}');
 
+    final bins = widget.lines.map((l) => l.bin).toList();
+    // ignore: avoid_print
+    print('[RouteOptimize] bins=$bins');
+    if (bins.any((b) => b == null || b.isEmpty)) {
+      // ignore: avoid_print
+      print('[RouteOptimize] SKIP: at least one line has null/empty bin');
+      return;
+    }
+
+    // Each Location has its own uploaded floor-plan layout on the server now
+    // (see mock_vision_server.py's per-location /api/layout/upload). Prefer
+    // the pick's own Location code (WarehousePickingLineDTO.LocationCode --
+    // more correct: a pick is always for one Location, which may not match
+    // whatever the operator selected), then the operator's selected
+    // warehouse (LocationSelectionScreen/CacheStorage).
+    //
+    // TEMP: hardcoded to "Kakegawa1" as a last resort for testing, because
+    // neither of the above is populated yet -- the backend at
+    // 133.167.47.242 hasn't been redeployed with WarehousePickingLineDTO.LocationCode,
+    // and LocationSelectionScreen has no entry point wired into app
+    // navigation yet, so CacheStorage.getLocation() is always null. REMOVE
+    // this hardcoded fallback once either of those is fixed.
+    final locationCode = widget.lines.first.locationCode ??
+        sl<CacheStorage>().getLocation() ??
+        'Kakegawa1';
+    // ignore: avoid_print
+    print('[RouteOptimize] locationCode=$locationCode '
+        '(dto=${widget.lines.first.locationCode}, cache=${sl<CacheStorage>().getLocation()})');
+    if (locationCode.isEmpty) {
+      // ignore: avoid_print
+      print('[RouteOptimize] SKIP: no locationCode available');
+      return;
+    }
+
+    // ignore: avoid_print
+    print('[RouteOptimize] calling optimize($locationCode, $bins)');
     try {
-      final order =
-          await sl<RouteOptimizerClient>().optimize(bins.cast<String>());
+      final order = await sl<RouteOptimizerClient>()
+          .optimize(locationCode, bins.cast<String>());
+      // ignore: avoid_print
+      print('[RouteOptimize] SUCCESS: order=$order');
       if (!mounted) return;
 
       final remaining = List<PickingLine>.from(widget.lines);
@@ -157,10 +198,14 @@ class _OptimizedLinesViewState extends State<_OptimizedLinesView> {
       }
       sorted.addAll(remaining); // any bin the optimizer didn't return (shouldn't happen)
       setState(() => _lines = sorted);
-    } on RouteOptimizerException {
+    } on RouteOptimizerException catch (e) {
       // Non-critical — keep the server's original order.
-    } catch (_) {
+      // ignore: avoid_print
+      print('[RouteOptimize] FAILED: $e');
+    } catch (e) {
       // Non-critical — keep the server's original order.
+      // ignore: avoid_print
+      print('[RouteOptimize] FAILED (unexpected): $e');
     }
   }
 

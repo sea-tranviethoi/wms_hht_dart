@@ -31,27 +31,23 @@ PutawayStaging _$PutawayStagingFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updateAt'] as String),
     );
 
-Map<String, dynamic> _$PutawayStagingToJson(PutawayStaging instance) {
-  final val = <String, dynamic>{
-    'putAwayNo': instance.putAwayNo,
-    'productCode': instance.productCode,
-    'unit': instance.unit,
-    'unitId': instance.unitId,
-    'journalQty': instance.journalQty,
-    'transQty': instance.transQty,
-    'bin': instance.bin,
-    'status': instance.status,
-    'isDeleted': instance.isDeleted,
-    'lotNo': instance.lotNo,
-    'expiryDate': instance.expiryDate,
-    'expirationDate': instance.expirationDate,
-    'janCode': instance.janCode,
-    'createAt': instance.createAt?.toIso8601String(),
-    'updateAt': instance.updateAt?.toIso8601String(),
-  };
-  if (instance.id != null) val['id'] = instance.id;
-  if (instance.putAwayLineId != null) {
-    val['putAwayLineId'] = instance.putAwayLineId;
-  }
-  return val;
-}
+Map<String, dynamic> _$PutawayStagingToJson(PutawayStaging instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'putAwayNo': instance.putAwayNo,
+      'productCode': instance.productCode,
+      'unit': instance.unit,
+      'unitId': instance.unitId,
+      'journalQty': instance.journalQty,
+      'transQty': instance.transQty,
+      'bin': instance.bin,
+      'status': instance.status,
+      'isDeleted': instance.isDeleted,
+      'lotNo': instance.lotNo,
+      'expiryDate': instance.expiryDate,
+      'expirationDate': instance.expirationDate,
+      'putAwayLineId': instance.putAwayLineId,
+      'janCode': instance.janCode,
+      'createAt': instance.createAt?.toIso8601String(),
+      'updateAt': instance.updateAt?.toIso8601String(),
+    };

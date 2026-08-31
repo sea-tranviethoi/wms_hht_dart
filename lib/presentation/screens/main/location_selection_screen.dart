@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../core/ai/layout_upload_client.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/storage/cache_storage.dart';
@@ -9,6 +14,7 @@ import '../../blocs/master/master_bloc.dart';
 import '../../../data/models/master/location.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../../routes/route_names.dart';
+import '../../widgets/app_loading.dart';
 
 /// Ported from screens/LocationSelection.js (if it existed in RN)
 ///
@@ -61,6 +67,108 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
                   l.locationName.toLowerCase().contains(kw))
               .toList();
     });
+  }
+
+  /// Same feature as the "Nạp layout" button on the WMS location-detail
+  /// page (DialogUploadWarehouseLayout.razor) — picks a floor-plan image and
+  /// uploads it for [loc] to mock_vision_server.py (POST
+  /// /api/layout/upload), then polls /api/layout/status until the
+  /// OCR/vision-model parse finishes.
+  Future<void> _uploadLayout(Location loc) async {
+    final picker = ImagePicker();
+    XFile? picked;
+    try {
+      picked = await picker.pickImage(source: ImageSource.gallery);
+    } catch (e) {
+      if (!mounted) return;
+      _showSnack('画像の選択に失敗しました: $e', isError: true);
+      return;
+    }
+    if (picked == null) return; // user cancelled
+    if (!mounted) return;
+
+    final progress = ValueNotifier<String>('アップロード中...');
+    _showLoadingDialog(progress);
+
+    try {
+      final client = sl<LayoutUploadClient>();
+      await client.uploadLayout(loc.locationCode, File(picked.path));
+
+      const pollInterval = Duration(seconds: 3);
+      const pollTimeout = Duration(minutes: 5);
+      final deadline = DateTime.now().add(pollTimeout);
+
+      progress.value = '解析中です。しばらくお待ちください...';
+
+      while (DateTime.now().isBefore(deadline)) {
+        await Future.delayed(pollInterval);
+        final status = await sl<LayoutUploadClient>().pollStatus(loc.locationCode);
+
+        if (status.status == 'done') {
+          _closeLoadingDialog();
+          if (!mounted) return;
+          _showSnack(
+            'レイアウト保存完了: ビン ${status.spatialBins} 件、特殊ビン ${status.specialBins} 件を検出しました。',
+          );
+          return;
+        }
+        if (status.status == 'error') {
+          _closeLoadingDialog();
+          if (!mounted) return;
+          _showSnack(status.error ?? 'レイアウトの処理に失敗しました', isError: true);
+          return;
+        }
+        // "processing" (or a transient poll failure) — keep waiting.
+      }
+
+      _closeLoadingDialog();
+      if (!mounted) return;
+      _showSnack('サーバー側で処理中です。もうすぐ完了します。', isError: false);
+    } on LayoutUploadException catch (e) {
+      _closeLoadingDialog();
+      if (!mounted) return;
+      _showSnack(e.toString(), isError: true);
+    } catch (e) {
+      _closeLoadingDialog();
+      if (!mounted) return;
+      _showSnack('アップロードに失敗しました: $e', isError: true);
+    }
+  }
+
+  bool _loadingDialogOpen = false;
+
+  void _showLoadingDialog(ValueNotifier<String> progress) {
+    _loadingDialogOpen = true;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          content: ValueListenableBuilder<String>(
+            valueListenable: progress,
+            builder: (_, message, __) => AppLoading.centered(message: message),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _closeLoadingDialog() {
+    if (_loadingDialogOpen && mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+    _loadingDialogOpen = false;
+  }
+
+  void _showSnack(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: const TextStyle(fontFamily: AppStyles.font)),
+        backgroundColor: isError ? AppColors.textError : AppColors.wageningenGreen,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   Future<void> _selectLocation(Location loc) async {
@@ -194,6 +302,7 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
             return _LocationTile(
               location: loc,
               onTap: () => _selectLocation(loc),
+              onUploadLayout: () => _uploadLayout(loc),
             );
           },
         );
@@ -205,8 +314,13 @@ class _LocationSelectionViewState extends State<_LocationSelectionView> {
 class _LocationTile extends StatelessWidget {
   final Location location;
   final VoidCallback onTap;
+  final VoidCallback onUploadLayout;
 
-  const _LocationTile({required this.location, required this.onTap});
+  const _LocationTile({
+    required this.location,
+    required this.onTap,
+    required this.onUploadLayout,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +358,17 @@ class _LocationTile extends StatelessWidget {
                 ),
               )
             : null,
-        trailing: const Icon(Icons.chevron_right, color: AppColors.gray),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.upload_file, color: AppColors.themeBackground),
+              tooltip: 'レイアウト読込',
+              onPressed: onUploadLayout,
+            ),
+            const Icon(Icons.chevron_right, color: AppColors.gray),
+          ],
+        ),
       ),
     );
   }

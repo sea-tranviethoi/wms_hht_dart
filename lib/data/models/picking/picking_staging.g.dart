@@ -29,25 +29,21 @@ PickingStaging _$PickingStagingFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updateAt'] as String),
     );
 
-Map<String, dynamic> _$PickingStagingToJson(PickingStaging instance) {
-  final val = <String, dynamic>{
-    'pickNo': instance.pickNo,
-    'productCode': instance.productCode,
-    'unit': instance.unit,
-    'unitId': instance.unitId,
-    'location': instance.location,
-    'bin': instance.bin,
-    'lotNo': instance.lotNo,
-    'pickQty': instance.pickQty,
-    'actualQty': instance.actualQty,
-    'status': instance.status,
-    'isDeleted': instance.isDeleted,
-    'createAt': instance.createAt?.toIso8601String(),
-    'updateAt': instance.updateAt?.toIso8601String(),
-  };
-  if (instance.id != null) val['id'] = instance.id;
-  if (instance.shipmentLineId != null) {
-    val['shipmentLineId'] = instance.shipmentLineId;
-  }
-  return val;
-}
+Map<String, dynamic> _$PickingStagingToJson(PickingStaging instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'pickNo': instance.pickNo,
+      'productCode': instance.productCode,
+      'unit': instance.unit,
+      'unitId': instance.unitId,
+      'location': instance.location,
+      'bin': instance.bin,
+      'lotNo': instance.lotNo,
+      'pickQty': instance.pickQty,
+      'actualQty': instance.actualQty,
+      'status': instance.status,
+      'isDeleted': instance.isDeleted,
+      'shipmentLineId': instance.shipmentLineId,
+      'createAt': instance.createAt?.toIso8601String(),
+      'updateAt': instance.updateAt?.toIso8601String(),
+    };

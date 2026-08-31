@@ -27,6 +27,7 @@ PickingLine _$PickingLineFromJson(Map<String, dynamic> json) => PickingLine(
           : DateTime.parse(json['updateAt'] as String),
       productName: json['productName'] as String?,
       unitName: json['unitName'] as String?,
+      locationCode: json['locationCode'] as String?,
     );
 
 Map<String, dynamic> _$PickingLineToJson(PickingLine instance) =>
@@ -35,6 +36,7 @@ Map<String, dynamic> _$PickingLineToJson(PickingLine instance) =>
       'pickNo': instance.pickNo,
       'productCode': instance.productCode,
       'location': instance.location,
+      'locationCode': instance.locationCode,
       'bin': instance.bin,
       'lotNo': instance.lotNo,
       'pickQty': instance.pickQty,

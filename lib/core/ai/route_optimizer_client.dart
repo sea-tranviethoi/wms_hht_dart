@@ -23,11 +23,15 @@ class RouteOptimizerClient {
   }
 
   /// Returns [bins] reordered for the shortest round trip starting and
-  /// ending at the warehouse entrance. Throws [RouteOptimizerException] on
-  /// failure.
-  Future<List<String>> optimize(List<String> bins) async {
+  /// ending at the warehouse entrance, using [locationCode]'s uploaded floor
+  /// plan (each Location has its own layout on the server now -- see
+  /// mock_vision_server.py's per-location /api/layout/upload). Throws
+  /// [RouteOptimizerException] on failure, including when [locationCode] has
+  /// no layout uploaded yet.
+  Future<List<String>> optimize(String locationCode, List<String> bins) async {
     try {
-      final res = await _dio.post('/api/route/optimize', data: {'bins': bins});
+      final res = await _dio.post('/api/route/optimize',
+          data: {'locationCode': locationCode, 'bins': bins});
       final data = res.data as Map<String, dynamic>;
       final order = data['order'] as List;
       return order.map((e) => e.toString()).toList();

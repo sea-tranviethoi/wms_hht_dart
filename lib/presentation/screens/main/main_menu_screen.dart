@@ -199,6 +199,11 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         backgroundColor: const Color(0xFF2D4A38), // settingsColor5 (BinMove) darker shade
         title: const Text('メニュー', style: AppStyles.appBarTitle),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.location_on_outlined, color: AppColors.white),
+            tooltip: 'ロケーション選択',
+            onPressed: () => context.push(RouteNames.locationSelect),
+          ),
           // Version badge
           Padding(
             padding: const EdgeInsets.only(right: 12),

@@ -12,6 +12,8 @@ class PickingLine {
   final String productCode;
   @JsonKey(name: 'location')
   final String? location;
+  @JsonKey(name: 'locationCode')
+  final String? locationCode;
   @JsonKey(name: 'bin')
   final String? bin;
   @JsonKey(name: 'lotNo')
@@ -53,6 +55,7 @@ class PickingLine {
     this.updateAt,
     this.productName,
     this.unitName,
+    this.locationCode,
   });
 
   factory PickingLine.fromJson(Map<String, dynamic> json) {
@@ -61,6 +64,7 @@ class PickingLine {
       pickNo: (json['pickNo'] ?? '').toString(),
       productCode: (json['productCode'] ?? '').toString(),
       location: json['location']?.toString(),
+      locationCode: json['locationCode']?.toString(),
       bin: json['bin']?.toString(),
       lotNo: json['lotNo']?.toString(),
       pickQty: toDouble(json['pickQty']) ?? 0.0,
@@ -83,6 +87,7 @@ class PickingLine {
     String? pickNo,
     String? productCode,
     String? location,
+    String? locationCode,
     String? bin,
     String? lotNo,
     double? pickQty,
@@ -101,6 +106,7 @@ class PickingLine {
       pickNo: pickNo ?? this.pickNo,
       productCode: productCode ?? this.productCode,
       location: location ?? this.location,
+      locationCode: locationCode ?? this.locationCode,
       bin: bin ?? this.bin,
       lotNo: lotNo ?? this.lotNo,
       pickQty: pickQty ?? this.pickQty,

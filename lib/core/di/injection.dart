@@ -15,6 +15,7 @@ import '../storage/secure_storage.dart';
 import '../update/app_updater.dart';
 import '../ai/vision_client.dart';
 import '../ai/route_optimizer_client.dart';
+import '../ai/layout_upload_client.dart';
 import '../../presentation/blocs/update/update_cubit.dart';
 import '../../data/datasources/remote/auth_remote_datasource.dart';
 import '../../data/datasources/remote/master_remote_datasource.dart';
@@ -98,6 +99,7 @@ Future<void> initDependencies() async {
 
   // ─── Core: Route Optimizer (picking route, proposal #7 "Nhóm A") ──
   sl.registerSingleton<RouteOptimizerClient>(RouteOptimizerClient());
+  sl.registerSingleton<LayoutUploadClient>(LayoutUploadClient());
 
   // ─── Data: Remote DataSources ─────────────────────────────────
   sl.registerSingleton<AuthRemoteDataSource>(
